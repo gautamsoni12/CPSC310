@@ -5,6 +5,14 @@ import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 
 import Log from "../Util";
 
+import { Course } from './Courses';
+
+'use strict';
+
+var fs = require("fs");
+var request = require('request');
+var JSZip = require('jszip');
+
 export default class InsightFacade implements IInsightFacade {
 
     constructor() {
@@ -12,7 +20,13 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
-        return null;
+        let myCourse = new Course(id, content);
+        
+            return new Promise (function (resolve, reject){
+                
+    
+    
+            })
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
