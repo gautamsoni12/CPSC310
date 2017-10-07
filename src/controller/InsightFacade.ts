@@ -22,11 +22,10 @@ export default class InsightFacade implements IInsightFacade {
     addDataset(id: string, content: string): Promise<InsightResponse> {
         let myCourse = new Course(id, content);
         
-            return new Promise (function (resolve, reject){
-                
+            return new Promise  (function (resolve, reject){
+        
     
-    
-            })
+            });
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
