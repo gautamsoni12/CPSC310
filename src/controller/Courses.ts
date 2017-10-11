@@ -40,7 +40,7 @@ export class Course {
             }
             
         } catch (emptyFileError) {
-            throw new Error(emptyFileError);
+            throw new Error("Zip file is empty!");
         }
         return data;
     }
