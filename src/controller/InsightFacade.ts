@@ -3,7 +3,10 @@
  */
 import { IInsightFacade, InsightResponse } from "./IInsightFacade";
 
-import Log from "../Util";
+import Log from "../Util"
+import * as JSzip from "jszip";
+var zip = new JSzip();
+
 
 import { Course } from './Courses';
 
@@ -15,14 +18,16 @@ var JSZip = require('jszip');
 var UBCInsight = new Map();
 export default class InsightFacade implements IInsightFacade {
 
+
     constructor() {
         Log.trace('InsightFacadeImpl::init()');
 
     }
 
-
     addDataset(id: string, content: string): Promise<InsightResponse> {
+
         let myCourse = new Course(id, content);
+
         var zipContent: Array<any>;
         var code: number;
 
