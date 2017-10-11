@@ -64,5 +64,13 @@ describe("EchoSpec", function () {
         expect(out.body).to.have.property('error');
         expect(out.body).to.deep.equal({error: 'Message not provided'});
     });
+    //TEST CASES FOR: addDataSet
+    //addDataSet with invalid zip file, should return error 400
+    //addDataSet with zip file containing no files, should return error 400
+    //addDataSet with zip file containing invalid course, should return error 400
+    //addDataSet with zip file containing invalid JSON, should return error 400
+    //addDataSet with zip file containing one course, result should be that course stored in DS & persisted to disk
+    //addDataSet with zip file containing multiple courses, result should be the courses stored in DS & persisted to disk
+    //addDataSet with zip file containing course already added, result should be data for existing course overwritten & persisted to disk
 
 });

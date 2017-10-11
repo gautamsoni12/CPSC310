@@ -3,15 +3,30 @@
  */
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 
-import Log from "../Util";
+import Log from "../Util"
+import * as JSzip from "jszip";
+var zip = new JSzip();
+
 
 export default class InsightFacade implements IInsightFacade {
+
 
     constructor() {
         Log.trace('InsightFacadeImpl::init()');
     }
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
+        
+        zip.loadAsync(content, {base64: true}).then(function (zipF) {
+            //zipF is all files contained within zip?
+            //if zip file contained multiple JSON and one is invalid, skip or invalidate entire zip?
+            zipF.forEach(function (relativePath, file) {
+                //For each file, check if valid then store in data structure
+            });
+        }).catch(function (err) {
+            //return InsightResponse, (how?) err: 400, msge: invalid zip file
+            //this block executes if loadAsync fails, meaning invalid zip file
+        })
         return null;
     }
 
