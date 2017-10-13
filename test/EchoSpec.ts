@@ -65,8 +65,8 @@ describe("EchoSpec", function () {
         expect(out.body).to.deep.equal({error: 'Message not provided'});
     });
 
-
     //TEST CASES FOR: addDataSet
+    //TEST CASES FOR: addDataSet  (USE DATASET GIVEN ON D1 WEBPAGE TO DO TESTS)
     //addDataSet with invalid zip file, should return error 400
     //addDataSet with zip file containing no files, should return error 400
     //addDataSet with zip file containing invalid course, should return error 400

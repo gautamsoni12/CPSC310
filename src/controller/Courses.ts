@@ -32,7 +32,7 @@ export class Course {
             if (file != null) {
                 var data: Array<any> = JSZip.loadAsync(file).then(function (zip: any) {
                     Object.keys(zip.files).forEach(function (zipfile) {
-                        zip.files[zipfile].async('string').then(function (fileData: Array<any>) {
+                        zip.files[zipfile].async('string', {base64: true}).then(function (fileData: Array<any>) {
                             console.log(fileData) // These are file contents      
                         })
                     })

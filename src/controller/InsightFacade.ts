@@ -5,6 +5,7 @@ import { IInsightFacade, InsightResponse } from "./IInsightFacade";
 
 import Log from "../Util"
 import * as JSzip from "jszip";
+
 var zip = new JSzip();
 
 
@@ -71,7 +72,10 @@ export default class InsightFacade implements IInsightFacade {
 
     }
 
-    performQuery(query: any): Promise<InsightResponse> {
+
+    performQuery(query: any): Promise <InsightResponse> {
         return null;
     }
+
+
 }
