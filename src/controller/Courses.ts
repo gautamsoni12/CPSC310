@@ -1,46 +1,49 @@
 import Log from "../Util";
 
+import * as JSzip from "jszip";
+
 'use strict';
-var fs = require("fs");
-var request = require('request');
-var JSZip = require('jszip');
-var jsonfile = require('jsonfile');
+let fs = require("fs");
+let request = require('request');
+let JSZip = require('jszip');
+let jsonfile = require('jsonfile');
+
+//var Promise = require('promise');
 
 export class Course {
-
     id: string;
-    content: string;
+    contents: string;
+
 
     constructor(id: string, content: string) {
         this.id = id;
-        this.content = content;
-    }
-
-    createNewFile() {
-        let zip = new JSZip();
-        zip.folder('Courses').file('Hello');
-
+        this.contents = content;
     }
 
     // Parameter : takes a zip file
     // Returns : Array containing content of Zip file. 
 
-    loadfile(file: any): Array<any> {
-        this.content = file;
-        
+    loadfile(file: string): Array<any> {
+        this.constructor().contents = file;
+        let jsZip = new JSZip();
+
         try {
             if (file != null) {
-                var data: Array<any> = JSZip.loadAsync(file).then(function (zip: any) {
+
+                var data: Array<any>;
+                jsZip.loadAsync(file, {base64: true}).then(function (zip: any) {
                     Object.keys(zip.files).forEach(function (zipfile) {
-                        zip.files[zipfile].async('string', {base64: true}).then(function (fileData: Array<any>) {
-                            console.log(fileData) // These are file contents      
+                        zip.files(zipfile).async('string').then(function (fileData: Array<any>) {
+                            console.log(fileData) // These are file contents
+                            data = fileData;
                         })
                     })
                 })
+
             }
-            
+
         } catch (emptyFileError) {
-            throw new Error("Zip file is empty!");
+            emptyFileError('Zip file is empty');
         }
         return data;
     }
