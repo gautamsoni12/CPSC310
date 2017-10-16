@@ -12,6 +12,7 @@ var zip = new JSzip();
 import { Course } from './Courses';
 
 'use strict';
+import {QUERYNode} from "../node/QUERYNode";
 
 var fs = require("fs");
 var request = require('request');
@@ -74,7 +75,17 @@ export default class InsightFacade implements IInsightFacade {
 
 
     performQuery(query: any): Promise <InsightResponse> {
-        return null;
+        let qNode: QUERYNode = new QUERYNode();
+        return new Promise(function (resolve, reject) {
+            try {
+                qNode.typeCheck(query);
+                resolve({code: 200, body: {message: 'Query is valid'} });
+            } catch (error) {
+                reject({code: 400, body: {message: 'Query failed. query is invalid'}});
+            }
+        })
+
+
     }
 
 

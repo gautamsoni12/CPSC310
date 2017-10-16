@@ -6,6 +6,7 @@ import Server from "../src/rest/Server";
 import {expect} from 'chai';
 import Log from "../src/Util";
 import {InsightResponse} from "../src/controller/IInsightFacade";
+import InsightFacade from "../src/controller/InsightFacade";
 
 describe("EchoSpec", function () {
 
@@ -72,5 +73,32 @@ describe("EchoSpec", function () {
     //addDataSet with zip file containing one course, result should be that course stored in DS & persisted to disk
     //addDataSet with zip file containing multiple courses, result should be the courses stored in DS & persisted to disk
     //addDataSet with zip file containing course already added, result should be data for existing course overwritten & persisted to disk
+
+
+    //TESTS FOR PARSING QUERIES
+    let query = {
+        "WHERE":{
+            "GT":{
+                "courses_avg":97
+            }
+        },
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
+        }
+    }
+
+    it("parse basic query, should return no error", function () {
+        let ifInstance: InsightFacade = new InsightFacade();
+        let promise = ifInstance.performQuery(query);
+        promise.then(function (result) {
+            sanityCheck(result);
+            expect(result.code).to.equal(200);
+            expect(result.body).to.deep.equal({message: 'Query is valid'})
+        })
+    })
 
 });
