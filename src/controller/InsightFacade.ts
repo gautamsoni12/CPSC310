@@ -38,7 +38,7 @@ export default class InsightFacade implements IInsightFacade {
                 for (let files in zipContent) {
                     jsonArray.push(JSON.parse(files));
                 }
-                //zipContent = convertToJson(zipContent);
+            
                 if (UBCInsight.has(id)) {
                     UBCInsight.set(id, jsonArray);
                     code = 201;
