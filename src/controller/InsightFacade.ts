@@ -43,7 +43,7 @@ export default class InsightFacade implements IInsightFacade {
                     UBCInsight.set(id, jsonArray);
                     code = 201;
                     UBCInsight.set(id, zipContent);
-                    this.writeArrayToFile(id, zipContent);
+                    writeArrayToFile(UBCInsight);
                     resolve({ code: code, body: { res: 'the operation was successful and the id already existed' } });
                 } else {
                     UBCInsight.set(id, jsonArray);
@@ -133,11 +133,10 @@ function loadfile(file: string): Promise<Array<any>> {
 }
 
 
-
 function writeArrayToFile(file: any): void {
 
     var object = this.convertToJson;
-    fs.writeFileSync(file, object);
+    fs.writeFile(file, object);
 }
 
 
