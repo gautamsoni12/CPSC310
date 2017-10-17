@@ -8,11 +8,17 @@ import Log from "../Util";
 //import { Course } from './Courses';
 
 'use strict';
+
+import {unzip} from "zlib";
+import forEach = require("core-js/fn/array/for-each");
 import {QUERYNode} from "../node/QUERYNode";
-import {Course} from "./Courses";
-import * as fs from "fs";
+
+const fs = require("fs");
 
 var JSZip = require('jszip');
+
+//var zip = require('node-zip')(data, {base64: false, checkCRC32: true});
+var path = require('path');
 
 let UBCInsight = new Map();
 
@@ -50,19 +56,6 @@ export default class InsightFacade implements IInsightFacade {
         return data;
     }
 
-    convertToJson(jszipFile: any): Array<any> {
-
-        var newFile: Array<any> = this.loadFile(jszipFile);
-        var jsonArray: Array<any>;
-
-        for (let entry of newFile) {
-            var jsonObject = JSON.parse(JSON.stringify(entry));
-            jsonArray.push(jsonObject);
-        }
-
-        return jsonArray;
-    }
-
      writeArrayToFile(id: string, file:any) {
 
         var object = this.convertToJson;
@@ -71,17 +64,18 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
-
-        let myCourse = new Course(id, content);
-
-        let zipContent: Array<any> = new Array();
+        let zipContent: any;
         let code: number = null;
 
         return new Promise(function (resolve, reject) {
             try {
 
-                zipContent = this.loadFile(content);
+
+                zipContent = this.loadfile(content);
+                //console.log(zipContent);
+                //zipContent = readFile(content);
                 zipContent = this.convertToJson(zipContent);
+
                 if (UBCInsight.has(id)) {
                     code = 201;
                     UBCInsight.set(id, zipContent);
@@ -95,12 +89,9 @@ export default class InsightFacade implements IInsightFacade {
                 }
             } catch (error) {
                 code = 400;
-                reject({ code: code, body: { res: error } })
+                reject({ "code": code, "body": { res: error('Error: Error thrown ! ') } })
             }
-
         });
-
-       // return newPromise;
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
@@ -121,8 +112,6 @@ export default class InsightFacade implements IInsightFacade {
 
     }
 
-
-
     performQuery(query: any): Promise <InsightResponse> {
         let qNode: QUERYNode = new QUERYNode();
         return new Promise(function (resolve, reject) {
@@ -133,7 +122,100 @@ export default class InsightFacade implements IInsightFacade {
                 reject({code: 400, body: {message: 'Query failed. query is invalid'}});
             }
         })
+}
+/*
+function readFile(file: any): Array<any> {
+
+    var path = file.toString();
+    var data1: Array<string> = new Array();
+
+    fs.readFile("path", 'base64', function(err:any, data: any) {
+        if (err) throw err;
+        JSZip.loadAsync(data, { base64: true }).then(function (zip: any) {
+            data1 = zip;
+        });
+    });
+
+    return data1;
+}
+*/
+
+    readFileFunction(file:any): any{
+
+    fs.readFile(file, function (err: any, data: string) {
+        if (err) throw err;
+        console.log(data);
+        return data;
+    });
+
+}
+    loadfile(file: string):Array<any> {
+
+
+        var jsZip = new JSZip();
+        var data1: Array<string> = new Array();
+
+        try {
+            if (file != null) {
+
+                let promiseArray: any[] = [];
+                // var jsZip = require('jszip')
+                jsZip.loadAsync(file, {base64: true}).then(function (zip: any) {
+                    zip.forEach(function (filename: any, file: any) {
+
+                        promiseArray.push(new Promise(function (fulfill, reject) {
+                            file.async('string').then(function (content: any) {
+                                try {
+                                    if (zip.file(filename) != null) {
+
+
+                                        fulfill(JSON.stringify(content));
+                                    }
+                                } catch (parseError) {
+
+                                    reject("Promise Error");
+                                }
+                            })
+                        }));
+                    });
+
+                        //console.log(promiseArray);
+
+                        Promise.all(promiseArray).then(function (response: any) {
+
+                            data1 = response;
+                            console.log(data1);
+
+                        }).catch(function (error: string) {
+                            throw new Error;
+
+                            /*
+                            object.async('string').then(function (fileData: any) {
+                                console.log(fileData) // These are your file contents
+                                data1 = fileData;
+                            })
+                            */
+                        })
+
+                })
+            }
+        } catch (emptyFileError) {
+            emptyFileError('Zip file is empty');
+        }
+        return data1;
+
+}
+
+ convertToJson(jszipFile: any) {
+
+    var newFile: Array<any> = this.loadfile(jszipFile);
+    var jsonArray: Array<any>;
+
+    for (let entry of newFile) {
+        var jsonObject = JSON.parse(JSON.stringify(entry));
+        jsonArray.push(jsonObject);
     }
+}
 }
 
 

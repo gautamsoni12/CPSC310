@@ -8,7 +8,6 @@ import Log from "../src/Util";
 import {InsightResponse} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 
-import {Course} from "../src/controller/Courses";
 
 import chai = require('chai');
 import chaiHttp = require('chai-http');
@@ -82,6 +81,20 @@ describe("EchoSpec", function () {
 
 
 
+    it("Should be able to handle a file", function () {
+        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
+        return insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+            console.log(value);
+        }).catch(function(error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
 
     //TEST CASES FOR: addDataSet
     //TEST CASES FOR: addDataSet  (USE DATASET GIVEN ON D1 WEBPAGE TO DO TESTS)
