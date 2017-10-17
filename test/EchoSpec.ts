@@ -82,7 +82,7 @@ describe("EchoSpec", function () {
 
 
     it("Should be able to handle a file", function () {
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
+        let content : string = fs.readFileSync('C:\\Users\\Michael Chern\\Desktop\\cpsc310_team126', "base64");
         return insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({

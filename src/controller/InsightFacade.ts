@@ -4,20 +4,14 @@
 import { IInsightFacade, InsightResponse } from "./IInsightFacade";
 
 import Log from "../Util";
-
-//import { Course } from './Courses';
-
 'use strict';
 
-import {unzip} from "zlib";
-import forEach = require("core-js/fn/array/for-each");
 import {QUERYNode} from "../node/QUERYNode";
+import {EVALUATENODE} from "../node/EVALUATENODE";
 
 const fs = require("fs");
 
 var JSZip = require('jszip');
-
-//var zip = require('node-zip')(data, {base64: false, checkCRC32: true});
 var path = require('path');
 
 let UBCInsight = new Map();
@@ -69,8 +63,6 @@ export default class InsightFacade implements IInsightFacade {
 
         return new Promise(function (resolve, reject) {
             try {
-
-
                 zipContent = this.loadfile(content);
                 //console.log(zipContent);
                 //zipContent = readFile(content);
@@ -113,11 +105,19 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     performQuery(query: any): Promise <InsightResponse> {
+        let obj: Array<any>;
+        var m = new Map();
         let qNode: QUERYNode = new QUERYNode();
+        let evalNode: EVALUATENODE = new EVALUATENODE();
         return new Promise(function (resolve, reject) {
             try {
-                qNode.typeCheck(query);
-                resolve({code: 200, body: {message: 'Query is valid'}});
+                qNode.typeCheck(query, evalNode);
+                for (let value in UBCInsight.values()) {
+                    evalNode.evaluate(value, obj);
+                }
+
+            resolve({code: 200, body: {message: 'Query is valid'}});
+
             } catch (error) {
                 reject({code: 400, body: {message: 'Query failed. query is invalid'}});
             }
@@ -162,13 +162,10 @@ function readFile(file: any): Array<any> {
                 // var jsZip = require('jszip')
                 jsZip.loadAsync(file, {base64: true}).then(function (zip: any) {
                     zip.forEach(function (filename: any, file: any) {
-
                         promiseArray.push(new Promise(function (fulfill, reject) {
                             file.async('string').then(function (content: any) {
                                 try {
                                     if (zip.file(filename) != null) {
-
-
                                         fulfill(JSON.stringify(content));
                                     }
                                 } catch (parseError) {
