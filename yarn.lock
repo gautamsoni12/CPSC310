@@ -357,6 +357,10 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
+colors@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/colors/-/colors-1.1.2.tgz#168a4701756b6a7f51a12ce0c97bfa28c084ed63"
+
 combined-stream@^1.0.5, combined-stream@~1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.5.tgz#938370a57b4a51dea2c77c15d5c5fdf895164009"
@@ -504,6 +508,12 @@ dtrace-provider@~0.8:
   resolved "https://registry.yarnpkg.com/dtrace-provider/-/dtrace-provider-0.8.0.tgz#fa95fbf67ed3ae3e97364f9664af7302e5ff5625"
   dependencies:
     nan "^2.3.3"
+
+ebnf@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/ebnf/-/ebnf-1.5.0.tgz#770832f79867b139e84f639e5070a9faf54faf5a"
+  dependencies:
+    colors "^1.1.2"
 
 ecc-jsbn@~0.1.1:
   version "0.1.1"

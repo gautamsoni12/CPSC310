@@ -8,6 +8,15 @@ import Log from "../src/Util";
 import {InsightResponse} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 
+import {Course} from "../src/controller/Courses";
+
+import chai = require('chai');
+import chaiHttp = require('chai-http');
+import Response = ChaiHttp.Response;
+import restify = require('restify');
+import * as fs from "fs";
+
+
 describe("EchoSpec", function () {
 
 
@@ -16,6 +25,11 @@ describe("EchoSpec", function () {
         expect(response).to.have.property('body');
         expect(response.code).to.be.a('number');
     }
+
+    let insightFacade: InsightFacade = null;
+    beforeEach(function() {
+        insightFacade = new InsightFacade();
+    });
 
     before(function () {
         Log.test('Before: ' + (<any>this).test.parent.title);
@@ -65,6 +79,11 @@ describe("EchoSpec", function () {
         expect(out.body).to.have.property('error');
         expect(out.body).to.deep.equal({error: 'Message not provided'});
     });
+
+
+
+
+    //TEST CASES FOR: addDataSet
     //TEST CASES FOR: addDataSet  (USE DATASET GIVEN ON D1 WEBPAGE TO DO TESTS)
     //addDataSet with invalid zip file, should return error 400
     //addDataSet with zip file containing no files, should return error 400
@@ -74,6 +93,7 @@ describe("EchoSpec", function () {
     //addDataSet with zip file containing multiple courses, result should be the courses stored in DS & persisted to disk
     //addDataSet with zip file containing course already added, result should be data for existing course overwritten & persisted to disk
 
+    //TESTS FPR addDataset
 
     //TESTS FOR PARSING QUERIES
     let query = {
@@ -93,11 +113,100 @@ describe("EchoSpec", function () {
 
     it("parse basic query, should return no error", function () {
         let ifInstance: InsightFacade = new InsightFacade();
-        let promise = ifInstance.performQuery(query);
+        let promise: Promise<InsightResponse> = ifInstance.performQuery(query);
         promise.then(function (result) {
             sanityCheck(result);
             expect(result.code).to.equal(200);
-            expect(result.body).to.deep.equal({message: 'Query is valid'})
+            expect(result.body).to.deep.equal({message: 'Query is valid'});
+        })
+    })
+
+    let complexQuery = {
+        "WHERE":{
+            "OR":[
+                {
+                    "AND":[
+                        {
+                            "GT":{
+                                "courses_avg":90
+                            }
+                        },
+                        {
+                            "IS":{
+                                "courses_dept":"adhe"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ":{
+                        "courses_avg":95
+                    }
+                }
+            ]
+        },
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
+        }
+    }
+
+    it("parse complex query, should return no error", function () {
+        let ifInstance: InsightFacade = new InsightFacade();
+        let promise: Promise<InsightResponse> = ifInstance.performQuery(complexQuery);
+        promise.then(function (result) {
+            sanityCheck(result);
+            expect(result.code).to.equal(200);
+            expect(result.body).to.deep.equal({message: 'Query is valid'});
+        })
+    })
+
+    let invalidQuery = {
+        "WHERE":{
+            "OR":[
+                {
+                    "AND":[
+                        {
+                            "GT":{
+                                "courses_lul":90
+                            }
+                        },
+                        {
+                            "IS":{
+                                "courses_dept":"adhe"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "POO":{
+                        "courses_avg":95
+                    }
+                }
+            ]
+        },
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dsd",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
+        }
+    }
+
+    it("parse invalid query, should return error with code 400", function () {
+        let ifInstance: InsightFacade = new InsightFacade();
+        let promise: Promise<InsightResponse> = ifInstance.performQuery(complexQuery);
+        promise.then(function (result) {
+            sanityCheck(result);
+            expect(result.code).to.equal(400);
+            expect(result.body).to.have.property('error');
+            expect(result.body).to.deep.equal({message: 'Query failed. query is invalid'});
         })
     })
 
