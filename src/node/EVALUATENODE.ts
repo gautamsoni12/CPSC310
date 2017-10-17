@@ -168,7 +168,7 @@ export class EVALUATENODE {
             if (this.eqAvg) {
                 for  (let i  = 0; this.columns.length; i++) {
                     if (this.columns[i] == "courses_avg") {
-                        
+
                     } else {
 
                     }
