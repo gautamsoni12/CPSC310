@@ -104,7 +104,7 @@ describe("EchoSpec", function () {
             console.log(value);
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
-                "code": 204,
+                "code": 201,
                 "body": {res: 'the operation was successful and the id already existed'}
             });
 
@@ -113,6 +113,23 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
+    it("Should be able to handle a file 1", function () {
+        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses2.zip', "base64");
+        insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
+            console.log(value);
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 201,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+        }).catch(function(error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+
     it("Should be able to handle a file 1", function () {
         let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
         insightFacade.removeDataset('Courses').then(function (value: InsightResponse) {
@@ -174,7 +191,7 @@ describe("EchoSpec", function () {
             ],
             "ORDER":"courses_avg"
         }
-    }
+    };
 
     it("parse basic query, should return no error", function () {
         let ifInstance: InsightFacade = new InsightFacade();
@@ -184,7 +201,30 @@ describe("EchoSpec", function () {
             expect(result.code).to.equal(200);
             expect(result.body).to.deep.equal({message: 'Query is valid'});
         })
-    })
+    });
+
+    it("Query should get sections", function () {
+        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses2.zip', "base64");
+        insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
+            console.log(value);
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful'}
+            });
+        }).catch(function(error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        });
+        let promise: Promise<InsightResponse> = insightFacade.performQuery(query);
+        promise.then(function (result) {
+            sanityCheck(result);
+
+            expect(result.code).to.equal(200);
+            expect(result.body).to.deep.equal({message: 'Query is valid'});
+
+        })
+    });
 
     let complexQuery = {
         "WHERE":{
@@ -218,7 +258,7 @@ describe("EchoSpec", function () {
             ],
             "ORDER":"courses_avg"
         }
-    }
+    };
 
     it("parse complex query, should return no error", function () {
         let ifInstance: InsightFacade = new InsightFacade();
@@ -228,7 +268,7 @@ describe("EchoSpec", function () {
             expect(result.code).to.equal(200);
             expect(result.body).to.deep.equal({message: 'Query is valid'});
         })
-    })
+    });
 
     let invalidQuery = {
         "WHERE":{
