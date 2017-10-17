@@ -33,6 +33,7 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (resolve, reject) {
 
             try {
+                if (content != null){
                 loadfile(content).then(function (value: Array<any>) {
                     zipContent = value;
                 }).catch(function (error) {
@@ -53,7 +54,8 @@ export default class InsightFacade implements IInsightFacade {
                     code = 204;
                     resolve({ code: code, body: { res: 'the operation was successful and the id was new' } });
                 }
-            } catch (error) {
+            }
+            }catch (error) {
                 code = 400;
                 reject({ "code": code, "body": { res:("error" + error)} });
             }
