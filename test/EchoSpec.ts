@@ -81,26 +81,27 @@ describe("EchoSpec", function () {
 
     it("Should be able to handle a file", function () {
         let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
-        return insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
+        insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
                 "code": 204,
                 "body": {res: 'the operation was successful and the id was new'}
             });
             console.log(value);
+
         }).catch(function(error) {
             Log.test('Error:' + error);
             expect.fail();
         })
     });
-/*
+
     it("Should be able to handle a file 1", function () {
         let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
         return insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
-                "code": 204,
-                "body": {res: 'the operation was successful and the id was new'}
+                "code": 201,
+                "body": {res: 'the operation was successful and the id already existed'}
             });
             console.log(value);
         }).catch(function(error) {
@@ -108,7 +109,8 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
-    */
+
+
 
 
 
