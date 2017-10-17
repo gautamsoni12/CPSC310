@@ -129,6 +129,22 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("Should be able to handle a file 1", function () {
+        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
+        insightFacade.removeDataset('Courses').then(function (value: InsightResponse) {
+            console.log(value);
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 404,
+                "body": {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+            });
+
+        }).catch(function(error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+
 
 
 

@@ -11,7 +11,7 @@ import Log from "../Util";
 
 const fs = require("fs");
 import forEach = require("core-js/fn/array/for-each");
-import {QUERYNode} from "../node/QUERYNode";
+import { QUERYNode } from "../node/QUERYNode";
 
 var JSZip = require('jszip');
 
@@ -31,14 +31,16 @@ export default class InsightFacade implements IInsightFacade {
         let jsonArray: any[];
 
         return new Promise(function (resolve, reject) {
+
             try {
                 loadfile(content).then(function (value: Array<any>) {
-                    zipContent = value
-                }).catch(function (error) { return error });
+                    zipContent = value;
+                }).catch(function (error) {
+                    error('Not valid zip file') });
                 for (let files in zipContent) {
                     jsonArray.push(JSON.parse(files));
                 }
-            
+
                 if (UBCInsight.has(id)) {
                     UBCInsight.set(id, jsonArray);
                     code = 201;
@@ -53,7 +55,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
             } catch (error) {
                 code = 400;
-                reject({ "code": code, "body": { res: error('Error: Error thrown ! ') } })
+                reject({ "code": code, "body": { res:("error" + error)} });
             }
         });
     }
@@ -67,7 +69,12 @@ export default class InsightFacade implements IInsightFacade {
                 if (UBCInsight.has(id)) {
                     code = 204;
                     UBCInsight.delete(id);
-                    resolve({ code: code, body: { res: 'the operation was successful' } })
+                    resolve({ code: code, body: { res: 'the operation was successful.' } });
+                }
+                else{
+                    code = 404;
+                    reject({ code: code, body: { res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.' } });
+
                 }
             } catch (error) {
                 code = 404;
@@ -104,24 +111,19 @@ function loadfile(file: string): Promise<Array<any>> {
                         if (!file.dir)
                             promiseArray.push(jsZip.file(filename).async("string").then((content: string) => {
                                 try {
-                                    data1.push(JSON.stringify(JSON.parse(content)));
+                                        data1.push(JSON.stringify(JSON.parse(content)));
 
                                 } catch (error) {
-                                    return error;
+                                    error('inner', error.message) ;
                                 }
                             }));
-
                     });
-
                     Promise.all(promiseArray).then(function (response: any) {
-                        //data1 = response;
                         fulfill(data1);
-
-                    }).catch(function (error: string) {
-                        reject('Error');
+                    }).catch(function(error) {
+                        reject('Error:'+ error);
                     })
                 });
-
             }
         }
         catch (emptyFileError) {
@@ -131,7 +133,6 @@ function loadfile(file: string): Promise<Array<any>> {
     });
 
 }
-
 
 function writeArrayToFile(file: any): void {
 
