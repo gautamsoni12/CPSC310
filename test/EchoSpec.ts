@@ -7,13 +7,14 @@ import {expect} from 'chai';
 import Log from "../src/Util";
 import {InsightResponse} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
-import {Course} from "../src/controller/Courses";
+
 
 import chai = require('chai');
 import chaiHttp = require('chai-http');
 import Response = ChaiHttp.Response;
 import restify = require('restify');
 import * as fs from "fs";
+
 
 describe("EchoSpec", function () {
 
@@ -79,6 +80,7 @@ describe("EchoSpec", function () {
     });
 
 
+
     it("Should be able to handle a file", function () {
         let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
         insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
@@ -95,22 +97,37 @@ describe("EchoSpec", function () {
         })
     });
 
+
     it("Should be able to handle a file 1", function () {
         let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
-        return insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
+        insightFacade.addDataset('Courses', content).then(function (value: InsightResponse) {
+            console.log(value);
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
-                "code": 201,
+                "code": 204,
                 "body": {res: 'the operation was successful and the id already existed'}
             });
-            console.log(value);
+
         }).catch(function(error) {
             Log.test('Error:' + error);
             expect.fail();
         })
     });
+    it("Should be able to handle a file 1", function () {
+        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
+        insightFacade.removeDataset('Courses').then(function (value: InsightResponse) {
+            console.log(value);
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful'}
+            });
 
-
+        }).catch(function(error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
 
 
 
@@ -124,5 +141,122 @@ describe("EchoSpec", function () {
     //addDataSet with zip file containing one course, result should be that course stored in DS & persisted to disk
     //addDataSet with zip file containing multiple courses, result should be the courses stored in DS & persisted to disk
     //addDataSet with zip file containing course already added, result should be data for existing course overwritten & persisted to disk
+
+    //TESTS FPR addDataset
+
+    //TESTS FOR PARSING QUERIES
+    let query = {
+        "WHERE":{
+            "GT":{
+                "courses_avg":97
+            }
+        },
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
+        }
+    }
+
+    it("parse basic query, should return no error", function () {
+        let ifInstance: InsightFacade = new InsightFacade();
+        let promise: Promise<InsightResponse> = ifInstance.performQuery(query);
+        promise.then(function (result) {
+            sanityCheck(result);
+            expect(result.code).to.equal(200);
+            expect(result.body).to.deep.equal({message: 'Query is valid'});
+        })
+    })
+
+    let complexQuery = {
+        "WHERE":{
+            "OR":[
+                {
+                    "AND":[
+                        {
+                            "GT":{
+                                "courses_avg":90
+                            }
+                        },
+                        {
+                            "IS":{
+                                "courses_dept":"adhe"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ":{
+                        "courses_avg":95
+                    }
+                }
+            ]
+        },
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
+        }
+    }
+
+    it("parse complex query, should return no error", function () {
+        let ifInstance: InsightFacade = new InsightFacade();
+        let promise: Promise<InsightResponse> = ifInstance.performQuery(complexQuery);
+        promise.then(function (result) {
+            sanityCheck(result);
+            expect(result.code).to.equal(200);
+            expect(result.body).to.deep.equal({message: 'Query is valid'});
+        })
+    })
+
+    let invalidQuery = {
+        "WHERE":{
+            "OR":[
+                {
+                    "AND":[
+                        {
+                            "GT":{
+                                "courses_lul":90
+                            }
+                        },
+                        {
+                            "IS":{
+                                "courses_dept":"adhe"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "POO":{
+                        "courses_avg":95
+                    }
+                }
+            ]
+        },
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dsd",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
+        }
+    }
+
+    it("parse invalid query, should return error with code 400", function () {
+        let ifInstance: InsightFacade = new InsightFacade();
+        let promise: Promise<InsightResponse> = ifInstance.performQuery(complexQuery);
+        promise.then(function (result) {
+            sanityCheck(result);
+            expect(result.code).to.equal(400);
+            expect(result.body).to.have.property('error');
+            expect(result.body).to.deep.equal({message: 'Query failed. query is invalid'});
+        })
+    })
 
 });

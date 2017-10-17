@@ -10,14 +10,14 @@ import Log from "../Util";
 'use strict';
 
 const fs = require("fs");
+import forEach = require("core-js/fn/array/for-each");
+import {QUERYNode} from "../node/QUERYNode";
 
 var JSZip = require('jszip');
-
 
 let UBCInsight = new Map();
 
 export default class InsightFacade implements IInsightFacade {
-
 
     constructor() {
         Log.trace('InsightFacadeImpl::init()');
@@ -26,30 +26,30 @@ export default class InsightFacade implements IInsightFacade {
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
 
-        //let myCourse = new Course(id, content);
-
         let zipContent: any[];
         let code: number = null;
         let jsonArray: any[];
 
         return new Promise(function (resolve, reject) {
             try {
-                loadfile(content).then(function (value: Array<any>){
-                    zipContent = value}).catch(function (error){return error});
-                for (let files in zipContent){
+                loadfile(content).then(function (value: Array<any>) {
+                    zipContent = value
+                }).catch(function (error) { return error });
+                for (let files in zipContent) {
                     jsonArray.push(JSON.parse(files));
                 }
-
                 //zipContent = convertToJson(zipContent);
                 if (UBCInsight.has(id)) {
                     UBCInsight.set(id, jsonArray);
                     code = 201;
-                    resolve({ "code": code, "body": { res: 'the operation was successful and the id already existed' } });
+                    UBCInsight.set(id, zipContent);
+                    this.writeArrayToFile(id, zipContent);
+                    resolve({ code: code, body: { res: 'the operation was successful and the id already existed' } });
                 } else {
                     UBCInsight.set(id, jsonArray);
                     writeArrayToFile(id);
                     code = 204;
-                    resolve({ "code": code, "body": { res: 'the operation was successful and the id was new' } });
+                    resolve({ code: code, body: { res: 'the operation was successful and the id was new' } });
                 }
             } catch (error) {
                 code = 400;
@@ -57,6 +57,7 @@ export default class InsightFacade implements IInsightFacade {
             }
         });
     }
+
 
     removeDataset(id: string): Promise<InsightResponse> {
         var code: number;
@@ -66,102 +67,80 @@ export default class InsightFacade implements IInsightFacade {
                 if (UBCInsight.has(id)) {
                     code = 204;
                     UBCInsight.delete(id);
-                    resolve({ "code": code, "body": { res: 'the operation was successful' } })
+                    resolve({ code: code, body: { res: 'the operation was successful' } })
                 }
             } catch (error) {
                 code = 404;
-                reject({ "code": code, "body": { res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.' } });
+                reject({ code: code, body: { res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.' } });
             }
         });
 
     }
 
-
     performQuery(query: any): Promise<InsightResponse> {
-        return null;
+        let qNode: QUERYNode = new QUERYNode();
+        return new Promise(function (resolve, reject) {
+            try {
+                qNode.typeCheck(query);
+                resolve({ code: 200, body: { message: 'Query is valid' } });
+            } catch (error) {
+                reject({ code: 400, body: { message: 'Query failed. query is invalid' } });
+            }
+        })
     }
 }
 
-function readFileFunction(file:any): any{
-
-    fs.readFile(file, function (err: any, data: string) {
-        if (err) throw err;
-        console.log(data);
-        return data;
-    });
-
-}
-function loadfile(file: string):Promise<Array<any>> {
+function loadfile(file: string): Promise<Array<any>> {
     return new Promise(function (fulfill, reject) {
 
-    var jsZip = new JSZip();
-    var data1: Array<string> = new Array();
+        var jsZip = new JSZip();
+        var data1: Array<string> = new Array();
 
-    try {
-        if (file != null) {
-            let promiseArray: any[] = [];
-            jsZip.loadAsync(file, {base64: true}).then(function (zip: any) {
-                zip.forEach(function (filename: any, file: any) {
-                    if (!file.dir)
-                        promiseArray.push(jsZip.file(filename).async("string").then((content: string) => {
-                            try {
+        try {
+            if (file != null) {
+                let promiseArray: any[] = [];
+                jsZip.loadAsync(file, { base64: true }).then(function (zip: any) {
+                    zip.forEach(function (filename: any, file: any) {
+                        if (!file.dir)
+                            promiseArray.push(jsZip.file(filename).async("string").then((content: string) => {
+                                try {
                                     data1.push(JSON.stringify(JSON.parse(content)));
 
-                            }catch(error){
-                                 return error;
-                            }
-                        }));
-                    // promiseArray.push(new Promise(function (fulfill, reject) {
-                    //     file.async('base64').then(function (content: any) {
-                    //         try {
-                    //             if (zip.file(file) != null) {
-                    //                 console.log(content);
-                    //                 fulfill(JSON.stringify(content));
-                    //             }
-                    //         } catch (parseError) {
-                    //             reject("Promise Error");
-                    //         }
-                    //     })
-                    // }));
+                                } catch (error) {
+                                    return error;
+                                }
+                            }));
+
+                    });
+
+                    Promise.all(promiseArray).then(function (response: any) {
+                        //data1 = response;
+                        fulfill(data1);
+
+                    }).catch(function (error: string) {
+                        reject('Error');
+                    })
                 });
 
-            Promise.all(promiseArray).then(function (response: any) {
-               //data1 = response;
-                fulfill (data1);
-
-            }).catch(function (error: string) {
-                reject('Error');
-            })
-            });
+            }
+        }
+        catch (emptyFileError) {
+            emptyFileError('Zip file is empty');
 
         }
-    }
-    catch (emptyFileError) {
-        emptyFileError('Zip file is empty');
-
-    }
     });
 
 }
 
-function convertToJson(jszipFile: any): Array<any> {
 
-    var newFile: Array<any> = this.loadfile(jszipFile);
-    var jsonArray: Array<any>;
 
-    for (let entry of newFile) {
-        var jsonObject = JSON.parse(JSON.stringify(entry));
-        jsonArray.push(jsonObject);
-    }
-
-    return jsonArray;
-}
-
-function writeArrayToFile(file:any): void {
+function writeArrayToFile(file: any): void {
 
     var object = this.convertToJson;
     fs.writeFileSync(file, object);
 }
+
+
 
 
 
