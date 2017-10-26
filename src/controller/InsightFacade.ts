@@ -84,18 +84,28 @@ export default class InsightFacade implements IInsightFacade {
 
     }
 
-
+//
     performQuery(query: any): Promise <InsightResponse> {
         let obj: Array<any>;
-        var m = new Map();
-        let qNode: QUERYNode = new QUERYNode();
-        let evalNode: EVALUATENODE = new EVALUATENODE();
+        let columns: Array<string>;
+        let qNode: QUERYNode;
+
         return new Promise(function (resolve, reject) {
             try {
-                qNode.typeCheck(query, evalNode);
-                for (let value in UBCInsight.values()) {
-                    evalNode.evaluate(value, obj);
+                //Loop returns filtered contents of value that matches query criteria
+                //TODO: Find way to pass each value in Map UBCinsight into for loop
+                for (let value of UBCInsight.values()) {
+                    //value == dataset contained in UBCinsight
+                    qNode = new QUERYNode(value);
+                    obj = qNode.typeCheck(query);
                 }
+
+                //Constructs object to return for each obj in value based on columns array
+                // {key: obj, ...}
+                //TODO:
+
+                //sort results based on ORDER
+                //TODO:
 
             resolve({code: 200, body: {message: 'Query is valid'}});
             } catch (error) {

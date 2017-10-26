@@ -7,48 +7,68 @@ import {EVALUATENODE} from "./EVALUATENODE";
 //QUERY NODE
 export class QUERYNode {
     private obj: any; //dont need this?
-    private whereKey: boolean = false;
-    private optionKey: boolean = false;
+    private dataset: Array<any>;
+    private whereKey: boolean;
+    private optionKey: boolean;
+    private columns: Array<string>;
+    private order: string;
 
-    constructor() {
+    constructor(dataset: Array<any>) {
+        this.dataset = dataset;
+        this.whereKey = false;
+        this.optionKey = false;
+        this.columns = new Array();
+        this.order = "";
+
 
     }
 
     /**
      *@param query: query to be typeChecked
-     * @param eNode: node to add keys to
      *checks grammar of query to see if it matches grammar
      */
-    typeCheck(query: any, eNode: EVALUATENODE) {
+    typeCheck(query: any): Array<any> {
         let keys = Object.keys(query);
         for (let i = 0; i < keys.length; i++) {
             if (keys[i] != "WHERE" || keys[i] != "OPTIONS") {
                 throw new Error;
             }
         }
-        this.parse(query, eNode);
+        return this.parse(query);
     }
 
     /**
      * @param query: query to be parsed
-     * @param eNode: node to add keys to
      * Parses query to see if WHERE or OPTIONS keys are present
      **/
-    parse(query: any, eNode: EVALUATENODE) {
+    parse(query: any): Array<any> {
         if (query.hasOwnProperty('WHERE')) {
-            let wNode: WHEREnode = new WHEREnode();
-            wNode.typeCheck(query['WHERE'], eNode);
+            this.whereKey = true;
         }
         if (query.hasOwnProperty('OPTIONS')) {
-            let oNode: OPTIONnode =  new OPTIONnode();
-            oNode.typeCheck(query['OPTIONS'], eNode);
+            this.optionKey = true;
         }
+        return this.evaluate(query)
     }
 
 
 
-    evaluate(query: any, dataset: Array<any>) {
+    evaluate(query: any):Array<any> {
+        let oNode: OPTIONnode = new OPTIONnode();
+        oNode.typeCheck(query['OPTIONS']);
+        this.columns = oNode.getColumns();
+        this.order = oNode.getOrder();
 
+        let wNode: WHEREnode = new WHEREnode(this.dataset);
+        return wNode.typeCheck(query['WHERE']);
+    }
+
+    getColumns(): Array<string> {
+        return this.columns;
+    }
+
+    getOrder() :string {
+        return this.order;
     }
 
 

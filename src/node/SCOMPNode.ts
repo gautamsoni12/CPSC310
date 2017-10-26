@@ -6,11 +6,13 @@ import {isString} from "util";
 //s_key: courses_('dept' | 'id' | 'instructor' | 'title' | 'uuid')
 export class SCOMPNode {
 
-    constructor() {
+    dataset: Array<any>
 
+    constructor(dataset: Array<any>) {
+        this.dataset = dataset;
     }
 
-    typeCheck(query: any, eNode: EVALUATENODE) {
+    typeCheck(query: any) {
         let keys = Object.keys(query);
         for (let i = 0; i < keys.length; i++) {
             if (keys[i] != "course_dept" || keys[i] != "course_id" || keys[i] != "course_instructor" ||
@@ -21,49 +23,37 @@ export class SCOMPNode {
                 throw new Error("query is invalid");
             }
         }
-        this.parse(query, eNode);
+        this.parse(query);
     }
 
-    parse(query: any, eNode: EVALUATENODE) {
+    parse(query: any) {
         if (query.hasOwnProperty('courses_dept')) {
-            if (query['courses_dept'].includes('*') && !query['courses_dept'].startsWith('*') &&
-                (query['courses_dept'].endsWith('*'))) {
-                throw new Error("query is invalid");
-            }
-            eNode.setInputStrings(query['courses_dept'], "dept");
+            this.hasStarValidLocation(query, 'courses_dept');
         }
         if (query.hasOwnProperty('courses_id')) {
-            if (query['courses_id'].includes('*') && !query['courses_id'].startsWith('*') &&
-                (query['courses_id'].endsWith('*'))) {
-                throw new Error("query is invalid");
-            }
-            eNode.setInputStrings(query['courses_id'], "id");
+            this.hasStarValidLocation(query, 'courses_id');
         }
         if (query.hasOwnProperty('courses_instructor')) {
-            if (query['courses_instructor'].includes('*') && !query['courses_instructor'].startsWith('*') &&
-                (query['courses_instructor'].endsWith('*'))) {
-                throw new Error("query is invalid");
-            }
-            eNode.setInputStrings(query['courses_instructor'], "instruct");
+            this.hasStarValidLocation(query, 'courses_instructor');
         }
         if (query.hasOwnProperty('courses_title')) {
-            if (query['courses_title'].includes('*') && !query['courses_title'].startsWith('*') &&
-                (query['courses_title'].endsWith('*'))) {
-                throw new Error("query is invalid");
-            }
-            eNode.setInputStrings(query['courses_title'], "title");
+            this.hasStarValidLocation(query, 'courses_title')
         }
         if (query.hasOwnProperty('courses_uuid')) {
-            if (query['courses_uuid'].includes('*') && !query['courses_uuid'].startsWith('*') &&
-                (query['courses_uuid'].endsWith('*'))) {
-                throw new Error("query is invalid");
-            }
-            eNode.setInputStrings(query['courses_uuid'], "uuid");
+            this.hasStarValidLocation(query, 'courses_uuid')
+        }
+        this.evaluate(query);
+    }
+
+    private hasStarValidLocation(query: any, s_key: string) {
+        if (query[s_key].includes('*') && !query[s_key].startsWith('*') ||
+            !query[s_key].endsWith('*')) {
+            throw new Error("query is invalid");
         }
     }
 
-    evaluate() {
-
+    evaluate(query: any) {
+        //TODO:
     }
 
 

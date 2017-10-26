@@ -15,15 +15,31 @@ export class WHEREnode {
 
     public COLUMNS: Array<string> = new Array();
 
-    constructor() {
+    andKey: boolean;
+    orKey: boolean;
+    ltKey: boolean;
+    gtKey: boolean;
+    eqKey: boolean;
+    isKey: boolean;
+    notKey: boolean;
+    dataset: Array<any>;
 
+    constructor(dataset: Array<any>) {
+        this.dataset = dataset;
+        this.andKey = false;
+        this.orKey = false;
+        this.ltKey = false;
+        this.gtKey = false;
+        this.eqKey = false;
+        this.isKey = false;
+        this.notKey = false;
     }
 
     /**
      * checks query to make sure grammar is valid
      * @param query: query to be typeChecked
      */
-    typeCheck(query: any, eNode: EVALUATENODE) {
+    typeCheck(query: any): Array<any> {
         let keys = Object.keys(query);
         for (let i = 0; i < keys.length; i++) {
             if (keys[i] != "AND" || keys[i] != "OR" || keys[i] != "LT" || keys[i] != "GT" || keys[i] != "EQ" ||
@@ -31,49 +47,69 @@ export class WHEREnode {
                 throw new Error("query is invalid");
             }
         }
-        this.parse(query, eNode);
+        return this.parse(query);
     }
 
     /**
      * parses query to see if keys are present
      * @param query: query to be parsed
      */
-    parse(query: any, eNode: EVALUATENODE) {
+    parse(query: any): Array<any> {
         if (query.hasOwnProperty('AND')) {
-            let lcNode: LOGICCOMPNode = new LOGICCOMPNode();
-            lcNode.typeCheck(query['AND'], "AND", eNode);
+            this.andKey = true;
         }
         if (query.hasOwnProperty('OR')) {
-            let lcNode: LOGICCOMPNode = new LOGICCOMPNode();
-            lcNode.typeCheck(query['OR'], "OR", eNode);
+            this.orKey  =true;
         }
-
         if (query.hasOwnProperty('LT')) {
-            let mNode: MCOMPNode = new MCOMPNode();
-            mNode.typeCheck(query['LT'], "LT", eNode);
+            this.ltKey = true;
         }
         if (query.hasOwnProperty('GT')) {
-            let mNode: MCOMPNode = new MCOMPNode();
-            mNode.typeCheck(query['GT'], "GT",eNode);
+            this.gtKey = true;
         }
         if (query.hasOwnProperty('EQ')) {
-            let mNode: MCOMPNode = new MCOMPNode();
-            mNode.typeCheck(query['EQ'], "EQ", eNode);
+            this.eqKey = true;
         }
-
         if (query.hasOwnProperty('IS')) {
-            let scNode: SCOMPNode = new SCOMPNode();
-            scNode.typeCheck(query['IS'], eNode);
+            this.isKey = true;
         }
         if (query.hasOwnProperty('NOT')) {
-            let nNode: NEGNode = new NEGNode();
-            nNode.typeCheck(query['NOT'], eNode);
+            this.notKey = true;
         }
+        return this.evaluate(query);
     }
 
-    evaluate(dataset: Array<any>): Promise<InsightResponse> {
 
-        return null;
+
+    evaluate(query: any): Array<any> {
+        let results: Array<any> = new Array();
+        if (this.andKey) {
+
+        }
+        if (this.orKey) {
+
+        }
+        if (this.ltKey) {
+            let mNode = new MCOMPNode(this.dataset);
+            results = mNode.typeCheck(query['LT'], "LT", false);
+        }
+        if (this.gtKey) {
+            let mNode = new MCOMPNode(this.dataset);
+            results = mNode.typeCheck(query['GT'], "GT", false);
+        }
+        if (this.eqKey) {
+            let mNode =  new MCOMPNode(this.dataset);
+            results = mNode.typeCheck(query['EQ'], "EQ", false)
+        }
+        if (this.isKey) {
+            let sNode = new SCOMPNode(this.dataset);
+            //sNode.typeCheck(query['IS']);
+        }
+        if (this.notKey) {
+            let negNode = new NEGNode(this.dataset);
+            //negNode.typeCheck(query['NOT']);
+        }
+        return results;
     }
 
 

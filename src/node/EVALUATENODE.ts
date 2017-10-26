@@ -2,6 +2,7 @@ import Log from "../Util";
 
 //NEGATION node: FILTER
 export class EVALUATENODE {
+
     private columns:Array<string>;
     private andFilters: Array<string>;
     private orFilters: Array<string>;
@@ -176,5 +177,4 @@ export class EVALUATENODE {
             }
         }
     }
-
 }
