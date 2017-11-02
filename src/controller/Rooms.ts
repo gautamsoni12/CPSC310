@@ -4,6 +4,7 @@ import * as JSzip from "jszip";
 'use strict';
 import {error} from "util";
 import {Room} from "./Room";
+import {Building} from "./Building";
 
 let fs = require("fs");
 let JSZip = require('jszip');
@@ -11,17 +12,8 @@ const parse5 = require('parse5');
 
 let buildings: Array<any> = [];
 let rooms: Array<any> = [];
-let myRoom: Room = {rooms_fullname: "",     //Full building name (e.g., "Hugh Dempster Pavilion").
-    rooms_shortname: "",    //Short building name (e.g., "DMP").
-    rooms_number: "",       //The room number. Not always a number, so represented as a string.
-    rooms_name: "",         //The room id; should be rooms_shortname+"_"+rooms_number.
-    rooms_address: "",      //The building address. (e.g., "6245 Agronomy Road V6T 1Z4").
-    rooms_lat: 0,          //The latitude of the building. Instructions for getting this field are below.
-    rooms_lon: 0,          //The longitude of the building. Instructions for getting this field are below.
-    rooms_seats: 0,        //The number of seats in the room.
-    rooms_type: "",         //The room type (e.g., "Small Group").
-    rooms_furniture: "",    //The room type (e.g., "Classroom-Movable Tables & Chairs").
-    rooms_href: "" }        //The link to full details online (e.g., "http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-201").};
+
+var buildingCode: string = "";
 
 export class Rooms {
     id: string;
@@ -34,17 +26,13 @@ export class Rooms {
         this.contents = content;
     }
 
-    buildings: Array<any> = [];
-    rooms: Array<any> = [];
-
-
     loadFile(file: string): any {
         let promiseArray: any[] = [];
         let roomsList: Array<any> = [];
 
         return new Promise(function (fulfill, reject) {
             let jsZip = new JSZip();
-            //let data1: Array<string> = [];
+            let roomList: Array<string> = [];
             try {
                 if (file != null) {
                     jsZip.loadAsync(file, {base64: true}).then(function (zip: any) {
@@ -54,35 +42,27 @@ export class Rooms {
                                         if (filename === 'index.htm') {
                                             let indexFile = parse5.parse(content);
                                             recurse(indexFile);
-                                            buildings = buildings.filter(function (word: string) {
-                                                return word.length > 1;
-                                            });
-                                        } else {
-                                            if (isValidFile(filename)) {
+                                        } else if (isValidFile(filename)) {
+                                                //console.log(filename.substring(41, 50));
+                                                buildingCode = filename.substring(41, 50);
                                                 let roomFile = parse5.parse(content);
                                                 roomRecurse(roomFile);
-                                                rooms = rooms.filter(function (word: string) {
-                                                    return word.length > 1;
-                                                });
                                             }
-                                        }
 
                                     }).catch(function (err: any) {
                                         console.log(err);
                                     })
+
                                 );
                             }
                         });
 
                         Promise.all(promiseArray).then(function (response: any) {
-                            fulfill(roomsList);
+                            fulfill(comleteRoom(buildings,rooms));
                         }).catch(function (error) {
-                            // console.log(1.1);
                             reject('Error:' + error);
                         })
                     }).catch(function (err: any) {
-
-                        //console.log(1.2);
                         reject(err);
                     });
                 }
@@ -92,6 +72,26 @@ export class Rooms {
             }
         });
     }
+}
+
+function comleteRoom( buildingsArray : Array<any>, roomsArray:Array<any>): Array<any>{
+
+    buildingsArray = buildings;
+    roomsArray = rooms;
+    for (let building of buildingsArray){
+        for (let room of roomsArray){
+            if(building.building_shortname === room.rooms_shortname){
+                room.rooms_fullname = building.building_fullname;
+                room.rooms_name = building.building_shortname.concat(room.rooms_number);
+                room.rooms_address = building.building_address;
+            }
+        }
+    }
+    return rooms;
+}
+
+function getlatLon(address: string){
+    
 }
 
 function isValidFile(fileName: String): Boolean {
@@ -168,30 +168,29 @@ function getBuildings(table: any) {
                                         for (let childOfColumnChild of childrenOfColumnChild) {
                                             let buildingTitle: string = childOfColumnChild.value;
                                             if (buildingInfoType.value === "views-field views-field-title") {
-                                                myRoom.rooms_number = buildingTitle.toString();
+                                                var buildingName = buildingTitle.toString().trim();
                                             }
                                         }
                                     }
-
-
                                     if (columnChild.value != null) {
                                         let info: string = columnChild.value;
                                         if (buildingInfoType.value === "views-field views-field-field-building-code") {
-                                            console.log(info.trim());
-                                            myRoom.rooms_shortname = info.toString().trim();
+
+                                            var buildingCode = info.toString().trim();
                                         }
                                         else if (buildingInfoType.value === "views-field views-field-field-building-address") {
-                                            myRoom.rooms_address = info.toString().trim();
+                                            var buildingAddress = info.toString().trim();
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                    let myBuilding: Building = { building_shortname: buildingCode, building_fullname: buildingName,  building_address: buildingAddress };
+                    buildings.push(myBuilding);
                 }
             }
         }
-
     }
 }
 
@@ -219,12 +218,12 @@ function getRooms(table: any) {
                                         for (let childOfColumnChild of childrenOfColumnChild) {
                                             let roomNum: string = childOfColumnChild.value;
                                             if (roomInfoType.value === "views-field views-field-field-room-number") {
-                                                myRoom.rooms_number = roomNum.toString();
+                                                var roomNumber = roomNum.toString();
                                             }
                                             let herfAttrs = columnChild.attrs;
                                             for (let herfAttr of herfAttrs) {
                                                 if (herfAttr.name === "href") {
-                                                    myRoom.rooms_href = herfAttr.value;
+                                                    var roomHerf = herfAttr.value;
                                                 }
                                             }
                                         }
@@ -232,13 +231,13 @@ function getRooms(table: any) {
                                     if (columnChild.value != null) {
                                         let info: string = columnChild.value;
                                         if (roomInfoType.value === "views-field views-field-field-room-capacity") {
-                                            myRoom.rooms_seats = parseInt(info.toString().trim());
+                                            var roomSeats = parseInt(info.toString().trim());
                                         }
                                         else if (roomInfoType.value === "views-field views-field-field-room-furniture") {
-                                            myRoom.rooms_furniture = info.toString().trim();
+                                            var roomFurniture = info.toString().trim();
                                         }
                                         else if (roomInfoType.value === "views-field views-field-field-room-type") {
-                                            myRoom.rooms_type = info.toString().trim();
+                                            var roomType = info.toString().trim();
                                         }
 
                                     }
@@ -246,6 +245,20 @@ function getRooms(table: any) {
                             }
                         }
                     }
+                    let myRoom: Room = {
+                        rooms_fullname: "",
+                        rooms_shortname: buildingCode,
+                        rooms_number: roomNumber,
+                        rooms_name: "",
+                        rooms_address: "",
+                        rooms_lat: 0,
+                        rooms_lon: 0,
+                        rooms_seats: roomSeats,
+                        rooms_type: roomType,
+                        rooms_furniture: roomFurniture,
+                        rooms_href: roomHerf
+                    };
+                    rooms.push(myRoom);
                 }
             }
         }
