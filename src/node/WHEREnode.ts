@@ -3,6 +3,8 @@ import {LOGICCOMPNode} from "./LOGICCOMPNode";
 import {SCOMPNode} from "./SCOMPNode";
 import {NEGNode} from "./NEGNode";
 import {MCOMPNode} from "./MCOMPNode";
+import {InsightResponse} from "../controller/IInsightFacade";
+import {EVALUATENODE} from "./EVALUATENODE";
 
 //WHERE NODE: FILTER
 //FILTER: 'AND' | 'OR' (LOGICCOMPARISON)
@@ -11,15 +13,33 @@ import {MCOMPNode} from "./MCOMPNode";
 //        'NOT" (NEGATION)
 export class WHEREnode {
 
-    constructor() {
+    public COLUMNS: Array<string> = new Array();
 
+    andKey: boolean;
+    orKey: boolean;
+    ltKey: boolean;
+    gtKey: boolean;
+    eqKey: boolean;
+    isKey: boolean;
+    notKey: boolean;
+    dataset: Array<any>;
+
+    constructor(dataset: Array<any>) {
+        this.dataset = dataset;
+        this.andKey = false;
+        this.orKey = false;
+        this.ltKey = false;
+        this.gtKey = false;
+        this.eqKey = false;
+        this.isKey = false;
+        this.notKey = false;
     }
 
     /**
      * checks query to make sure grammar is valid
      * @param query: query to be typeChecked
      */
-    typeCheck(query: any) {
+    typeCheck(query: any): Array<any> {
         let keys = Object.keys(query);
         for (let i = 0; i < keys.length; i++) {
             if (keys[i] != "AND" || keys[i] != "OR" || keys[i] != "LT" || keys[i] != "GT" || keys[i] != "EQ" ||
@@ -27,50 +47,73 @@ export class WHEREnode {
                 throw new Error("query is invalid");
             }
         }
-        this.parse(query);
+        return this.parse(query);
     }
 
     /**
      * parses query to see if keys are present
      * @param query: query to be parsed
      */
-    parse(query: any) {
+    parse(query: any): Array<any> {
         if (query.hasOwnProperty('AND')) {
-            let lcNode: LOGICCOMPNode = new LOGICCOMPNode();
-            lcNode.typeCheck(query['AND'], "AND");
+            this.andKey = true;
         }
         if (query.hasOwnProperty('OR')) {
-            let lcNode: LOGICCOMPNode = new LOGICCOMPNode();
-            lcNode.typeCheck(query['OR'], "OR");
+            this.orKey  =true;
         }
-
-        if (query.hasOwnProperty('LT') || query.hasOwnProperty('GT') || query.hasOwnProperty('EQ')) {
-            let mNode: MCOMPNode = new MCOMPNode();
-            mNode.typeCheck(query['LT'], "LT")
+        if (query.hasOwnProperty('LT')) {
+            this.ltKey = true;
         }
         if (query.hasOwnProperty('GT')) {
-            let mNode: MCOMPNode = new MCOMPNode();
-            mNode.typeCheck(query['GT'], "GT")
+            this.gtKey = true;
         }
         if (query.hasOwnProperty('EQ')) {
-            let mNode: MCOMPNode = new MCOMPNode();
-            mNode.typeCheck(query['EQ'], "EQ")
+            this.eqKey = true;
         }
-
         if (query.hasOwnProperty('IS')) {
-            let scNode: SCOMPNode = new SCOMPNode();
-            scNode.parse(query['IS']);
+            this.isKey = true;
         }
         if (query.hasOwnProperty('NOT')) {
-            let nNode: NEGNode = new NEGNode();
-            nNode.typeCheck(query['NOT']);
+            this.notKey = true;
         }
+        return this.evaluate(query);
     }
 
-    evaluate() {
 
 
+<<<<<<< HEAD
 
+=======
+    evaluate(query: any): Array<any> {
+        let results: Array<any> = new Array();
+        if (this.andKey) {
+
+        }
+        if (this.orKey) {
+
+        }
+        if (this.ltKey) {
+            let mNode = new MCOMPNode(this.dataset);
+            results = mNode.typeCheck(query['LT'], "LT", false);
+        }
+        if (this.gtKey) {
+            let mNode = new MCOMPNode(this.dataset);
+            results = mNode.typeCheck(query['GT'], "GT", false);
+        }
+        if (this.eqKey) {
+            let mNode =  new MCOMPNode(this.dataset);
+            results = mNode.typeCheck(query['EQ'], "EQ", false)
+        }
+        if (this.isKey) {
+            let sNode = new SCOMPNode(this.dataset);
+            //sNode.typeCheck(query['IS']);
+        }
+        if (this.notKey) {
+            let negNode = new NEGNode(this.dataset);
+            //negNode.typeCheck(query['NOT']);
+        }
+        return results;
+>>>>>>> bc3f8af45a5ba017f8a2f43b09e4dbea82788122
     }
 
 

@@ -1,4 +1,5 @@
 import Log from "../Util";
+import {EVALUATENODE} from "./EVALUATENODE";
 
 //ORDERNode: m_key | s_key
 export class ORDERNode {
@@ -7,24 +8,13 @@ export class ORDERNode {
 
     }
 
-    typeCheck(query: any) {
-        let keys = Object.keys(query);
-        for (let i = 0; i < keys.length; i++) {
-            if (keys[i] != "courses_avg" || keys[i] != "courses_pass" || keys[i] != "courses_fail" || keys[i] != "courses_audit" ||
-                keys[i] != "courses_dept" || keys[i] != "courses_id" || keys[i] != "courses_instructor" || keys[i] != "courses_title" || keys[i] != "courses_uuid") {
+    typeCheck(query: any): string {
+        if (query != "courses_avg" || query != "courses_pass" || query != "courses_fail" || query != "courses_audit" ||
+            query != "courses_dept" || query != "courses_id" || query != "courses_instructor" || query != "courses_title" ||
+            query != "courses_uuid") {
                 throw new Error("query is invalid");
-            }
         }
-        this.parse(query);
+        return query;
     }
-
-    parse(query: any) {
-        //do something TODO:
-    }
-
-    evaluate() {
-
-    }
-
 
 }

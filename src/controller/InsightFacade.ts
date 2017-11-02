@@ -4,19 +4,21 @@
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 
 import Log from "../Util";
-
-//import { Course } from './Courses';
-
 'use strict';
 
-const fs = require("fs");
 
+import {EVALUATENODE} from "../node/EVALUATENODE";
+
+const fs = require("fs");
 import {QUERYNode} from "../node/QUERYNode";
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
 
 let JSZip = require('jszip');
 const parse5 = require('parse5');
+
+
+//var JSZip = require('jszip');
 
 let UBCInsight = new Map();
 let code: number = null;
@@ -148,17 +150,75 @@ export default class InsightFacade implements IInsightFacade {
 
     }
 
-    performQuery(query: any): Promise<InsightResponse> {
-        let qNode: QUERYNode = new QUERYNode();
+
+    performQuery(query: any): Promise <InsightResponse> {
+        let obj: Array<any>;
+        let columns: Array<string>;
+        let qNode: QUERYNode;
+
         return new Promise(function (resolve, reject) {
             try {
+
                 qNode.typeCheck(query);
                 resolve({code: 200, body: {message: 'Query is valid'}});
+
+                //Loop returns filtered contents of value that matches query criteria
+                //TODO: Find way to pass each value in Map UBCinsight into for loop
+                // for (let value of UBCInsight.values()) {
+                //     //value == dataset contained in UBCinsight
+                //     qNode = new QUERYNode(value);
+                //     obj = qNode.typeCheck(query);
+                // }
+
+                //Constructs object to return for each obj in value based on columns array
+                // {key: obj, ...}
+                //TODO:
+
+                //sort results based on ORDER
+                //TODO:
+
+            resolve({code: 200, body: {message: 'Query is valid'}});
             } catch (error) {
                 reject({code: 400, body: {message: 'Query failed. query is invalid'}});
             }
         })
     }
+}
+
+function loadfile(file: string): Promise<Array<any>> {
+    return new Promise(function (fulfill, reject) {
+
+        var jsZip = new JSZip();
+        var data1: Array<string> = new Array();
+
+        try {
+            if (file != null) {
+                let promiseArray: any[] = [];
+                jsZip.loadAsync(file, { base64: true }).then(function (zip: any) {
+                    zip.forEach(function (filename: any, file: any) {
+
+                        if (!file.dir)
+                            promiseArray.push(jsZip.file(filename).async("string").then((content: string) => {
+                                try {
+                                        data1.push(JSON.stringify(JSON.parse(content)));
+
+                                } catch (error) {
+                                    error('inner', error.message) ;
+                                }
+                            }));
+                    });
+                    Promise.all(promiseArray).then(function (response: any) {
+                        fulfill(data1);
+                    }).catch(function(error) {
+                        reject('Error:'+ error);
+                    })
+                });
+            }
+        }
+        catch (emptyFileError) {
+            emptyFileError('Zip file is empty');
+        }
+    });
 }
 
 

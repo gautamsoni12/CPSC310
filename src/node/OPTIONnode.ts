@@ -1,13 +1,22 @@
 import Log from "../Util";
 import {COLUMNSNode} from "./COLUMNSNode";
 import {ORDERNode} from "./ORDERNode";
+import {EVALUATENODE} from "./EVALUATENODE";
 
 //OPTION NODE: COLUMNS , ORDER: KEYS
 
 export class OPTIONnode {
 
-    constructor() {
+    columnKey: boolean;
+    orderKey: boolean;
+    order: string;
+    columns: Array<string>;
 
+    constructor() {
+        this.columnKey = false;
+        this.orderKey = false;
+        this.columns = new Array();
+        this.order = "";
     }
 
     /**
@@ -30,17 +39,36 @@ export class OPTIONnode {
      */
     parse(query: any) {
         if (query.hasOwnProperty('COLUMNS')) {
-            let cNOde: COLUMNSNode = new COLUMNSNode();
-            cNOde.typeCheck(query['COLUMNS']);
+            //let cNOde: COLUMNSNode = new COLUMNSNode();
+            //cNOde.typeCheck(query['COLUMNS']);
+            this.columnKey = true;
+
         }
         if (query.hasOwnProperty('ORDER')) {
-            let oNode: ORDERNode = new ORDERNode();
-            oNode.typeCheck(query['ORDER']);
+            //let oNode: ORDERNode = new ORDERNode();
+            //oNode.typeCheck(query['ORDER']);
+            this.orderKey = true;
+        }
+        this.evaluate(query);
+    }
+
+    evaluate(query: any) {
+        if (this.columnKey) {
+            let columnsNode: COLUMNSNode = new COLUMNSNode();
+            this.columns = columnsNode.typeCheck(query['COLUMNS']);
+        }
+        if (this.orderKey) {
+            let orderNode: ORDERNode = new ORDERNode();
+            this.order = orderNode.typeCheck(query['ORDER']);
         }
     }
 
-    evaluate() {
+    getColumns(): Array<string> {
+        return this.columns;
+    }
 
+    getOrder(): string {
+        return this.order;
     }
 
 
