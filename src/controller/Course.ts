@@ -35,12 +35,10 @@ export class Course {
                                 promiseArray.push(jsZip.file(filename).async("string").then((content: string) => {
                                         try {
                                             data1.push(JSON.stringify(JSON.parse(content)));
-
                                         } catch (error) {
 
                                         }
                                     }).catch(function (error: any) {
-
 
                                     })
                                 );
