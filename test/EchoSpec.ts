@@ -262,7 +262,7 @@ describe("EchoSpec", function () {
             sanityCheck(result);
 
             expect(result.code).to.equal(200);
-            expect(result.body).to.deep.equal({message: 'Query is valid'});
+            expect(result.body).to.deep.equal({result:[]});
 
         })
     });
@@ -342,8 +342,8 @@ describe("EchoSpec", function () {
                 "courses_avg"
             ],
             "ORDER":"courses_avg"
-        }
-    }
+        }};
+
 
     it("parse invalid query, should return error with code 400", function () {
         let ifInstance: InsightFacade = new InsightFacade();
@@ -354,6 +354,23 @@ describe("EchoSpec", function () {
             expect(result.body).to.have.property('error');
             expect(result.body).to.deep.equal({message: 'Query failed. query is invalid'});
         })
-    })
+    });
+
+
+    it("Should be able to handle a html file ", function () {
+        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            // console.log(value);
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 404,
+                "body": {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+            });
+
+        }).catch(function(error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
 
 });
