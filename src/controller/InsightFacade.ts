@@ -12,7 +12,7 @@ import {EVALUATENODE} from "../node/EVALUATENODE";
 
 const fs = require("fs");
 import {QUERYNode} from "../node/QUERYNode";
-import {Course} from "./Course";
+import {Course} from "./Courses";
 import {Rooms} from "./Rooms";
 import {Dataset} from "./Dataset";
 //import isEmpty = ts.isEmpty;
@@ -33,21 +33,15 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
-
         return new Promise(function (resolve, reject) {
             try {
                 if (content != null) {
-                    let zipContent: Array<any> = [];
+                    var zipContent: Array<any> = [];
                     if (id === "courses") {
-
-                        let jsonArray: Array<any>= [];
-
                         let newCourse = new Course(id, content);
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
-                            for (let files in zipContent) {
-                                jsonArray.push(JSON.parse(files));
-                            }
+                            code = addDatasetResult(id, zipContent);
                             if (code === 201) {
                                 resolve({code: code, body: {res: 'the operation was successful and the id already existed'}});
                             }
@@ -55,9 +49,8 @@ export default class InsightFacade implements IInsightFacade {
                                 resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
                             }
 
-                            code = addDatasetResult(id, jsonArray);
                         }).catch(function (error) {
-                            console.log(error, 'Not valid zip file')
+                            reject(error);
                         });
 
                     }
@@ -65,10 +58,7 @@ export default class InsightFacade implements IInsightFacade {
                     else if (id === "rooms") {
 
                         let ubcRooms = new Rooms(id, content);
-
-                        // c 1
                         ubcRooms.loadFile(content).then(function (value: any) {
-
                             zipContent = ubcRooms.listOfRooms;
 
                             code = addDatasetResult(id, zipContent);
@@ -81,8 +71,7 @@ export default class InsightFacade implements IInsightFacade {
                             }
 
                         }).catch(function (error: any) {
-
-                            console.log(error);
+                            reject(error);
                         });
 
                     }
@@ -157,7 +146,7 @@ export default class InsightFacade implements IInsightFacade {
             } catch (error) {
                 reject({code: 400, body: {message: 'Query failed. query is invalid'}});
             }
-        })
+        });
     }
 }
 
