@@ -13,7 +13,7 @@ import {EVALUATENODE} from "./EVALUATENODE";
 //        'NOT" (NEGATION)
 export class WHEREnode {
 
-    public COLUMNS: Array<string> = new Array();
+    public COLUMNS: Array<string> = [];
 
     andKey: boolean;
     orKey: boolean;
@@ -81,11 +81,8 @@ export class WHEREnode {
 
 
 
-<<<<<<< HEAD
-
-=======
     evaluate(query: any): Array<any> {
-        let results: Array<any> = new Array();
+        let results: Array<any> = [];
         if (this.andKey) {
 
         }
@@ -113,8 +110,7 @@ export class WHEREnode {
             //negNode.typeCheck(query['NOT']);
         }
         return results;
->>>>>>> bc3f8af45a5ba017f8a2f43b09e4dbea82788122
-    }
 
+    }
 
 }
