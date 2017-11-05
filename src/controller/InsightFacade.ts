@@ -14,10 +14,17 @@ const fs = require("fs");
 import {QUERYNode} from "../node/QUERYNode";
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
-import {Dataset} from "./Dataset";
+//import {Dataset} from "./Dataset";
+
+export interface Dataset {
+
+    id: string;                 // DataSet ID.
+    dataset: Array<any>;        // An array of dataset
+
+}
 
 'use strict';
-//import isEmpty = ts.isEmpty;
+
 
 
 let JSZip = require('jszip');
