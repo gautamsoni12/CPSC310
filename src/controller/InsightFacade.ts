@@ -14,7 +14,7 @@ const fs = require("fs");
 import {QUERYNode} from "../node/QUERYNode";
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
-//import {Dataset} from "./Dataset";
+
 
 export interface Dataset {
 
@@ -24,8 +24,6 @@ export interface Dataset {
 }
 
 'use strict';
-
-
 
 let JSZip = require('jszip');
 const parse5 = require('parse5');
@@ -40,14 +38,12 @@ let queryID: string;
 export default class InsightFacade implements IInsightFacade {
 
 
-
     constructor() {
         Log.trace('InsightFacadeImpl::init()');
 
     }
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
-        var x =this;
         return new Promise(function (resolve, reject) {
             try {
                 if (content != null) {
@@ -56,10 +52,9 @@ export default class InsightFacade implements IInsightFacade {
                         let newCourse = new Course(id, content);
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
-                            code = addDatasetResult(id, zipContent);
-
-
-
+                            addDatasetResult(id, zipContent).then(function (value: any) {
+                                code = value;
+                            });
 
                             if (code === 201) {
                                 resolve({
@@ -82,8 +77,9 @@ export default class InsightFacade implements IInsightFacade {
                         let ubcRooms = new Rooms(id, content);
                         ubcRooms.loadFile(content).then(function (value: any) {
                             zipContent = value;
-                            code = addDatasetResult(id, zipContent);
-
+                            addDatasetResult(id, zipContent).then(function (value: any) {
+                                code = value;
+                            });
                             if (code === 201) {
                                 resolve({
                                     code: code,
@@ -97,7 +93,6 @@ export default class InsightFacade implements IInsightFacade {
                         }).catch(function (error: any) {
                             reject(error);
                         });
-
                     }
                 }
             } catch (error) {
@@ -111,28 +106,36 @@ export default class InsightFacade implements IInsightFacade {
         let code: number;
         return new Promise(function (resolve, reject) {
             try {
-                if (UBCInsight.has(id)) {
-                    code = 204;
-                    UBCInsight.delete(id);
-                    resolve({code: code, body: {res: 'the operation was successful.'}});
-                }
-                else {
+                if (UBCInsight1 === null) {
                     code = 404;
                     reject({
                         code: code,
                         body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                     });
-
+                }
+                else {
+                    for (let insight of UBCInsight1) {
+                        if (insight.id === id) {
+                            code = 204;
+                            UBCInsight.delete(id);
+                            resolve({code: code, body: {res: 'the operation was successful.'}});
+                        }
+                        else {
+                            code = 404;
+                            reject({
+                                code: code,
+                                body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+                            });
+                        }
+                    }
                 }
             } catch (error) {
-                code = 404;
                 reject({
                     code: code,
                     body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                 });
             }
         });
-
     }
 
 
@@ -144,36 +147,19 @@ export default class InsightFacade implements IInsightFacade {
                 let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
                 let where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
 
-                //whereNode(where);
-
-                var orderNode = (Object.getOwnPropertyDescriptor(option, "ORDER")).value;
-
-                let columnNode = (Object.getOwnPropertyDescriptor(option, "COLUMNS")).value;
-                queryID = columnNode[0].split("_", 1);
-
-                for (let insight of UBCInsight1) {
-                    if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
-                        var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
-                        break;
-                    }
-                }
-                for (let data of dataToQuery) {
-                    let resultObject: any = {};
-                    for (let queryColumn of queryColumns) {
-                        resultObject.queryColumn = Object.getOwnPropertyDescriptor(data, queryColumn).value;
-                    }
-                    tempResults.push(resultObject);
-                }
+                whereNode(where);
+                optionNode(option);
 
                 tempResults.sort(compare);
-                resolve(tempResults);
-            }catch (error){
-                reject(error);
+                resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
+            } catch (error) {
+                reject({code: 424, body: {res: 'the query failed because of a missing dataset'}});
             }
 
         });
     }
 }
+
 function compare(a: any, b: any) {
     if (a.orderNode < b.orderNode)
         return -1;
@@ -182,49 +168,74 @@ function compare(a: any, b: any) {
     return 0;
 }
 
-let m_keymain:any;
-let m_keyvalue:any;
+let m_keymain: any;
+let m_keyvalue: any;
 
-function whereNode(node:any){
+function optionNode(node: any) {
+    var orderNode = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
+
+    let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
+    queryID = columnNode[0].split("_", 1);
+
+    for (let insight of UBCInsight1) {
+        if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
+            var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+            break;
+        }
+    }
+    for (let data of dataToQuery) {
+        let resultObject: any = {};
+        for (let queryColumn of queryColumns) {
+            resultObject.queryColumn = Object.getOwnPropertyDescriptor(data, queryColumn).value;
+        }
+        tempResults.push(resultObject);
+    }
+
+    tempResults.sort(compare);
+
+}
+
+function whereNode(node: any) {
 
     var logicComarator = Object.getOwnPropertyNames(node);
     for (let logic of logicComarator) {
-        var m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with  course_avg = 95;
-        var m_key1 =  Object.getOwnPropertyNames(m_key);
+        var m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
+        var m_key1 = Object.getOwnPropertyNames(m_key);
         m_keymain = m_key1[0];
-        for (let key of m_key1){
+        for (let key of m_key1) {
             m_keyvalue = Object.getOwnPropertyDescriptor(m_key, key);
         }
-        if (logic === 'LT'){
+        if (logic === 'LT') {
             lessThan(tempResults);
 
         }
-        else if (logic === 'GT'){
+        else if (logic === 'GT') {
             greaterThan(tempResults);
         }
-        else if (logic === 'EQ'){
+        else if (logic === 'EQ') {
             equalTo(tempResults);
         }
-        else if (logic === 'AND'){
+        else if (logic === 'AND') {
 
         }
-        else if (logic === 'OR'){
+        else if (logic === 'OR') {
 
         }
     }
 
 }
 
-function and(){
-
-}
-function or(){
+function and() {
 
 }
 
-function lessThan(queryArray: Array<any>){
-    for( let result of tempResults){
-        if (result[m_keymain] >= m_keyvalue){
+function or() {
+
+}
+
+function lessThan(queryArray: Array<any>) {
+    for (let result of tempResults) {
+        if (result[m_keymain] >= m_keyvalue) {
             var index = tempResults.indexOf(result);
             if (index > -1) {
                 tempResults.splice(index, 1);
@@ -234,9 +245,9 @@ function lessThan(queryArray: Array<any>){
 
 }
 
-function greaterThan(queryArray: Array<any>){
-    for( let result of tempResults){
-        if (result[m_keymain] <= m_keyvalue){
+function greaterThan(queryArray: Array<any>) {
+    for (let result of tempResults) {
+        if (result[m_keymain] <= m_keyvalue) {
             var index = tempResults.indexOf(result);
             if (index > -1) {
                 tempResults.splice(index, 1);
@@ -245,9 +256,9 @@ function greaterThan(queryArray: Array<any>){
     }
 }
 
-function equalTo(queryArray: Array<any>){
-    for( let result of tempResults){
-        if (result[m_keymain] != m_keyvalue){
+function equalTo(queryArray: Array<any>) {
+    for (let result of tempResults) {
+        if (result[m_keymain] != m_keyvalue) {
             var index = tempResults.indexOf(result);
             if (index > -1) {
                 tempResults.splice(index, 1);
@@ -257,33 +268,38 @@ function equalTo(queryArray: Array<any>){
 }
 
 
+function addDatasetResult(id: string, dataArray: Array<any>): Promise<number> {
+    return new Promise(function (resolve, reject) {
 
-function addDatasetResult(id: string, dataArray: Array<any>): number {
-
-    if (UBCInsight1.length === 0) {
-        let myDataset: Dataset = {id: id, dataset: dataArray};
-        UBCInsight1.push(myDataset);
-        //fs.writeFile(dataArray);
-        code = 204;
-        return code;
-
-    } else {
-        for (let Insight of UBCInsight1) {
-            if (id === Insight.id) {
-                let myDataset: Dataset = {id: id, dataset: dataArray};
-                UBCInsight1.push(myDataset);
-                //fs.writeFile(dataArray);
-                code = 201;
-                return code;
-            } else {
+        try {
+            if (UBCInsight1.length === 0) {
                 let myDataset: Dataset = {id: id, dataset: dataArray};
                 UBCInsight1.push(myDataset);
                 //fs.writeFile(dataArray);
                 code = 204;
-                return code;
+                resolve(code);
+
+            } else {
+                for (let Insight of UBCInsight1) {
+                    if (id === Insight.id) {
+                        let myDataset: Dataset = {id: id, dataset: dataArray};
+                        UBCInsight1.push(myDataset);
+                        fs.writeFile(dataArray);
+                        code = 201;
+                        resolve(code);
+                    } else {
+                        let myDataset: Dataset = {id: id, dataset: dataArray};
+                        UBCInsight1.push(myDataset);
+                        fs.writeFile(dataArray);
+                        code = 204;
+                        resolve(code);
+                    }
+                }
             }
+        } catch (error) {
+            reject(error);
         }
-    }
+    });
 }
 
 
