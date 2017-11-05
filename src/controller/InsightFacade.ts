@@ -15,6 +15,7 @@ import {QUERYNode} from "../node/QUERYNode";
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
 import {Dataset} from "./Dataset";
+import {Building} from "./Building";
 
 //import isEmpty = ts.isEmpty;
 
@@ -73,7 +74,7 @@ export default class InsightFacade implements IInsightFacade {
 
                         let ubcRooms = new Rooms(id, content);
                         ubcRooms.loadFile(content).then(function (value: any) {
-                            zipContent = ubcRooms.listOfRooms;
+                            zipContent = value;
                             code = addDatasetResult(id, zipContent);
 
                             if (code === 201) {
@@ -277,23 +278,6 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
         }
     }
 }
-
-
-
-let query = {
-    "WHERE":{
-        "GT":{
-            "courses_avg":97
-        }
-    },
-    "OPTIONS":{
-        "COLUMNS":[
-            "courses_dept",
-            "courses_avg"
-        ],
-        "ORDER":"courses_avg"
-    }
-};
 
 
 // let obj: Array<any>;
