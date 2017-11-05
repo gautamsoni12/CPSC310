@@ -15,6 +15,10 @@ import {QUERYNode} from "../node/QUERYNode";
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
 
+export interface Result {
+    result: Array<any>;        // An array of dataset
+}
+
 
 export interface Dataset {
 
@@ -54,8 +58,8 @@ export default class InsightFacade implements IInsightFacade {
                             zipContent = value;
                             addDatasetResult(id, zipContent).then(function (value: any) {
                                 code = value;
-                            });
 
+                            });
                             if (code === 201) {
                                 resolve({
                                     code: code,
@@ -69,9 +73,7 @@ export default class InsightFacade implements IInsightFacade {
                         }).catch(function (error: any) {
                             reject(error);
                         });
-
                     }
-
                     else if (id === "rooms") {
 
                         let ubcRooms = new Rooms(id, content);
@@ -147,11 +149,11 @@ export default class InsightFacade implements IInsightFacade {
                 let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
                 let where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
 
-                whereNode(where);
                 optionNode(option);
-
                 tempResults.sort(compare);
-                resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
+                // whereNode(where);
+                let myResult: Result = {result: tempResults};
+                resolve({code: code, body: myResult});
             } catch (error) {
                 reject({code: 424, body: {res: 'the query failed because of a missing dataset'}});
             }
@@ -161,6 +163,7 @@ export default class InsightFacade implements IInsightFacade {
 }
 
 function compare(a: any, b: any) {
+
     if (a.orderNode < b.orderNode)
         return -1;
     if (a.orderNode > b.orderNode)
@@ -172,10 +175,11 @@ let m_keymain: any;
 let m_keyvalue: any;
 
 function optionNode(node: any) {
-    var orderNode = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
+    //let orderNode = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
 
     let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
     queryID = columnNode[0].split("_", 1);
+
 
     for (let insight of UBCInsight1) {
         if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
@@ -185,14 +189,22 @@ function optionNode(node: any) {
     }
     for (let data of dataToQuery) {
         let resultObject: any = {};
-        for (let queryColumn of queryColumns) {
-            resultObject.queryColumn = Object.getOwnPropertyDescriptor(data, queryColumn).value;
+        for (let queryColumn of columnNode) {
+            resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
         }
         tempResults.push(resultObject);
     }
-
-    tempResults.sort(compare);
-
+    tempResults.sort( function (a: any, b: any){
+        let orderNode:any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
+        //let orderNode1 = (Object.getOwnPropertyNames(node));
+        if (typeof a ==='object' && typeof b ==='object') {
+            if (a[orderNode] < b[orderNode])
+                return -1;
+            if (a[orderNode] > b[orderNode])
+                return 1;
+            return 0;
+        }
+    });
 }
 
 function whereNode(node: any) {
