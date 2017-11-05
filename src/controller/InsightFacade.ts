@@ -15,8 +15,8 @@ import {QUERYNode} from "../node/QUERYNode";
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
 import {Dataset} from "./Dataset";
-import {Building} from "./Building";
 
+'use strict';
 //import isEmpty = ts.isEmpty;
 
 
