@@ -90,7 +90,7 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
                         room.rooms_fullname = building.building_fullname;
                         room.rooms_name = building.building_shortname+ "_"+room.rooms_number;
                         room.rooms_address = building.building_address;
-                        let geoResponse = getlatLon(building.building_address).then(function(value:any){
+                        getlatLon(building.building_address).then(function(value:any){
                             if (value.error){
                                 room.rooms_lat = 0;
                                 room.rooms_lon = 0;
@@ -107,7 +107,6 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
         } catch (error) {
             reject(error);
         }
-        //return rooms;
     });
 
 }
