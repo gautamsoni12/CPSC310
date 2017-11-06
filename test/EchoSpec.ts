@@ -257,11 +257,11 @@ describe("EchoSpec", function () {
     });
 
     it("Query should get sections", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses2.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip', "base64");
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             console.log(value);
             Log.test('Value:' + value);
-            insightFacade.performQuery(query).then(function (result) {
+            insightFacade.performQuery(complexQuery).then(function (result) {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(200);
@@ -269,7 +269,7 @@ describe("EchoSpec", function () {
 
             });
             expect(value).to.deep.equal({
-                "code": 200,
+                "code": 204,
                 "body": {res: 'the operation was successful'}
             });
 
@@ -361,19 +361,7 @@ describe("EchoSpec", function () {
     };
 
 
-    // it("parse invalid query, should return error with code 400", function () {
-    //     let ifInstance: InsightFacade = new InsightFacade();
-    //     let promise: Promise<InsightResponse> = ifInstance.performQuery(complexQuery);
-    //     promise.then(function (result) {
-    //         sanityCheck(result);
-    //         expect(result.code).to.equal(400);
-    //         expect(result.body).to.have.property('error');
-    //         expect(result.body).to.deep.equal({message: 'Query failed. query is invalid'});
-    //     })
-    // });
-
-
-    it("Should be able to handle a html file ", function () {
+    it("Should be able to handle a html file", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
@@ -410,11 +398,81 @@ describe("EchoSpec", function () {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(200);
-                expect(result.body).to.deep.equal({result: [ { rooms_name: 'DMP_101' },
-                    { rooms_name: 'DMP_110' },
-                    { rooms_name: 'DMP_201' },
-                    { rooms_name: 'DMP_301' },
-                    { rooms_name: 'DMP_310' } ]});
+                expect(result.body).to.deep.equal({
+                    result: [{rooms_name: 'DMP_101'},
+                        {rooms_name: 'DMP_110'},
+                        {rooms_name: 'DMP_201'},
+                        {rooms_name: 'DMP_301'},
+                        {rooms_name: 'DMP_310'}]
+                });
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+
+    let roomQuery2 = {
+        "WHERE": {
+            "IS": {
+                "rooms_address": "*Agrono*"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_address", "rooms_name"
+            ]
+        }
+    };
+
+    it("Should be able to handle a html query2", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(roomQuery2).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({
+                    result:
+                        [{ rooms_address: '6245 Agronomy Road V6T 1Z4',
+                            rooms_name: 'DMP_101' },
+                            { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                                rooms_name: 'DMP_110' },
+                            { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                                rooms_name: 'DMP_201' },
+                            { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                                rooms_name: 'DMP_301' },
+                            { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                                rooms_name: 'DMP_310' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_1001' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3002' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3004' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3016' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3018' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3052' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3058' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3062' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3068' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3072' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_3074' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4002' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4004' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4016' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4018' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4052' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4058' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4062' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4068' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4072' },
+                            { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4074' } ]
+                });
 
             });
             expect(value).to.deep.equal({
@@ -428,4 +486,3 @@ describe("EchoSpec", function () {
     });
 
 });
-
