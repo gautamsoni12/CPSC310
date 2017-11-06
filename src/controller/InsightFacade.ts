@@ -34,10 +34,11 @@ const parse5 = require('parse5');
 
 let UBCInsight1: Array<any> = [];
 let UBCInsight = new Map();
-let code: number = null;
+let code: number = 400;
 let queryColumns: Array<any> = [];
 let tempResults: Array<any> = [];
 let queryID: string;
+let tempResult1: Array<any> = [];
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -56,7 +57,7 @@ export default class InsightFacade implements IInsightFacade {
                         let newCourse = new Course(id, content);
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
-                            code =addDatasetResult(id, zipContent);//.then(function (value: any) {
+                            code = addDatasetResult(id, zipContent);//.then(function (value: any) {
                                 //code = value;
 
                             //});
@@ -95,6 +96,10 @@ export default class InsightFacade implements IInsightFacade {
                         }).catch(function (error: any) {
                             reject(error);
                         });
+                    }
+                    else{
+                        code = 400;
+                        reject({code: code, body: {res: ("error: " + "wrong id")}});
                     }
                 }
             } catch (error) {
@@ -153,11 +158,15 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 let qObject = JSON.parse(JSON.stringify(query));
                 let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
-                let where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
+                var where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
 
                 optionNode(option);
-                tempResults.sort(compare);
-                let myResult: Result = {result: tempResults};
+
+                whereNode(where);
+                //console.log(tempResult1);
+               // console.log(tempResult1);
+                let myResult: Result = {result: tempResult1};
+                console.log(myResult);
                 resolve({code: code, body: myResult});
             } catch (error) {
                 reject({code: 424, body: {res: 'the query failed because of a missing dataset'}});
@@ -167,14 +176,6 @@ export default class InsightFacade implements IInsightFacade {
     }
 }
 
-function compare(a: any, b: any) {
-
-    if (a.orderNode < b.orderNode)
-        return -1;
-    if (a.orderNode > b.orderNode)
-        return 1;
-    return 0;
-}
 
 let m_keymain: any;
 let m_keyvalue: any;
@@ -192,6 +193,7 @@ function optionNode(node: any) {
         }
     }
     for (let data of dataToQuery) {
+
         let resultObject: any = {};
         for (let queryColumn of columnNode) {
             resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
@@ -209,7 +211,7 @@ function optionNode(node: any) {
             return 0;
         }
     });
-    
+
 }
 
 
@@ -229,8 +231,6 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
             for (let Insight of UBCInsight1) {
                 if (id === Insight.id) {
                     Insight.dataset = dataArray;
-                    //let myDataset: Dataset = {id: id, dataset: dataArray};
-                    //UBCInsight1.push(myDataset);
                     //fs.writeFile(dataArray);
                     code = 201;
                     return code;
@@ -252,77 +252,86 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
 
 
 
-// function whereNode(node: any) {
-//
-//     var logicComarator = Object.getOwnPropertyNames(node);
-//     for (let logic of logicComarator) {
-//         var m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
-//         var m_key1 = Object.getOwnPropertyNames(m_key);
-//         m_keymain = m_key1[0];
-//         for (let key of m_key1) {
-//             m_keyvalue = Object.getOwnPropertyDescriptor(m_key, key);
-//         }
-//         if (logic === 'LT') {
-//             lessThan(tempResults);
-//
-//         }
-//         else if (logic === 'GT') {
-//             greaterThan(tempResults);
-//         }
-//         else if (logic === 'EQ') {
-//             equalTo(tempResults);
-//         }
-//         else if (logic === 'AND') {
-//
-//         }
-//         else if (logic === 'OR') {
-//
-//         }
-//     }
-//
-// }
-//
-// function and() {
-//
-// }
-//
-// function or() {
-//
-// }
-//
-// function lessThan(queryArray: Array<any>) {
-//     for (let result of tempResults) {
-//         if (result[m_keymain] >= m_keyvalue) {
-//             var index = tempResults.indexOf(result);
-//             if (index > -1) {
-//                 tempResults.splice(index, 1);
-//             }
-//         }
-//     }
-//
-// }
-//
-// function greaterThan(queryArray: Array<any>) {
-//     for (let result of tempResults) {
-//         if (result[m_keymain] <= m_keyvalue) {
-//             var index = tempResults.indexOf(result);
-//             if (index > -1) {
-//                 tempResults.splice(index, 1);
-//             }
-//         }
-//     }
-// }
-//
-// function equalTo(queryArray: Array<any>) {
-//     for (let result of tempResults) {
-//         if (result[m_keymain] != m_keyvalue) {
-//             var index = tempResults.indexOf(result);
-//             if (index > -1) {
-//                 tempResults.splice(index, 1);
-//             }
-//         }
-//     }
-// }
+function whereNode(node: any) {
+
+    var logicComarator = Object.getOwnPropertyNames(node);
+    for (let logic of logicComarator) {
+        if (logic === 'AND') {
+
+        }
+        else if (logic === 'OR') {
+
+        }
+        var m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
+        var m_key1 = Object.getOwnPropertyNames(m_key);
+        m_keymain = m_key1[0];
+        for (let key of m_key1) {
+            m_keyvalue = Object.getOwnPropertyDescriptor(m_key, key);
+            break;
+        }
+        if (logic === 'LT') {
+            lessThan(tempResults);
+            break;
+
+        }
+        else if (logic === 'GT') {
+            greaterThan(tempResults);
+            break;
+        }
+        else if (logic === 'EQ') {
+            equalTo(tempResults);
+            break;
+        }
+        else if (logic === 'IS') {
+            is(tempResults);
+            break;
+
+        }
+    }
+
+}
+
+function and() {
+
+}
+function is(queryArray: Array<any>) {
+
+    for (let result of queryArray) {
+        var abc = result[m_keymain];
+        if (result[m_keymain] >= m_keyvalue.value) {
+            var index = queryArray.indexOf(result);
+            if (index > -1) {
+                queryArray.splice(index, 1);
+            }
+        }
+    }
+}
+
+function or() {
+
+}
+
+function lessThan(queryArray: Array<any>) {
+
+    tempResult1 = queryArray.filter(function(result){
+        return result[m_keymain] < m_keyvalue.value;
+    });
+}
+
+function greaterThan(queryArray: Array<any>){
+
+
+    tempResult1= queryArray.filter(function(result){
+        return result[m_keymain] > m_keyvalue.value;
+    });
+}
+
+function equalTo(queryArray: Array<any>) {
+
+    tempResult1 = queryArray.filter(function(result){
+        return result[m_keymain] === m_keyvalue.value;
+    });
+}
 
 
 // function addDatasetResult(id: string, dataArray: Array<any>): number {
