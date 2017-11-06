@@ -168,7 +168,7 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
             } catch (error) {
-                reject({code: 424, body: {res: 'the query failed because of a missing dataset'}});
+                reject({code: 400, body: {res: 'the query failed because of a missing dataset'}});
             }
 
         });
@@ -179,36 +179,39 @@ let m_keymain: any;
 let m_keyvalue: any;
 
 function optionNode(node: any) {
+    try {
+        let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
 
-    let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
+        queryID = columnNode[0].split("_", 1);
 
-    queryID = columnNode[0].split("_", 1);
-
-    for (let insight of UBCInsight1) {
-        if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
-            var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
-            break;
+        for (let insight of UBCInsight1) {
+            if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
+                var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+                break;
+            }
         }
+        for (let data of dataToQuery) {
+
+            let resultObject: any = {};
+            for (let queryColumn of columnNode) {
+                resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
+            }
+            tempResults.push(resultObject);
+        }
+        tempResults.sort(function (a: any, b: any) {
+            let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
+
+            if (typeof a === 'object' && typeof b === 'object') {
+                if (a[orderNode] < b[orderNode])
+                    return -1;
+                if (a[orderNode] > b[orderNode])
+                    return 1;
+                return 0;
+            }
+        });
+    }catch(error) {
+        throw new Error(error.message);
     }
-    for (let data of dataToQuery) {
-
-        let resultObject: any = {};
-        for (let queryColumn of columnNode) {
-            resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
-        }
-        tempResults.push(resultObject);
-    }
-    tempResults.sort(function (a: any, b: any) {
-        let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
-
-        if (typeof a === 'object' && typeof b === 'object') {
-            if (a[orderNode] < b[orderNode])
-                return -1;
-            if (a[orderNode] > b[orderNode])
-                return 1;
-            return 0;
-        }
-    });
 
 }
 
