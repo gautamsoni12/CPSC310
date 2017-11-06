@@ -26,9 +26,8 @@ describe("EchoSpec", function () {
     }
 
 
-
     let insightFacade: InsightFacade = null;
-    beforeEach(function() {
+    beforeEach(function () {
         insightFacade = new InsightFacade();
     });
 
@@ -47,7 +46,7 @@ describe("EchoSpec", function () {
     afterEach(function () {
         Log.test('AfterTest: ' + (<any>this).currentTest.title);
     });
-    it("Test Server", function() {
+    it("Test Server", function () {
 
         // Init
         chai.use(chaiHttp);
@@ -56,33 +55,33 @@ describe("EchoSpec", function () {
 
         // Test
         expect(server).to.not.equal(undefined);
-        try{
+        try {
             Server.echo((<restify.Request>{}), null, null);
             expect.fail()
-        } catch(err) {
+        } catch (err) {
             expect(err.message).to.equal("Cannot read property 'json' of null");
         }
 
-        return server.start().then(function(success: boolean) {
+        return server.start().then(function (success: boolean) {
             return chai.request(URL)
                 .get("/")
-        }).catch(function(err) {
+        }).catch(function (err) {
             expect.fail()
-        }).then(function(res: Response) {
+        }).then(function (res: Response) {
             expect(res.status).to.be.equal(200);
             return chai.request(URL)
                 .get("/echo/Hello")
-        }).catch(function(err) {
+        }).catch(function (err) {
             expect.fail()
-        }).then(function(res: Response) {
+        }).then(function (res: Response) {
             expect(res.status).to.be.equal(200);
             return server.start()
-        }).then(function(success: boolean) {
+        }).then(function (success: boolean) {
             expect.fail();
-        }).catch(function(err) {
+        }).catch(function (err) {
             expect(err.code).to.equal('EADDRINUSE');
             return server.stop();
-        }).catch(function(err) {
+        }).catch(function (err) {
             expect.fail();
         });
     });
@@ -121,10 +120,9 @@ describe("EchoSpec", function () {
     });
 
 
-
     it("Should be able to handle a file", function () {
 
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             insightFacade.removeDataset('courses').then(function (value: InsightResponse) {
@@ -135,7 +133,7 @@ describe("EchoSpec", function () {
                     "body": {res: 'the operation was successful'}
                 });
 
-            }).catch(function(error) {
+            }).catch(function (error) {
                 Log.test('Error:' + error);
                 expect.fail();
             })
@@ -146,7 +144,7 @@ describe("EchoSpec", function () {
             });
             console.log(value);
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             Log.test('Error:' + error);
             expect.fail();
         })
@@ -154,7 +152,7 @@ describe("EchoSpec", function () {
 
 
     it("Should be able to handle a file 1", function () {
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip', "base64");
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             console.log(value);
             Log.test('Value:' + value);
@@ -163,14 +161,14 @@ describe("EchoSpec", function () {
                 "body": {res: 'the operation was successful and the id already existed'}
             });
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             Log.test('Error:' + error);
             expect.fail();
         })
     });
 
     it("Should be able to handle a file 2", function () {
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses2.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses2.zip', "base64");
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             console.log(value);
             Log.test('Value:' + value);
@@ -179,14 +177,14 @@ describe("EchoSpec", function () {
                 "body": {res: 'the operation was successful and the id was new'}
             });
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             Log.test('Error:' + error);
             expect.fail();
         })
     });
 
     it("Should be able to handle a file 3", function () {
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
         insightFacade.removeDataset('courses').then(function (value: InsightResponse) {
             console.log(value);
 
@@ -196,7 +194,7 @@ describe("EchoSpec", function () {
                 "body": {res: 'the operation was successful'}
             });
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             Log.test('Error:' + error);
             expect.fail();
         })
@@ -204,7 +202,7 @@ describe("EchoSpec", function () {
 
 
     it("Should be able to handle a file 4", function () {
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
         insightFacade.removeDataset('courses').then(function (value: InsightResponse) {
             console.log(value);
             Log.test('Value:' + value);
@@ -213,13 +211,11 @@ describe("EchoSpec", function () {
                 "body": {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
             });
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             Log.test('Error:' + error);
             expect.fail();
         })
     });
-
-
 
 
     //TEST CASES FOR: addDataSet
@@ -236,17 +232,17 @@ describe("EchoSpec", function () {
 
     //TESTS FOR PARSING QUERIES
     let query = {
-        "WHERE":{
-            "GT":{
-                "courses_avg":97
+        "WHERE": {
+            "GT": {
+                "courses_avg": 97
             }
         },
-        "OPTIONS":{
-            "COLUMNS":[
+        "OPTIONS": {
+            "COLUMNS": [
                 "courses_dept",
                 "courses_avg"
             ],
-            "ORDER":"courses_avg"
+            "ORDER": "courses_avg"
         }
     };
 
@@ -261,7 +257,7 @@ describe("EchoSpec", function () {
     });
 
     it("Query should get sections", function () {
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses2.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses2.zip', "base64");
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             console.log(value);
             Log.test('Value:' + value);
@@ -269,16 +265,16 @@ describe("EchoSpec", function () {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(200);
-                expect(result.body).to.deep.equal({result:[]});
+                expect(result.body).to.deep.equal({result: []});
 
             });
             expect(value).to.deep.equal({
-                "code": 204,
+                "code": 200,
                 "body": {res: 'the operation was successful'}
             });
 
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             Log.test('Error:' + error);
             expect.fail();
         });
@@ -287,42 +283,42 @@ describe("EchoSpec", function () {
 
 
     let complexQuery = {
-        "WHERE":{
-            "OR":[
+        "WHERE": {
+            "OR": [
                 {
-                    "AND":[
+                    "AND": [
                         {
-                            "GT":{
-                                "courses_avg":90
+                            "GT": {
+                                "courses_avg": 90
                             }
                         },
                         {
-                            "IS":{
-                                "courses_dept":"adhe"
+                            "IS": {
+                                "courses_dept": "adhe"
                             }
                         }
                     ]
                 },
                 {
-                    "EQ":{
-                        "courses_avg":95
+                    "EQ": {
+                        "courses_avg": 95
                     }
                 }
             ]
         },
-        "OPTIONS":{
-            "COLUMNS":[
+        "OPTIONS": {
+            "COLUMNS": [
                 "courses_dept",
                 "courses_id",
                 "courses_avg"
             ],
-            "ORDER":"courses_avg"
+            "ORDER": "courses_avg"
         }
     };
 
     it("parse complex query, should return no error", function () {
         let ifInstance: InsightFacade = new InsightFacade();
-        let promise: Promise<InsightResponse> = ifInstance.performQuery(complexQuery);
+        let promise: Promise<InsightResponse> = ifInstance.performQuery(query);
         promise.then(function (result) {
             sanityCheck(result);
             expect(result.code).to.equal(200);
@@ -331,37 +327,38 @@ describe("EchoSpec", function () {
     });
 
     let invalidQuery = {
-        "WHERE":{
-            "OR":[
+        "WHERE": {
+            "OR": [
                 {
-                    "AND":[
+                    "AND": [
                         {
-                            "GT":{
-                                "courses_lul":90
+                            "GT": {
+                                "courses_lul": 90
                             }
                         },
                         {
-                            "IS":{
-                                "courses_dept":"adhe"
+                            "IS": {
+                                "courses_dept": "adhe"
                             }
                         }
                     ]
                 },
                 {
-                    "POO":{
-                        "courses_avg":95
+                    "POO": {
+                        "courses_avg": 95
                     }
                 }
             ]
         },
-        "OPTIONS":{
-            "COLUMNS":[
+        "OPTIONS": {
+            "COLUMNS": [
                 "courses_dsd",
                 "courses_id",
                 "courses_avg"
             ],
-            "ORDER":"courses_avg"
-        }};
+            "ORDER": "courses_avg"
+        }
+    };
 
 
     // it("parse invalid query, should return error with code 400", function () {
@@ -377,14 +374,14 @@ describe("EchoSpec", function () {
 
 
     it("Should be able to handle a html file ", function () {
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
                 "code": 204,
                 "body": {res: 'the operation was successful and the id was new'}
             });
-        }).catch(function(error) {
+        }).catch(function (error) {
             Log.test('Error:' + error);
             expect.fail();
         })
@@ -393,7 +390,7 @@ describe("EchoSpec", function () {
     let roomQuery = {
         "WHERE": {
             "IS": {
-                "rooms_name": "ORCH_*"
+                "rooms_name": "DMP_*"
             }
         },
         "OPTIONS": {
@@ -405,7 +402,7 @@ describe("EchoSpec", function () {
     };
 
     it("Should be able to handle a html query", function () {
-        let content : string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -413,14 +410,18 @@ describe("EchoSpec", function () {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(200);
-                expect(result.body).to.deep.equal({result:[]});
+                expect(result.body).to.deep.equal({result: [ { rooms_name: 'DMP_101' },
+                    { rooms_name: 'DMP_110' },
+                    { rooms_name: 'DMP_201' },
+                    { rooms_name: 'DMP_301' },
+                    { rooms_name: 'DMP_310' } ]});
 
             });
             expect(value).to.deep.equal({
                 "code": 204,
                 "body": {res: 'the operation was successful and the id was new'}
             });
-        }).catch(function(error) {
+        }).catch(function (error) {
             Log.test('Error:' + error);
             expect.fail();
         })
