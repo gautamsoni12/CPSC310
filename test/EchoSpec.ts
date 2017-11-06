@@ -142,7 +142,7 @@ describe("EchoSpec", function () {
                 "code": 204,
                 "body": {res: 'the operation was successful and the id was new'}
             });
-            console.log(value);
+            //console.log(value);
 
         }).catch(function (error) {
             Log.test('Error:' + error);
@@ -154,7 +154,7 @@ describe("EchoSpec", function () {
     it("Should be able to handle a file 1", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip', "base64");
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
-            console.log(value);
+            //console.log(value);
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
                 "code": 201,
@@ -170,7 +170,7 @@ describe("EchoSpec", function () {
     it("Should be able to handle a file 2", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses2.zip', "base64");
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
-            console.log(value);
+            //console.log(value);
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
                 "code": 201,
@@ -186,7 +186,7 @@ describe("EchoSpec", function () {
     it("Should be able to handle a file 3", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
         insightFacade.removeDataset('courses').then(function (value: InsightResponse) {
-            console.log(value);
+           // console.log(value);
 
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
@@ -204,7 +204,7 @@ describe("EchoSpec", function () {
     it("Should be able to handle a file 4", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/Courses1.zip', "base64");
         insightFacade.removeDataset('courses').then(function (value: InsightResponse) {
-            console.log(value);
+            //console.log(value);
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
                 "code": 404,
@@ -259,7 +259,7 @@ describe("EchoSpec", function () {
     it("Query should get sections", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip', "base64");
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
-            console.log(value);
+           // console.log(value);
             Log.test('Value:' + value);
             insightFacade.performQuery(complexQuery).then(function (result) {
                 sanityCheck(result);
@@ -361,7 +361,7 @@ describe("EchoSpec", function () {
     };
 
 
-    it("Should be able to handle a html file", function () {
+    it("Should be able to handle a html file ", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
