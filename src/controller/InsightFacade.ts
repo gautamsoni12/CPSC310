@@ -19,6 +19,7 @@ export interface Result {
 
     result: Array<any>;        // An array of dataset
 }
+
 export interface Dataset {
 
     id: string;                 // DataSet ID.
@@ -93,7 +94,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
             } catch (error) {
                 code = 400;
-                reject({code: code, body: {res: ("error: " + error)}});
+                reject({code: code, body: {res: ("error: " + error.message)}});
             }
         });
     }
@@ -102,7 +103,7 @@ export default class InsightFacade implements IInsightFacade {
         let code: number;
         return new Promise(function (resolve, reject) {
             try {
-                if (UBCInsight1 === null) {
+                if (UBCInsight1.length < 1) {
                     code = 404;
                     reject({
                         code: code,
@@ -153,13 +154,13 @@ export default class InsightFacade implements IInsightFacade {
 
                     whereNode(where);
                     let myResult: Result = {result: tempResult1};
-                    //console.log(myResult);
+                    console.log(myResult);
                     code = 200;
 
                     resolve({code: code, body: myResult});
 
                 } catch (error) {
-                    if (error.message ==="missing dataset"){
+                    if (error.message === "missing dataset") {
                         code = 424;
                         reject({code: code, body: {error: 'the query failed' + error}});
                     }
@@ -185,18 +186,20 @@ function optionNode(node: any) {
         let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
 
         queryID = columnNode[0].split("_", 1);
-        if (UBCInsight1.length ===0){
+        if (UBCInsight1.length === 0) {
             throw "empty dataset";
         }
+
         for (let insight of UBCInsight1) {
             if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
                 var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
-                if (dataToQuery === null){
+                if (dataToQuery === null) {
                     throw new Error("missing dataset");
                 }
                 break;
             }
         }
+
         for (let data of dataToQuery) {
 
             let resultObject: any = {};
@@ -206,6 +209,7 @@ function optionNode(node: any) {
             }
             tempResults.push(resultObject);
         }
+
         tempResults.sort(function (a: any, b: any) {
             let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
 
@@ -217,43 +221,12 @@ function optionNode(node: any) {
                 return 0;
             }
         });
-    }catch(error) {
+
+    } catch (error) {
         throw Error(error.message);
     }
 }
 
-function addDatasetResult(id: string, dataArray: Array<any>): number {
-
-    try {
-        if (UBCInsight1.length === 0) {
-            let myDataset: Dataset = {id: id, dataset: dataArray};
-            UBCInsight1.push(myDataset);
-            //fs.writeFile(dataArray);
-            code = 204;
-            return code;
-
-        } else {
-            for (let Insight of UBCInsight1) {
-                if (id === Insight.id) {
-                    Insight.dataset = dataArray;
-                    //fs.writeFile(dataArray);
-                    code = 201;
-                    return code;
-                } else {
-                    let myDataset: Dataset = {id: id, dataset: dataArray};
-                    UBCInsight1.push(myDataset);
-                    //fs.writeFile(dataArray);
-                    code = 204;
-                    return code;
-                }
-            }
-        }
-    } catch (error) {
-        code = 400;
-        console.log(error);
-    }
-
-}
 
 
 function whereNode(node: any) {
@@ -293,41 +266,41 @@ function whereNode(node: any) {
             }
         }
     }
-    catch(error){
+    catch (error) {
         throw Error(error.message);
     }
 
 }
 
 function andFunction(node: any) {
-    try{
-    var queryLogic = Object.getOwnPropertyNames(node);
-    for (let logic of queryLogic) {
-        if (logic === "AND") {
-            whereNode(logic);
-        }
-        else if (logic === "OR") {
-            whereNode(logic);
-        }
-        else if (logic === 'LT') {
-            lessThan(tempResults);
-            break;
-        }
-        else if (logic === 'GT') {
-            greaterThan(tempResults);
-            break;
-        }
-        else if (logic === 'EQ') {
-            equalTo(tempResults);
-            break;
-        }
-        else if (logic === 'IS') {
-            is(tempResults);
-            break;
+    try {
+        var queryLogic = Object.getOwnPropertyNames(node);
+        for (let logic of queryLogic) {
+            if (logic === "AND") {
+                whereNode(logic);
+            }
+            else if (logic === "OR") {
+                whereNode(logic);
+            }
+            else if (logic === 'LT') {
+                lessThan(tempResults);
+                break;
+            }
+            else if (logic === 'GT') {
+                greaterThan(tempResults);
+                break;
+            }
+            else if (logic === 'EQ') {
+                equalTo(tempResults);
+                break;
+            }
+            else if (logic === 'IS') {
+                is(tempResults);
+                break;
+            }
         }
     }
-    }
-    catch(error){
+    catch (error) {
         throw Error(error.message);
     }
 
@@ -335,37 +308,37 @@ function andFunction(node: any) {
 
 function orFunction(node: any) {
     try {
-    var queryLogic = Object.getOwnPropertyNames(node);
-    for (let logic of queryLogic) {
-        if (logic === "AND") {
-            whereNode(logic);
-        }
-        else if (logic === "OR") {
-            whereNode(logic);
-        }
-        else if (logic === 'LT') {
-            lessThan(tempResults);
-            break;
-        }
-        else if (logic === 'GT') {
-            greaterThan(tempResults);
-            break;
-        }
-        else if (logic === 'EQ') {
-            equalTo(tempResults);
-            break;
-        }
-        else if (logic === 'IS') {
-            is(tempResults);
-            break;
-        }
-        else if (logic === 'NOT') {
-            not(tempResults);
-            break;
+        var queryLogic = Object.getOwnPropertyNames(node);
+        for (let logic of queryLogic) {
+            if (logic === "AND") {
+                whereNode(logic);
+            }
+            else if (logic === "OR") {
+                whereNode(logic);
+            }
+            else if (logic === 'LT') {
+                lessThan(tempResults);
+                break;
+            }
+            else if (logic === 'GT') {
+                greaterThan(tempResults);
+                break;
+            }
+            else if (logic === 'EQ') {
+                equalTo(tempResults);
+                break;
+            }
+            else if (logic === 'IS') {
+                is(tempResults);
+                break;
+            }
+            else if (logic === 'NOT') {
+                not(tempResults);
+                break;
+            }
         }
     }
-    }
-    catch(error){
+    catch (error) {
         throw Error(error.message);
     }
 }
@@ -390,8 +363,10 @@ function is(queryArray: Array<any>) {
 
         tempResult1 = queryArray.filter(function (result) {
             if (typeof result[m_keymain] === "string" && result[m_keymain] != "") {
-                var inputString = result[m_keymain].split("*", 1);
-                return m_keyvalue.value.includes(inputString);
+                let inputString = result[m_keymain].split("*", 1);
+                let inputString2 = result[m_keymain].split("_", 1);
+                let inputString3 = result[m_keymain].split(" ", 1);
+                return (m_keyvalue.value.includes(inputString) || m_keyvalue.value.includes(inputString2) || m_keyvalue.value.includes(inputString3));
             }
         });
     } catch (error) {
@@ -403,7 +378,6 @@ function is(queryArray: Array<any>) {
 
 function lessThan(queryArray: Array<any>) {
     try {
-
         tempResult1 = queryArray.filter(function (result) {
             if (Number.isInteger(result[m_keymain])) {
                 return result[m_keymain] < m_keyvalue.value;
@@ -441,37 +415,36 @@ function equalTo(queryArray: Array<any>) {
         throw new Error(error);
     }
 }
+function addDatasetResult(id: string, dataArray: Array<any>): number {
 
-// let obj: Array<any>;
-// let columns: Array<string>;
-// let qNode: QUERYNode;
-//
-//
-//     try {
-//
-//         qNode.typeCheck(query);
-//         resolve({code: 200, body: {message: 'Query is valid'}});
-//
-//         // Loop returns filtered contents of value that matches query criteria
-//         // TODO: Find way to pass each value in Map UBCinsight into for loop
-//         let courses = UBCInsight.get("courses");
-//
-//         console.log(courses);
-//
-//         // for (let value of courses) {
-//         //     //value == dataset contained in UBCinsight
-//         //     qNode = new QUERYNode(value);
-//         //     obj = qNode.typeCheck(query);
-//         // }
-//
-//         //Constructs object to return for each obj in value based on columns array
-//         // {key: obj, ...}
-//         //TODO:
-//
-//         //sort results based on ORDER
-//         //TODO:
-//
-//         resolve({code: 200, body: {message: 'Query is valid'}});
-//     } catch (error) {
-//         reject({code: 400, body: {message: 'Query failed. query is invalid'}});
-//     }
+    try {
+        if (UBCInsight1.length === 0) {
+            let myDataset: Dataset = {id: id, dataset: dataArray};
+            UBCInsight1.push(myDataset);
+            //fs.writeFile(dataArray);
+            code = 204;
+            return code;
+
+        } else {
+            for (let Insight of UBCInsight1) {
+                if (id === Insight.id) {
+                    Insight.dataset = dataArray;
+                    //fs.writeFile(dataArray);
+                    code = 201;
+                    return code;
+                } else {
+                    let myDataset: Dataset = {id: id, dataset: dataArray};
+                    UBCInsight1.push(myDataset);
+                    //fs.writeFile(dataArray);
+                    code = 204;
+                    return code;
+                }
+            }
+        }
+    } catch (error) {
+        code = 400;
+        console.log(error);
+    }
+
+}
+
