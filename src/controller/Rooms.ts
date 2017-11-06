@@ -81,6 +81,7 @@ export class Rooms {
 function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promise<Array<any>> {
 
     return new Promise(function (resolve, reject) {
+        var latlonPrimiseArray: Array<any> = [];
         try {
             buildingsArray = buildings;
             roomsArray = rooms;
@@ -88,18 +89,25 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
                 for (let room of roomsArray) {
                     if (building.building_shortname === room.rooms_shortname) {
                         room.rooms_fullname = building.building_fullname;
-                        room.rooms_name = building.building_shortname+ "_"+room.rooms_number;
+                        room.rooms_name = building.building_shortname + "_" + room.rooms_number;
                         room.rooms_address = building.building_address;
-                        getlatLon(building.building_address).then(function(value:any){
-                            if (value.error){
-                                room.rooms_lat = 0;
-                                room.rooms_lon = 0;
-                            }
-                            room.rooms_lat = value.lat;
-                            room.rooms_lon = value.lon;
-                        }).catch(function (error:any){
-                            throw ("Lat-Lon empty"+ error.message);
-                        });
+
+                        latlonPrimiseArray.push(new Promise(function (fulfill, reject) {
+                                getlatLon(building.building_address, room).then(function (value: any) {
+                                    fulfill(value);
+                                    console.log(value);
+                                }).catch(function (error: any) {
+                                    throw ("Lat-Lon empty" + error.message);
+                                });
+                            })
+                        );
+
+                        Promise.all(latlonPrimiseArray).then(function (response: any) {
+                            console.log(response);
+                        }).catch(function (error: string) {
+                            reject(error);
+                        })
+
                     }
                 }
             }
@@ -112,16 +120,16 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
 }
 
 
-function getlatLon(address: string){
+function getlatLon(address: string, room: any):Promise<any> {
     return new Promise(function (resolve, reject) {
 
-        let tempUrl:string = "http://skaha.cs.ubc.ca:11316/api/v1/team126/"+ address;
+        let tempUrl: string = "http://skaha.cs.ubc.ca:11316/api/v1/team126/" + address;
 
-        let url:string = tempUrl.split(' ').join('%20');
-        console.log (url);
+        let url: string = tempUrl.split(' ').join('%20');
+        //console.log(url);
 
-        http.get(url,function (result:any) {
-            const { statusCode } = result;
+        http.get(url, function (result: any) {
+            const {statusCode} = result;
             const contentType = result.headers['content-type'];
 
             let error;
@@ -141,16 +149,25 @@ function getlatLon(address: string){
 
             result.setEncoding('utf8');
             let rawData = '';
-            result.on('data', (chunk:any) => { rawData += chunk; });
+            result.on('data', (chunk: any) => {
+                rawData += chunk;
+            });
             result.on('end', () => {
                 try {
                     const parsedData = JSON.parse(rawData);
-                    resolve(parsedData);
+
+                    if (parsedData.error) {
+                        room.rooms_lat = 0;
+                        room.rooms_lon = 0;
+                    }
+                    room.rooms_lat = parsedData.lat;
+                    room.rooms_lon = parsedData.lon;
+                    resolve(true);
                 } catch (e) {
                     console.error(e.message);
                 }
             });
-        }).on('error', (e:any) => {
+        }).on('error', (e: any) => {
             resolve({error: e.message});
         });
     });
