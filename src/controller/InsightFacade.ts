@@ -28,9 +28,6 @@ export interface Dataset {
 
 'use strict';
 
-let JSZip = require('jszip');
-const parse5 = require('parse5');
-
 let UBCInsight1: Array<any> = [];
 let code: number = 400;
 let tempResults: Array<any> = [];
@@ -188,7 +185,9 @@ function optionNode(node: any) {
         let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
 
         queryID = columnNode[0].split("_", 1);
-
+        if (UBCInsight1.length ===0){
+            throw "empty dataset";
+        }
         for (let insight of UBCInsight1) {
             if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
                 var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
@@ -221,9 +220,7 @@ function optionNode(node: any) {
     }catch(error) {
         throw Error(error.message);
     }
-
 }
-
 
 function addDatasetResult(id: string, dataArray: Array<any>): number {
 
@@ -260,44 +257,50 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
 
 
 function whereNode(node: any) {
+    try {
 
-    var logicComarator = Object.getOwnPropertyNames(node);
-    for (let logic of logicComarator) {
-        if (logic === 'AND') {
-            andFunction(logic);
-        }
-        else if (logic === 'OR') {
-            orFunction(logic);
-        }
-        var m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
-        var m_key1 = Object.getOwnPropertyNames(m_key);
-        m_keymain = m_key1[0];
-        for (let key of m_key1) {
-            m_keyvalue = Object.getOwnPropertyDescriptor(m_key, key);
-            break;
-        }
-        if (logic === 'LT') {
-            lessThan(tempResults);
-            break;
-        }
-        else if (logic === 'GT') {
-            greaterThan(tempResults);
-            break;
-        }
-        else if (logic === 'EQ') {
-            equalTo(tempResults);
-            break;
-        }
-        else if (logic === 'IS') {
-            is(tempResults);
-            break;
+        var logicComarator = Object.getOwnPropertyNames(node);
+        for (let logic of logicComarator) {
+            if (logic === 'AND') {
+                andFunction(logic);
+            }
+            else if (logic === 'OR') {
+                orFunction(logic);
+            }
+            var m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
+            var m_key1 = Object.getOwnPropertyNames(m_key);
+            m_keymain = m_key1[0];
+            for (let key of m_key1) {
+                m_keyvalue = Object.getOwnPropertyDescriptor(m_key, key);
+                break;
+            }
+            if (logic === 'LT') {
+                lessThan(tempResults);
+                break;
+            }
+            else if (logic === 'GT') {
+                greaterThan(tempResults);
+                break;
+            }
+            else if (logic === 'EQ') {
+                equalTo(tempResults);
+                break;
+            }
+            else if (logic === 'IS') {
+                is(tempResults);
+                break;
 
+            }
         }
+    }
+    catch(error){
+        throw Error(error.message);
     }
 
 }
 
 function andFunction(node: any) {
+    try{
     var queryLogic = Object.getOwnPropertyNames(node);
     for (let logic of queryLogic) {
         if (logic === "AND") {
@@ -322,11 +325,16 @@ function andFunction(node: any) {
             is(tempResults);
             break;
         }
+    }
+    }
+    catch(error){
+        throw Error(error.message);
     }
 
 }
 
 function orFunction(node: any) {
+    try {
     var queryLogic = Object.getOwnPropertyNames(node);
     for (let logic of queryLogic) {
         if (logic === "AND") {
@@ -351,7 +359,30 @@ function orFunction(node: any) {
             is(tempResults);
             break;
         }
+        else if (logic === 'NOT') {
+            not(tempResults);
+            break;
+        }
     }
+    }
+    catch(error){
+        throw Error(error.message);
+    }
+}
+
+function not(queryArray: Array<any>) {
+    try {
+
+        tempResult1 = queryArray.filter(function (result) {
+            if (typeof result[m_keymain] === "string" && result[m_keymain] != "") {
+                var inputString = result[m_keymain].split("*", 1);
+                return !(m_keyvalue.value.includes(inputString));
+            }
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+
 }
 
 function is(queryArray: Array<any>) {
