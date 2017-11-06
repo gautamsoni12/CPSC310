@@ -162,12 +162,17 @@ export default class InsightFacade implements IInsightFacade {
                     resolve({code: code, body: myResult});
 
                 } catch (error) {
-                    if (error) {
+                    if (error.message ==="missing dataset"){
+                        code = 424;
+                        reject({code: code, body: {error: 'the query failed' + error}});
+                    }
+                    else if (error) {
                         code = 400;
-                        reject({code: 424, body: {error: 'the query failed' + error}});
+                        reject({code: code, body: {error: 'the query failed' + error}});
                     }
                 }
             } catch (error) {
+
                 reject({code: 400, body: {res: 'the query failed because of a missing dataset'}});
             }
 
@@ -187,6 +192,9 @@ function optionNode(node: any) {
         for (let insight of UBCInsight1) {
             if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
                 var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+                if (dataToQuery === null){
+                    throw new Error("missing dataset");
+                }
                 break;
             }
         }
@@ -194,6 +202,7 @@ function optionNode(node: any) {
 
             let resultObject: any = {};
             for (let queryColumn of columnNode) {
+
                 resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
             }
             tempResults.push(resultObject);
@@ -210,7 +219,7 @@ function optionNode(node: any) {
             }
         });
     }catch(error) {
-        throw new Error(error.message);
+        throw Error(error.message);
     }
 
 }
