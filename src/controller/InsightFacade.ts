@@ -151,6 +151,7 @@ export default class InsightFacade implements IInsightFacade {
                 var where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
                 try {
                     optionNode(option);
+                    //console.log(tempResults);
 
                     whereNode(where);
                     let myResult: Result = {result: tempResult1};
@@ -182,7 +183,7 @@ let m_keymain: any;
 let m_keyvalue: any;
 
 function optionNode(node: any) {
-    try {
+    //try {
         let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
 
         queryID = columnNode[0].split("_", 1);
@@ -209,22 +210,25 @@ function optionNode(node: any) {
             }
             tempResults.push(resultObject);
         }
+        if ((Object.getOwnPropertyDescriptor(node, "ORDER"))) {
+        let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
 
-        tempResults.sort(function (a: any, b: any) {
-            let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
+            tempResults.sort(function (a: any, b: any) {
 
-            if (typeof a === 'object' && typeof b === 'object') {
-                if (a[orderNode] < b[orderNode])
-                    return -1;
-                if (a[orderNode] > b[orderNode])
-                    return 1;
-                return 0;
-            }
-        });
 
-    } catch (error) {
-        throw Error(error.message);
-    }
+                if (typeof a === 'object' && typeof b === 'object') {
+                    if (a[orderNode] < b[orderNode])
+                        return -1;
+                    if (a[orderNode] > b[orderNode])
+                        return 1;
+                    return 0;
+                }
+            });
+        }
+
+    // } catch (error) {
+    //     throw Error(error.message);
+    // }
 }
 
 
@@ -232,15 +236,17 @@ function optionNode(node: any) {
 function whereNode(node: any) {
     try {
 
-        var logicComarator = Object.getOwnPropertyNames(node);
+        let logicComarator = Object.getOwnPropertyNames(node);
+        let andNode = Object.getOwnPropertyDescriptor(node, "AND");
+        let orNode = Object.getOwnPropertyDescriptor(node, "OR");
         for (let logic of logicComarator) {
-            if (logic === 'AND') {
-                andFunction(logic);
+            if (andNode) {
+                andFunction(andNode.value);
             }
-            else if (logic === 'OR') {
-                orFunction(logic);
+            else if (orNode) {
+                andFunction(orNode.value);
             }
-            var m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
+            let m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
             var m_key1 = Object.getOwnPropertyNames(m_key);
             m_keymain = m_key1[0];
             for (let key of m_key1) {
@@ -249,107 +255,65 @@ function whereNode(node: any) {
             }
             if (logic === 'LT') {
                 lessThan(tempResults);
-                break;
+
             }
             else if (logic === 'GT') {
                 greaterThan(tempResults);
-                break;
             }
             else if (logic === 'EQ') {
                 equalTo(tempResults);
-                break;
+
             }
             else if (logic === 'IS') {
                 is(tempResults);
-                break;
 
-            }
-        }
-    }
-    catch (error) {
-        throw Error(error.message);
-    }
-
-}
-
-function andFunction(node: any) {
-    try {
-        var queryLogic = Object.getOwnPropertyNames(node);
-        for (let logic of queryLogic) {
-            if (logic === "AND") {
-                whereNode(logic);
-            }
-            else if (logic === "OR") {
-                whereNode(logic);
-            }
-            else if (logic === 'LT') {
-                lessThan(tempResults);
-                break;
-            }
-            else if (logic === 'GT') {
-                greaterThan(tempResults);
-                break;
-            }
-            else if (logic === 'EQ') {
-                equalTo(tempResults);
-                break;
             }
             else if (logic === 'IS') {
-                is(tempResults);
-                break;
-            }
-        }
-    }
-    catch (error) {
-        throw Error(error.message);
-    }
-
-}
-
-function orFunction(node: any) {
-    try {
-        var queryLogic = Object.getOwnPropertyNames(node);
-        for (let logic of queryLogic) {
-            if (logic === "AND") {
-                whereNode(logic);
-            }
-            else if (logic === "OR") {
-                whereNode(logic);
-            }
-            else if (logic === 'LT') {
-                lessThan(tempResults);
-                break;
-            }
-            else if (logic === 'GT') {
-                greaterThan(tempResults);
-                break;
-            }
-            else if (logic === 'EQ') {
-                equalTo(tempResults);
-                break;
-            }
-            else if (logic === 'IS') {
-                is(tempResults);
-                break;
-            }
-            else if (logic === 'NOT') {
                 not(tempResults);
-                break;
+
+
             }
         }
     }
     catch (error) {
         throw Error(error.message);
     }
+
 }
+
+function andFunction(node: Array<any>) {
+    try {
+        node.forEach(function(innerNode:any){
+
+            let andNode = Object.getOwnPropertyDescriptor(innerNode, "AND");
+            let orNode = Object.getOwnPropertyDescriptor(innerNode, "OR");
+            if (andNode) {
+                andFunction(andNode.value);
+            }
+            else if (orNode) {
+                andFunction(orNode.value);
+            }
+            else{
+                whereNode(innerNode);
+            }
+        });
+
+    }
+    catch (error) {
+        throw Error(error.message);
+    }
+
+}
+
+
 
 function not(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
             if (typeof result[m_keymain] === "string" && result[m_keymain] != "") {
-                var inputString = result[m_keymain].split("*", 1);
-                return !(m_keyvalue.value.includes(inputString));
+                var inputString = m_keyvalue.value.split("*", 1);
+                return !(result[m_keymain].includes(inputString));
             }
         });
     } catch (error) {
@@ -363,10 +327,19 @@ function is(queryArray: Array<any>) {
 
         tempResult1 = queryArray.filter(function (result) {
             if (typeof result[m_keymain] === "string" && result[m_keymain] != "") {
-                let inputString = result[m_keymain].split("*", 1);
-                let inputString2 = result[m_keymain].split("_", 1);
-                let inputString3 = result[m_keymain].split(" ", 1);
-                return (m_keyvalue.value.includes(inputString) || m_keyvalue.value.includes(inputString2) || m_keyvalue.value.includes(inputString3));
+                let inputString = m_keyvalue.value.split("*", 3);
+                let inputString1 = inputString[0];
+                let inputString2 = inputString[1];
+                let inputString3 = inputString[2];
+                if (inputString1 != ""){
+                return (result[m_keymain].includes(inputString1));
+            }
+                else if (inputString2 != ""){
+                    return (result[m_keymain].includes(inputString2));
+                }
+                else if (inputString3 != ""){
+                    return (result[m_keymain].includes(inputString3));
+                }
             }
         });
     } catch (error) {
@@ -379,9 +352,9 @@ function is(queryArray: Array<any>) {
 function lessThan(queryArray: Array<any>) {
     try {
         tempResult1 = queryArray.filter(function (result) {
-            if (Number.isInteger(result[m_keymain])) {
+            //if (Number.isInteger(result[m_keymain])) {
                 return result[m_keymain] < m_keyvalue.value;
-            }
+            //}
         });
     } catch (error) {
         throw new Error(error);
@@ -393,9 +366,10 @@ function greaterThan(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (Number.isInteger(result[m_keymain])) {
+            //if (Number.isInteger(result[m_keymain])) {
+                //console.log(result[m_keymain]);
                 return result[m_keymain] > m_keyvalue.value;
-            }
+            //}
         });
     } catch (error) {
         throw new Error(error);
@@ -407,9 +381,9 @@ function equalTo(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (Number.isInteger(result[m_keymain])) {
+            //if (Number.isInteger(result[m_keymain])) {
                 return result[m_keymain] === m_keyvalue.value;
-            }
+            //}
         });
     } catch (error) {
         throw new Error(error);
@@ -421,7 +395,7 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
         if (UBCInsight1.length === 0) {
             let myDataset: Dataset = {id: id, dataset: dataArray};
             UBCInsight1.push(myDataset);
-            //fs.writeFile(dataArray);
+            fs.writeFileSync(id, dataArray);
             code = 204;
             return code;
 
@@ -429,13 +403,13 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
             for (let Insight of UBCInsight1) {
                 if (id === Insight.id) {
                     Insight.dataset = dataArray;
-                    //fs.writeFile(dataArray);
+                    fs.writeFileSync(id,dataArray);
                     code = 201;
                     return code;
                 } else {
                     let myDataset: Dataset = {id: id, dataset: dataArray};
                     UBCInsight1.push(myDataset);
-                    //fs.writeFile(dataArray);
+                    fs.writeFileSync(id, dataArray);
                     code = 204;
                     return code;
                 }
