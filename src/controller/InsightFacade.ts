@@ -159,15 +159,20 @@ export default class InsightFacade implements IInsightFacade {
                 let qObject = JSON.parse(JSON.stringify(query));
                 let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
                 var where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
+                try {
+                    optionNode(option);
 
-                optionNode(option);
-
-                whereNode(where);
-                //console.log(tempResult1);
-               // console.log(tempResult1);
-                let myResult: Result = {result: tempResult1};
-                console.log(myResult);
-                resolve({code: code, body: myResult});
+                    whereNode(where);
+                    let myResult: Result = {result: tempResult1};
+                    console.log(myResult);
+                    code = 200;
+                    resolve({code: code, body: myResult});
+                }catch(error){
+                    if (error){
+                        code = 400;
+                        reject({code: 424, body: {error: 'the query failed' + error}});
+                    }
+                }
             } catch (error) {
                 reject({code: 424, body: {res: 'the query failed because of a missing dataset'}});
             }
@@ -175,7 +180,6 @@ export default class InsightFacade implements IInsightFacade {
         });
     }
 }
-
 
 let m_keymain: any;
 let m_keyvalue: any;
@@ -257,10 +261,10 @@ function whereNode(node: any) {
     var logicComarator = Object.getOwnPropertyNames(node);
     for (let logic of logicComarator) {
         if (logic === 'AND') {
-
+            andFunction(logic);
         }
         else if (logic === 'OR') {
-
+            orFunction(logic);
         }
         var m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
         var m_key1 = Object.getOwnPropertyNames(m_key);
@@ -272,7 +276,6 @@ function whereNode(node: any) {
         if (logic === 'LT') {
             lessThan(tempResults);
             break;
-
         }
         else if (logic === 'GT') {
             greaterThan(tempResults);
@@ -291,46 +294,123 @@ function whereNode(node: any) {
 
 }
 
-function and() {
+function andFunction(node:any) {
+    var queryLogic = Object.getOwnPropertyNames(node);
+    for (let logic of queryLogic) {
+        if (logic === "AND") {
+            whereNode(logic);
+        }
+        else if (logic === "OR") {
+            whereNode(logic);
+        }
+        else if (logic === 'LT') {
+            lessThan(tempResults);
+            break;
+        }
+        else if (logic === 'GT') {
+            greaterThan(tempResults);
+            break;
+        }
+        else if (logic === 'EQ') {
+            equalTo(tempResults);
+            break;
+        }
+        else if (logic === 'IS') {
+            is(tempResults);
+            break;
+        }
+    }
 
 }
-function is(queryArray: Array<any>) {
 
-    for (let result of queryArray) {
-        var abc = result[m_keymain];
-        if (result[m_keymain] >= m_keyvalue.value) {
-            var index = queryArray.indexOf(result);
-            if (index > -1) {
-                queryArray.splice(index, 1);
-            }
+function orFunction(node:any) {
+    var queryLogic = Object.getOwnPropertyNames(node);
+    for (let logic of queryLogic) {
+        if (logic === "AND") {
+            whereNode(logic);
+        }
+        else if (logic === "OR") {
+            whereNode(logic);
+        }
+        else if (logic === 'LT') {
+            lessThan(tempResults);
+            break;
+        }
+        else if (logic === 'GT') {
+            greaterThan(tempResults);
+            break;
+        }
+        else if (logic === 'EQ') {
+            equalTo(tempResults);
+            break;
+        }
+        else if (logic === 'IS') {
+            is(tempResults);
+            break;
         }
     }
 }
 
-function or() {
+function is(queryArray: Array<any>) {
+    try {
 
+        tempResult1 = queryArray.filter(function (result) {
+            if (Number.isInteger(result[m_keymain])) {
+                var inputString = result[m_keymain].split("_",1);
+                return m_keyvalue.value.includes(inputString);
+            }
+        });
+    }catch(error){
+        throw new Error (error);
+    }
+
+
+    // tempResult1 = queryArray.filter(function(result){
+    //     var inputString = result[m_keymain].split("_",1);
+    //     return m_keyvalue.value.includes(inputString);
+    // });
 }
 
-function lessThan(queryArray: Array<any>) {
 
-    tempResult1 = queryArray.filter(function(result){
-        return result[m_keymain] < m_keyvalue.value;
-    });
+function lessThan(queryArray: Array<any>) {
+    try {
+
+        tempResult1 = queryArray.filter(function (result) {
+            if (Number.isInteger(result[m_keymain])) {
+                return result[m_keymain] < m_keyvalue.value;
+            }
+        });
+    }catch(error){
+        throw new Error (error);
+    }
 }
 
 function greaterThan(queryArray: Array<any>){
 
+    try {
 
-    tempResult1= queryArray.filter(function(result){
-        return result[m_keymain] > m_keyvalue.value;
-    });
+        tempResult1 = queryArray.filter(function (result) {
+            if (Number.isInteger(result[m_keymain])) {
+                return result[m_keymain] > m_keyvalue.value;
+            }
+        });
+    }catch(error){
+        throw new Error (error);
+    }
 }
 
 function equalTo(queryArray: Array<any>) {
 
-    tempResult1 = queryArray.filter(function(result){
-        return result[m_keymain] === m_keyvalue.value;
-    });
+    try {
+
+        tempResult1 = queryArray.filter(function (result) {
+            if (Number.isInteger(result[m_keymain])) {
+                return result[m_keymain] === m_keyvalue.value;
+            }
+        });
+    }catch(error){
+        throw new Error (error);
+    }
 }
 
 
