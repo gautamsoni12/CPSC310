@@ -34,7 +34,7 @@ let code: number = 400;
 let tempResults: Array<any> = [];
 let queryID: string;
 let tempResult1: Array<any> = [];
-var where :any;
+var where: any;
 let tempResult2: Array<any> = [];
 
 export default class InsightFacade implements IInsightFacade {
@@ -52,6 +52,9 @@ export default class InsightFacade implements IInsightFacade {
                     if (id === "courses") {
                         let newCourse = new Course(id, content);
                         newCourse.loadfile(content).then(function (value: Array<any>) {
+                            if (value.length < 1){
+                                throw "Empty Zip"
+                            }
                             zipContent = value;
 
                             code = addDatasetResult(id, zipContent);//.then(function (value: any) {
@@ -74,6 +77,9 @@ export default class InsightFacade implements IInsightFacade {
 
                         let ubcRooms = new Rooms(id, content);
                         ubcRooms.loadFile(content).then(function (value: Array<any>) {
+                            if (value.length < 1){
+                                throw "Empty Zip"
+                            }
                             zipContent = value;
                             code = addDatasetResult(id, zipContent);
                             if (code === 201) {
@@ -87,7 +93,8 @@ export default class InsightFacade implements IInsightFacade {
                             }
 
                         }).catch(function (error: any) {
-                            reject(error);
+                            code = 400;
+                            reject({code: code, body: {error: ("error: " + error.message)}});
                         });
                     }
                     else {
@@ -165,7 +172,8 @@ export default class InsightFacade implements IInsightFacade {
 
                     optionNode(option);
                     let myResult: Result = {result: tempResult2};
-                    //console.log(tempResult2);
+                    console.log(tempResult2);
+
                     code = 200;
                     resolve({code: code, body: myResult});
 

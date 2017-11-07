@@ -95,7 +95,7 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
                         latlonPrimiseArray.push(new Promise(function (fulfill, reject) {
                                 getlatLon(building.building_address, room).then(function (value: any) {
                                     fulfill(value);
-                                    console.log(value);
+                                    //console.log(value);
                                 }).catch(function (error: any) {
                                     throw ("Lat-Lon empty" + error.message);
                                 });
@@ -103,7 +103,7 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
                         );
 
                         Promise.all(latlonPrimiseArray).then(function (response: any) {
-                            console.log(response);
+                            //console.log(response);
                         }).catch(function (error: string) {
                             reject(error);
                         })
@@ -365,7 +365,7 @@ function getRooms(table: any) {
                         rooms_furniture: roomFurniture,
                         rooms_href: roomHerf
                     };
-                    this.listOfRooms.push(myRoom);
+                    rooms.push(myRoom);
                 }
             }
         }

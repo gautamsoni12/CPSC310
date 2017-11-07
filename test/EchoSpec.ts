@@ -507,5 +507,82 @@ describe("EchoSpec", function () {
             expect.fail();
         });
     });
+
+    let roomQuery3 = {
+        "WHERE": {
+            "IS": {
+                "rooms_name": "DMP_*"
+            }
+        },
+
+    };
+
+    it("Should be able to handle a html query- INVALID", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(roomQuery3).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({
+                    result: [{rooms_name: 'DMP_101'},
+                        {rooms_name: 'DMP_110'},
+                        {rooms_name: 'DMP_201'},
+                        {rooms_name: 'DMP_301'},
+                        {rooms_name: 'DMP_310'}]
+                });
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+
+    let roomQuery4 = {
+
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+
+    };
+
+    it("Should be able to handle a html query- INVALID 2", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(roomQuery4).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({
+                    result: [{rooms_name: 'DMP_101'},
+                        {rooms_name: 'DMP_110'},
+                        {rooms_name: 'DMP_201'},
+                        {rooms_name: 'DMP_301'},
+                        {rooms_name: 'DMP_310'}]
+                });
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
 });
 
