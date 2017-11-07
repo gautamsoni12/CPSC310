@@ -2,10 +2,6 @@ import Log from "../Util";
 import * as JSzip from "jszip";
 
 'use strict';
-import {error} from "util";
-
-let fs = require("fs");
-let request = require('request');
 let JSZip = require('jszip');
 
 export class Course {
@@ -39,7 +35,7 @@ export class Course {
 
                                         }
                                     }).catch(function (error: any) {
-
+                                    reject({code: 400, body: {error: error.message}});
                                     })
                                 );
                         });
@@ -49,11 +45,11 @@ export class Course {
                             fulfill(data1);
                         }).catch(function (error) {
 
-                            reject('Error:' + error);
+                            reject({code: 400, body: {error: ("error: " + "wrong id")}});
                         })
                     }).catch(function (err: any) {
                         console.log(err);
-                        reject(err);
+                        reject({code: 400, body: {error: err.message}});
                     });
                 }
             }

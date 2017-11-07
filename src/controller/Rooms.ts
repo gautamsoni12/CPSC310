@@ -50,7 +50,7 @@ export class Rooms {
                                         }
 
                                     }).catch(function (err: any) {
-                                        console.log(err);
+                                    reject({code: 400, body: {error: err.message}});
                                     })
                                 );
                             }
@@ -62,10 +62,10 @@ export class Rooms {
                             fulfill(comleteRoom(buildings, rooms));
 
                         }).catch(function (error) {
-                            reject('Error:' + error);
+                            reject({code: 400, body: {error: error.message}});
                         })
                     }).catch(function (err: any) {
-                        reject(err);
+                        reject({code: 400, body: {error: err.message}});
                     });
                 }
             }
@@ -286,9 +286,6 @@ function getBuildings(table: any) {
     }
 }
 
-function getListOfRooms(): Array<any> {
-    return this.listOfRooms;
-}
 
 
 function getRooms(table: any) {

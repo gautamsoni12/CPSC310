@@ -30,7 +30,7 @@ export interface Dataset {
 'use strict';
 
 let UBCInsight1: Array<any> = [];
-let code: number = 400;
+let code: number = 0;
 let tempResults: Array<any> = [];
 let queryID: string;
 let tempResult1: Array<any> = [];
@@ -210,7 +210,7 @@ function optionNode(node: any) {
 
     for (let insight of UBCInsight1) {
         if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
-            var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+            var dataToQuery: any = Object.getOwnPropertyDescriptor(insight, "dataset").value;
             if (dataToQuery === null) {
                 throw new Error("missing dataset");
             }
