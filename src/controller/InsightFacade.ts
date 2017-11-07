@@ -31,7 +31,7 @@ let code: number = 400;
 let tempResults: Array<any> = [];
 let queryID: string;
 let tempResult1: Array<any> = [];
-let where :any;
+let where: any;
 let tempResult2: Array<any> = [];
 
 export default class InsightFacade implements IInsightFacade {
@@ -212,7 +212,7 @@ function optionNode(node: any) {
     for (let data of tempResult1) {
         let resultObject: any = {};
         for (let queryColumn of columnNode) {
-            if (queryColumn.split("_", 1) != queryID[0]){
+            if (queryColumn.split("_", 1) != queryID[0]) {
                 throw "Query contains both courses and rooms keys.";
             }
 
@@ -226,21 +226,21 @@ function optionNode(node: any) {
     if ((Object.getOwnPropertyDescriptor(node, "ORDER"))) {
         let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
 
-            if (orderNode.split("_", 1) != queryID[0]) {
-                throw "Query contains both courses and rooms keys.";
-            }
-
-            tempResult2.sort(function (a: any, b: any) {
-
-                if (typeof a === 'object' && typeof b === 'object') {
-                    if (a[orderNode] < b[orderNode])
-                        return -1;
-                    if (a[orderNode] > b[orderNode])
-                        return 1;
-                    return 0;
-                }
-            });
+        if (orderNode.split("_", 1) != queryID[0]) {
+            throw "Query contains both courses and rooms keys.";
         }
+
+        tempResult2.sort(function (a: any, b: any) {
+
+            if (typeof a === 'object' && typeof b === 'object') {
+                if (a[orderNode] < b[orderNode])
+                    return -1;
+                if (a[orderNode] > b[orderNode])
+                    return 1;
+                return 0;
+            }
+        });
+    }
 
 }
 
@@ -248,52 +248,58 @@ function optionNode(node: any) {
 function whereNode(node: any) {
     try {
 
-        let logicComarator = Object.getOwnPropertyNames(node);
         let andNode = Object.getOwnPropertyDescriptor(node, "AND");
         let orNode = Object.getOwnPropertyDescriptor(node, "OR");
         let notNode = Object.getOwnPropertyDescriptor(node, "NOT");
 
-        for (let logic of logicComarator) {
-            if (andNode) {
-                andFunction(andNode.value);
-            }
-            else if (orNode) {
-                andFunction(orNode.value);
-            }else if (notNode) {
-                andFunction(orNode.value);
+        if(Object.getOwnPropertyNames(node)) {
 
-            }
+            let logicNames = Object.getOwnPropertyNames(node);
 
-            let m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
-            var m_key1 = Object.getOwnPropertyNames(m_key);
-            m_keymain = m_key1[0];
-            for (let key of m_key1) {
-                m_keyvalue = Object.getOwnPropertyDescriptor(m_key, key);
-                break;
-            }
-            if (logic === 'LT') {
-                lessThan(tempResults);
-                break;
+            logicNames.forEach(function (logic) {
 
-            }
-            else if (logic === 'GT') {
-                greaterThan(tempResults);
-                break;
-            }
-            else if (logic === 'EQ') {
-                equalTo(tempResults);
-                break;
+                if (andNode) {
+                    andFunction(andNode.value);
+                }
+                else if (orNode) {
+                    andFunction(orNode.value);
+                } else if (notNode) {
+                    andFunction(orNode.value);
 
-            }
-            else if (logic === 'IS') {
-                is(tempResults);
-                break;
+                }
 
-            }
-            else {
-                throw "Invalid query";
-            }
 
+                let m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
+                var m_key1 = Object.getOwnPropertyNames(m_key);
+                m_keymain = m_key1[0];
+                for (let key of m_key1) {
+                    m_keyvalue = Object.getOwnPropertyDescriptor(m_key, key);
+                    //break;
+                }
+                if (logic === 'LT') {
+                    lessThan(tempResults);
+                    //break;
+
+                }
+                else if (logic === 'GT') {
+                    greaterThan(tempResults);
+                    //break;
+                }
+                else if (logic === 'EQ') {
+                    equalTo(tempResults);
+                    //break;
+
+                }
+                else if (logic === 'IS') {
+                    is(tempResults);
+                    //break;
+
+                }
+                // else {
+                //     throw "Invalid query";
+                // }
+
+            });
         }
     }
     catch (error) {
@@ -330,30 +336,11 @@ function andFunction(node: Array<any>) {
 
 }
 
-
-function not(queryArray: Array<any>) {
-    try {
-
-        tempResult1 = queryArray.filter(function (result) {
-            if (typeof result[m_keymain] === "string" && result[m_keymain] != "") {
-                var inputString = m_keyvalue.value.split("*", 1);
-                return !(result[m_keymain].includes(inputString));
-            }
-            else{
-                throw "Invalid NOT";
-            }
-        });
-    } catch (error) {
-        throw new Error(error);
-    }
-
-}
-
 function is(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (typeof result[m_keymain] === "string"){//} && result[m_keymain] != "") {
+            if (typeof result[m_keymain] === "string") {//} && result[m_keymain] != "") {
                 let inputString = m_keyvalue.value.split("*", 3);
                 let inputString1 = inputString[0];
                 let inputString2 = inputString[1];
@@ -375,23 +362,24 @@ function is(queryArray: Array<any>) {
     } catch (error) {
         throw new Error(error);
     }
-
+    tempResults = tempResult1;
 }
 
 
 function lessThan(queryArray: Array<any>) {
     try {
         tempResult1 = queryArray.filter(function (result) {
-            if (typeof result[m_keymain]=== "number") {
-            return result[m_keymain] < m_keyvalue.value;
+            if (typeof result[m_keymain] === "number") {
+                return result[m_keymain] < m_keyvalue.value;
             }
-            else{
+            else {
                 throw "Invalid LT";
             }
         });
     } catch (error) {
         throw new Error(error);
     }
+    tempResults = tempResult1;
 }
 
 function greaterThan(queryArray: Array<any>) {
@@ -399,17 +387,18 @@ function greaterThan(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (typeof result[m_keymain]=== "number") {
-            //console.log(result[m_keymain]);
-            return result[m_keymain] > m_keyvalue.value;
+            if (typeof result[m_keymain] === "number") {
+                //console.log(result[m_keymain]);
+                return result[m_keymain] > m_keyvalue.value;
             }
-            else{
+            else {
                 throw "Invalid GT";
             }
         });
     } catch (error) {
         throw new Error(error);
     }
+    tempResults = tempResult1;
 }
 
 function equalTo(queryArray: Array<any>) {
@@ -417,16 +406,17 @@ function equalTo(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (typeof result[m_keymain]=== "number") {
-            return result[m_keymain] === m_keyvalue.value;
+            if (typeof result[m_keymain] === "number") {
+                return result[m_keymain] === m_keyvalue.value;
             }
-            else{
+            else {
                 throw "Invalid EQ";
             }
         });
     } catch (error) {
         throw new Error(error);
     }
+    tempResults = tempResult1;
 }
 
 function addDatasetResult(id: string, dataArray: Array<any>): number {
