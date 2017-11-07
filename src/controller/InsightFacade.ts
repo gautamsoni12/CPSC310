@@ -34,6 +34,8 @@ let code: number = 400;
 let tempResults: Array<any> = [];
 let queryID: string;
 let tempResult1: Array<any> = [];
+var where :any;
+let tempResult2: Array<any> = [];
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -51,6 +53,7 @@ export default class InsightFacade implements IInsightFacade {
                         let newCourse = new Course(id, content);
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
+
                             code = addDatasetResult(id, zipContent);//.then(function (value: any) {
 
                             if (code === 201) {
@@ -162,17 +165,23 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (resolve, reject) {
             try {
                 let qObject = JSON.parse(JSON.stringify(query));
-                let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
-                var where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
+                var option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
+
+                if (typeof option === 'undefined') {
+                    throw "Invalid query. Body missing.";
+                }
+
+                where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
+                if (typeof where === 'undefined') {
+                    throw "Invalid query. Body missing.";
+                }
                 try {
+
+                    //whereNode(where);
                     optionNode(option);
-                    //console.log(tempResults);
-
-                    whereNode(where);
-                    let myResult: Result = {result: tempResult1};
-                    //console.log(myResult);
+                    let myResult: Result = {result: tempResult2};
+                    //console.log(tempResult2);
                     code = 200;
-
                     resolve({code: code, body: myResult});
 
                 } catch (error) {
@@ -200,53 +209,57 @@ let m_keyvalue: any;
 
 function optionNode(node: any) {
     //try {
-        let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
+    let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
 
-        queryID = columnNode[0].split("_", 1);
-        if (UBCInsight1.length === 0) {
-            throw "empty dataset";
-        }
+    queryID = columnNode[0].split("_", 1);
+    if (UBCInsight1.length === 0) {
+        throw "empty dataset";
+    }
 
-        for (let insight of UBCInsight1) {
-            if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
-                var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
-                if (dataToQuery === null) {
-                    throw new Error("missing dataset");
-                }
-                break;
+    for (let insight of UBCInsight1) {
+        if (Object.getOwnPropertyDescriptor(insight, "id").value === queryID[0]) {
+            var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+            if (dataToQuery === null) {
+                throw new Error("missing dataset");
             }
+            break;
         }
+    }
+    tempResults = dataToQuery;
+    whereNode(where);
 
-        for (let data of dataToQuery) {
+    for (let data of tempResult1) {
+        let resultObject: any = {};
 
-            let resultObject: any = {};
-            for (let queryColumn of columnNode) {
+        for (let queryColumn of columnNode) {
 
-                resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
-            }
-            tempResults.push(resultObject);
+            resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
         }
-        if ((Object.getOwnPropertyDescriptor(node, "ORDER"))) {
+        tempResult2.push(resultObject);
+
+    }
+
+
+    if ((Object.getOwnPropertyDescriptor(node, "ORDER"))) {
         let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
 
-            tempResults.sort(function (a: any, b: any) {
+        tempResult2.sort(function (a: any, b: any) {
 
 
-                if (typeof a === 'object' && typeof b === 'object') {
-                    if (a[orderNode] < b[orderNode])
-                        return -1;
-                    if (a[orderNode] > b[orderNode])
-                        return 1;
-                    return 0;
-                }
-            });
-        }
+            if (typeof a === 'object' && typeof b === 'object') {
+                if (a[orderNode] < b[orderNode])
+                    return -1;
+                if (a[orderNode] > b[orderNode])
+                    return 1;
+                return 0;
+            }
+        });
+    }
 
     // } catch (error) {
     //     throw Error(error.message);
     // }
 }
-
 
 
 function whereNode(node: any) {
@@ -284,7 +297,7 @@ function whereNode(node: any) {
                 is(tempResults);
 
             }
-            else if (logic === 'IS') {
+            else if (logic === 'NOT') {
                 not(tempResults);
 
 
@@ -299,7 +312,7 @@ function whereNode(node: any) {
 
 function andFunction(node: Array<any>) {
     try {
-        node.forEach(function(innerNode:any){
+        node.forEach(function (innerNode: any) {
 
             let andNode = Object.getOwnPropertyDescriptor(innerNode, "AND");
             let orNode = Object.getOwnPropertyDescriptor(innerNode, "OR");
@@ -309,7 +322,7 @@ function andFunction(node: Array<any>) {
             else if (orNode) {
                 andFunction(orNode.value);
             }
-            else{
+            else {
                 whereNode(innerNode);
             }
         });
@@ -320,7 +333,6 @@ function andFunction(node: Array<any>) {
     }
 
 }
-
 
 
 function not(queryArray: Array<any>) {
@@ -347,13 +359,13 @@ function is(queryArray: Array<any>) {
                 let inputString1 = inputString[0];
                 let inputString2 = inputString[1];
                 let inputString3 = inputString[2];
-                if (inputString1 != ""){
-                return (result[m_keymain].includes(inputString1));
-            }
-                else if (inputString2 != ""){
+                if (inputString1 != "") {
+                    return (result[m_keymain].includes(inputString1));
+                }
+                else if (inputString2 != "") {
                     return (result[m_keymain].includes(inputString2));
                 }
-                else if (inputString3 != ""){
+                else if (inputString3 != "") {
                     return (result[m_keymain].includes(inputString3));
                 }
             }
@@ -369,7 +381,7 @@ function lessThan(queryArray: Array<any>) {
     try {
         tempResult1 = queryArray.filter(function (result) {
             //if (Number.isInteger(result[m_keymain])) {
-                return result[m_keymain] < m_keyvalue.value;
+            return result[m_keymain] < m_keyvalue.value;
             //}
         });
     } catch (error) {
@@ -383,8 +395,8 @@ function greaterThan(queryArray: Array<any>) {
 
         tempResult1 = queryArray.filter(function (result) {
             //if (Number.isInteger(result[m_keymain])) {
-                //console.log(result[m_keymain]);
-                return result[m_keymain] > m_keyvalue.value;
+            //console.log(result[m_keymain]);
+            return result[m_keymain] > m_keyvalue.value;
             //}
         });
     } catch (error) {
@@ -398,13 +410,14 @@ function equalTo(queryArray: Array<any>) {
 
         tempResult1 = queryArray.filter(function (result) {
             //if (Number.isInteger(result[m_keymain])) {
-                return result[m_keymain] === m_keyvalue.value;
+            return result[m_keymain] === m_keyvalue.value;
             //}
         });
     } catch (error) {
         throw new Error(error);
     }
 }
+
 function addDatasetResult(id: string, dataArray: Array<any>): number {
 
     try {
@@ -419,7 +432,7 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
             for (let Insight of UBCInsight1) {
                 if (id === Insight.id) {
                     Insight.dataset = dataArray;
-                    fs.writeFileSync(id,dataArray);
+                    fs.writeFileSync(id, dataArray);
                     code = 201;
                     return code;
                 } else {
