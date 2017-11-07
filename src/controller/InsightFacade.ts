@@ -162,10 +162,10 @@ export default class InsightFacade implements IInsightFacade {
                 }
                 try {
 
-                    //whereNode(where);
+
                     optionNode(option);
                     let myResult: Result = {result: tempResult2};
-                    console.log(tempResult2);
+                    console.log(myResult);
                     code = 200;
                     resolve({code: code, body: myResult});
 
@@ -364,9 +364,9 @@ function is(queryArray: Array<any>) {
 function lessThan(queryArray: Array<any>) {
     try {
         tempResult1 = queryArray.filter(function (result) {
-            //if (Number.isInteger(result[m_keymain])) {
+            if (Number.isFinite(result[m_keymain])) {
             return result[m_keymain] < m_keyvalue.value;
-            //}
+            }
         });
     } catch (error) {
         throw new Error(error);
@@ -378,10 +378,10 @@ function greaterThan(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            //if (Number.isInteger(result[m_keymain])) {
+            if (Number.isFinite(result[m_keymain])) {
             //console.log(result[m_keymain]);
             return result[m_keymain] > m_keyvalue.value;
-            //}
+            }
         });
     } catch (error) {
         throw new Error(error);
@@ -393,9 +393,9 @@ function equalTo(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            //if (Number.isInteger(result[m_keymain])) {
+            if (Number.isFinite(result[m_keymain])) {
             return result[m_keymain] === m_keyvalue.value;
-            //}
+            }
         });
     } catch (error) {
         throw new Error(error);
