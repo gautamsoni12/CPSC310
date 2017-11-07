@@ -168,7 +168,7 @@ export default class InsightFacade implements IInsightFacade {
 
                     let myResult: Result = {result: tempResult2};
 
-                    // console.log(myResult);
+                     console.log(myResult);
                     // console.log(JSON.stringify(myResult));
                     code = 200;
                     resolve({code: code, body: myResult});
@@ -215,7 +215,7 @@ function optionNode(node: any) {
     tempResults = dataToQuery;
     whereNode(where);
 
-    for (let data of tempResult1) {
+    for (let data of tempResults) {
         let resultObject: any = {};
         for (let queryColumn of columnNode) {
             if (queryColumn.split("_", 1) != queryID[0]) {
@@ -279,7 +279,7 @@ function whereNode(node: any) {
                 m_keymain = m_key1[0];
                 for (let key of m_key1) {
                     m_keyvalue = Object.getOwnPropertyDescriptor(m_key, key);
-                    //break;
+
                 }
                 if (logic === 'LT') {
                     lessThan(tempResults);
@@ -297,12 +297,8 @@ function whereNode(node: any) {
                 }
                 else if (logic === 'IS') {
                     is(tempResults);
-                    //break;
 
                 }
-                // else {
-                //     throw "Invalid query";
-                // }
 
             });
         }
@@ -345,7 +341,10 @@ function is(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (typeof result[m_keymain] === "string") {//} && result[m_keymain] != "") {
+            if (typeof result[m_keymain] === "string") {
+                if ((m_keyvalue.value).includes("**")){
+                    throw "Invalid string";
+                }
                 let inputString = m_keyvalue.value.split("*", 3);
                 let inputString1 = inputString[0];
                 let inputString2 = inputString[1];
