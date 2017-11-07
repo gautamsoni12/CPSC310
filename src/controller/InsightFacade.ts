@@ -167,7 +167,7 @@ export default class InsightFacade implements IInsightFacade {
 
                     optionNode(option);
                     let myResult: Result = {result: tempResult2};
-                    console.log(myResult);
+                    //console.log(myResult);
                     code = 200;
                     resolve({code: code, body: myResult});
 
@@ -216,6 +216,9 @@ function optionNode(node: any) {
     for (let data of tempResult1) {
         let resultObject: any = {};
         for (let queryColumn of columnNode) {
+            if (queryColumn.split("_", 1) != queryID[0]){
+                throw "Query contains both courses and rooms keys.";
+            }
 
             resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
         }
