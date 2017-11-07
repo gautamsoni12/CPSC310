@@ -162,10 +162,14 @@ export default class InsightFacade implements IInsightFacade {
 
 
                     optionNode(option);
+                    if (tempResult1.length< 1){
+                        throw "Invalid Query";
+                    }
+
                     let myResult: Result = {result: tempResult2};
-                    console.log(myResult);
+                    console.log(tempResult2);
                     code = 200;
-                    resolve({code: code, body: myResult});
+                    resolve({code: code, body: tempResult2});
 
                 } catch (error) {
                     if (error.message === "missing dataset") {
@@ -174,7 +178,7 @@ export default class InsightFacade implements IInsightFacade {
                     }
                     else if (error) {
                         code = 400;
-                        reject({code: code, body: {error: 'the query failed' + error}});
+                        reject({code: code, body: {error: 'the query failed'}});
                     }
                 }
             } catch (error) {
