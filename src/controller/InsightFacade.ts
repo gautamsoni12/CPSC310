@@ -290,7 +290,6 @@ function whereNode(node: any) {
             else if (logic === 'NOT') {
                 not(tempResults);
 
-
             }
         }
     }
@@ -371,8 +370,9 @@ function lessThan(queryArray: Array<any>) {
     try {
         tempResult1 = queryArray.filter(function (result) {
 
-            return result[m_keymain] < m_keyvalue.value;
-
+            if (Number.isInteger(result[m_keymain])) {
+                return result[m_keymain] < m_keyvalue.value;
+            }
         });
     } catch (error) {
         throw new Error(error);
@@ -384,8 +384,9 @@ function greaterThan(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-
-            return result[m_keymain] > m_keyvalue.value;
+            if (Number.isInteger(result[m_keymain])) {
+                return result[m_keymain] > m_keyvalue.value;
+            }
         });
     } catch (error) {
         throw new Error(error);
@@ -398,8 +399,9 @@ function equalTo(queryArray: Array<any>) {
 
         tempResult1 = queryArray.filter(function (result) {
 
-            return result[m_keymain] === m_keyvalue.value;
-
+            if (Number.isInteger(result[m_keymain])) {
+                return result[m_keymain] === m_keyvalue.value;
+            }
         });
     } catch (error) {
         throw new Error(error);

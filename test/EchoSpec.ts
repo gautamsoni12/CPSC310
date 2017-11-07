@@ -262,7 +262,7 @@ describe("EchoSpec", function () {
         insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             // console.log(value);
             Log.test('Value:' + value);
-            insightFacade.performQuery(complexQuery).then(function (result) {
+            insightFacade.performQuery(query).then(function (result) {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(200);

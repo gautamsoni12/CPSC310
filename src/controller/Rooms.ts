@@ -58,7 +58,6 @@ export class Rooms {
 
                         Promise.all(promiseArray).then(function (response: any) {
 
-
                             fulfill(comleteRoom(buildings, rooms));
 
                         }).catch(function (error) {
@@ -101,17 +100,15 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
                                 });
                             })
                         );
-
-                        Promise.all(latlonPrimiseArray).then(function (response: any) {
-                            //console.log(response);
-                        }).catch(function (error: string) {
-                            reject(error);
-                        })
-
                     }
                 }
             }
-            resolve(rooms);
+            Promise.all(latlonPrimiseArray).then(function (response: any) {
+                resolve(rooms);
+            }).catch(function (error: string) {
+                reject(error);
+            });
+            //resolve(rooms);
         } catch (error) {
             reject(error);
         }
@@ -162,7 +159,7 @@ function getlatLon(address: string, room: any):Promise<any> {
                     }
                     room.rooms_lat = parsedData.lat;
                     room.rooms_lon = parsedData.lon;
-                    resolve(true);
+                    resolve(parsedData);
                 } catch (e) {
                     console.error(e.message);
                 }
