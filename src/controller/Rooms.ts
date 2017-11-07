@@ -95,23 +95,24 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
                         latlonPrimiseArray.push(new Promise(function (fulfill, reject) {
                                 getlatLon(building.building_address, room).then(function (value: any) {
                                     fulfill(value);
-                                    console.log(value);
+                                    //console.log(value);
                                 }).catch(function (error: any) {
                                     throw ("Lat-Lon empty" + error.message);
                                 });
                             })
                         );
 
-                        Promise.all(latlonPrimiseArray).then(function (response: any) {
-                            console.log(response);
-                        }).catch(function (error: string) {
-                            reject(error);
-                        })
+
 
                     }
                 }
             }
-            resolve(rooms);
+            Promise.all(latlonPrimiseArray).then(function (response: any) {
+                resolve(rooms);
+            }).catch(function (error: string) {
+                reject(error);
+            })
+
         } catch (error) {
             reject(error);
         }

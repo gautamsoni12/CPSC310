@@ -6,11 +6,7 @@ import {MCOMPNode} from "./MCOMPNode";
 import {InsightResponse} from "../controller/IInsightFacade";
 import {EVALUATENODE} from "./EVALUATENODE";
 
-//WHERE NODE: FILTER
-//FILTER: 'AND' | 'OR' (LOGICCOMPARISON)
-//        'LT' | 'GT' | 'EQ" (MCOMPARISON)
-//        'IS' (SCOMPARISON)
-//        'NOT" (NEGATION)
+
 export class WHEREnode {
 
     public COLUMNS: Array<string> = [];

@@ -217,20 +217,6 @@ describe("EchoSpec", function () {
         })
     });
 
-
-    //TEST CASES FOR: addDataSet
-    //TEST CASES FOR: addDataSet  (USE DATASET GIVEN ON D1 WEBPAGE TO DO TESTS)
-    //addDataSet with invalid zip file, should return error 400
-    //addDataSet with zip file containing no files, should return error 400
-    //addDataSet with zip file containing invalid course, should return error 400
-    //addDataSet with zip file containing invalid JSON, should return error 400
-    //addDataSet with zip file containing one course, result should be that course stored in DS & persisted to disk
-    //addDataSet with zip file containing multiple courses, result should be the courses stored in DS & persisted to disk
-    //addDataSet with zip file containing course already added, result should be data for existing course overwritten & persisted to disk
-
-    //TESTS FPR addDataset
-
-    //TESTS FOR PARSING QUERIES
     let query = {
         "WHERE": {
             "GT": {
@@ -472,6 +458,48 @@ describe("EchoSpec", function () {
                             { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4068' },
                             { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4072' },
                             { rooms_address: '6363 Agronomy Road', rooms_name: 'ORCH_4074' } ]
+                });
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+
+    let course_query = {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "watt*"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    };
+    it("Should be able to handle a rooms query", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full1.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(course_query).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({
+                    result: [{rooms_name: 'DMP_101'},
+                        {rooms_name: 'DMP_110'},
+                        {rooms_name: 'DMP_201'},
+                        {rooms_name: 'DMP_301'},
+                        {rooms_name: 'DMP_310'}]
                 });
 
             });

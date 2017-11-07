@@ -1,12 +1,10 @@
-import Log from "../Util";
-import * as JSzip from "jszip";
-
 'use strict';
-import {error} from "util";
 
-let fs = require("fs");
-let request = require('request');
+import {Course1} from "./Course1";
+
 let JSZip = require('jszip');
+
+let courses: Array<any> = [];
 
 export class Course {
     id: string;
@@ -24,8 +22,6 @@ export class Course {
         return new Promise(function (fulfill, reject) {
 
             let jsZip = new JSZip();
-            let data1: Array<string> = new Array();
-
             try {
                 if (file != null) {
                     let promiseArray: any[] = [];
@@ -34,19 +30,19 @@ export class Course {
                             if (!file.dir)
                                 promiseArray.push(jsZip.file(filename).async("string").then((content: string) => {
                                         try {
-                                            data1.push(JSON.stringify(JSON.parse(content)));
+                                            var cJson: any = JSON.parse(content);
+                                            recurse(cJson);
                                         } catch (error) {
 
                                         }
                                     }).catch(function (error: any) {
-
+                                        reject(error);
                                     })
                                 );
                         });
-
                         Promise.all(promiseArray).then(function (response: any) {
 
-                            fulfill(data1);
+                            fulfill(courses);
                         }).catch(function (error) {
 
                             reject('Error:' + error);
@@ -62,5 +58,53 @@ export class Course {
             }
         });
     }
+}
 
+function recurse(htmlNode: any) {
+
+    if (typeof htmlNode === 'object') {
+        let jResult: Array<any> = htmlNode.result;
+        if (jResult[0] != null) {
+            for (let res of jResult) {
+                getCourse(res);
+            }
+        }
+    }
+}
+
+function getCourse(cNode: any): Promise<any> {
+
+    return new Promise(function (resolve, reject) {
+        try {
+            var dept = (Object.getOwnPropertyDescriptor(cNode, "Subject")).value;
+            var id = (Object.getOwnPropertyDescriptor(cNode, "Course")).value;
+            var avg = (Object.getOwnPropertyDescriptor(cNode, "Avg")).value;
+            var instructor = (Object.getOwnPropertyDescriptor(cNode, "Professor")).value;
+            var title = (Object.getOwnPropertyDescriptor(cNode, "Title")).value;
+            var pass = (Object.getOwnPropertyDescriptor(cNode, "Pass")).value;
+            var fail = (Object.getOwnPropertyDescriptor(cNode, "Fail")).value;
+            var audit = (Object.getOwnPropertyDescriptor(cNode, "Audit")).value;
+            var uuid = (Object.getOwnPropertyDescriptor(cNode, "id")).value;
+            var year = parseInt((Object.getOwnPropertyDescriptor(cNode, "Year")).value);
+            if ((Object.getOwnPropertyDescriptor(cNode, "Section")).value === "overall") {
+                year = 1900;
+            }
+            let myCourse: Course1 = {
+                courses_dept: dept.toString(),
+                courses_id: id.toString(),        //The course number (will be treated as a string, e.g., 499b).
+                courses_avg: parseFloat(avg),      //The average of the course offering.
+                courses_instructor: instructor.toString(),//The instructor teaching the course offering.
+                courses_title: title.toString(),     //The name of the course.
+                courses_pass: parseInt(pass),      //The number of students that passed the course offering.
+                courses_fail: parseInt(fail),      //The number of students that failed the course offering.
+                courses_audit: parseInt(audit),      //The number of students that audited the course offering.
+                courses_uuid: uuid.toString(),      //The unique id of a course offering.
+                courses_year: year,
+            };
+
+            resolve(courses.push(myCourse));
+        }catch(error){
+            reject(error);
+        }
+    });
 }
