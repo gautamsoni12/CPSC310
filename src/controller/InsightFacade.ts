@@ -177,7 +177,6 @@ export default class InsightFacade implements IInsightFacade {
                 }
                 try {
 
-                    //whereNode(where);
                     optionNode(option);
                     let myResult: Result = {result: tempResult2};
                     //console.log(tempResult2);
