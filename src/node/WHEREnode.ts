@@ -103,7 +103,7 @@ export class WHEREnode {
         }
         if (this.isKey) {
             let sNode = new SCOMPNode(this.dataset);
-            //sNode.typeCheck(query['IS']);
+            sNode.typeCheck(query['IS']);
         }
         if (this.notKey) {
             let negNode = new NEGNode(this.dataset);

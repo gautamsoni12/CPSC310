@@ -14,6 +14,8 @@ import chaiHttp = require('chai-http');
 import Response = ChaiHttp.Response;
 import restify = require('restify');
 import * as fs from "fs";
+import * as assert from "assert";
+import {fail} from "assert";
 
 
 describe("EchoSpec", function () {
@@ -237,8 +239,7 @@ describe("EchoSpec", function () {
 
     it("parse basic query, should return no error", function () {
         let ifInstance: InsightFacade = new InsightFacade();
-        let promise: Promise<InsightResponse> = ifInstance.performQuery(query);
-        promise.then(function (result) {
+        ifInstance.performQuery(query).then(function (result) {
             sanityCheck(result);
             expect(result.code).to.equal(200);
             expect(result.body).to.deep.equal({message: 'Query is valid'});
@@ -309,7 +310,7 @@ describe("EchoSpec", function () {
             sanityCheck(result);
             expect(result.code).to.equal(200);
             expect(result.body).to.deep.equal({message: 'Query is valid'});
-        })
+        }).catch()
     });
 
     let invalidQuery = {
@@ -348,10 +349,11 @@ describe("EchoSpec", function () {
 
     it("parse invalid query, should return error with code 400", function () {
         let ifInstance: InsightFacade = new InsightFacade();
-        let promise: Promise<InsightResponse> = ifInstance.performQuery(complexQuery);
-        promise.then(function (result) {
-            sanityCheck(result);
-            expect(result.code).to.equal(400);
+        ifInstance.performQuery(complexQuery).then(function (result) {
+            expect.fail("should not go here");
+        }).catch(function (result) {
+            //sanityCheck(result);
+            expect(result.code).to.deep.equal(400);
             expect(result.body).to.have.property('error');
             expect(result.body).to.deep.equal({message: 'Query failed. query is invalid'});
         })

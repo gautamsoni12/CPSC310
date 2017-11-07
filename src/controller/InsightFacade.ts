@@ -56,7 +56,7 @@ export default class InsightFacade implements IInsightFacade {
                         let newCourse = new Course(id, content);
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
-                            code =addDatasetResult(id, zipContent);//.then(function (value: any) {
+                            code = addDatasetResult(id, zipContent);//.then(function (value: any) {
                                 //code = value;
 
                             //});
@@ -148,7 +148,21 @@ export default class InsightFacade implements IInsightFacade {
 
 
     performQuery(query: any): Promise<InsightResponse> {
+        return new Promise(function (resolve, reject) {
+            try {
+                //Dataset: {id: , dataArray: array}
+                for (let dataset of UBCInsight1) {
+                    let qNode = new QUERYNode(dataset.dataset);
+                    qNode.typeCheck(query);
 
+                }
+            } catch (err) {
+                reject({code: 400, body: {res: "Query is Invalid"}})
+            }
+            return null
+        })
+
+        /*
         return new Promise(function (resolve, reject) {
             try {
                 let qObject = JSON.parse(JSON.stringify(query));
@@ -164,6 +178,7 @@ export default class InsightFacade implements IInsightFacade {
             }
 
         });
+        */
     }
 }
 

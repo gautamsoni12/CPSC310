@@ -194,6 +194,10 @@ function getBuildings(table: any) {
     }
 }
 
+function getListOfRooms(): Array<any> {
+    return this.listOfRooms;
+}
+
 
 function getRooms(table: any) {
 
@@ -258,7 +262,7 @@ function getRooms(table: any) {
                         rooms_furniture: roomFurniture,
                         rooms_href: roomHerf
                     };
-                    rooms.push(myRoom);
+                    this.listOfRooms.push(myRoom);
                 }
             }
         }
