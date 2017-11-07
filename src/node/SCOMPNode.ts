@@ -95,7 +95,7 @@ export class SCOMPNode {
         let keys = Object.keys(query);
         if (query[keys[0]].startsWith('*')) {
             for (let rooms in this.dataset) {
-                let roomInfo =
+                //let roomInfo =
             }
         }
     }
