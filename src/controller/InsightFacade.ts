@@ -359,9 +359,6 @@ function is(queryArray: Array<any>) {
                     return (result[m_keymain].includes(inputString3));
                 }
             }
-            // else{
-            //     throw "Invalid IS";
-            // }
         });
     } catch (error) {
         throw new Error(error);
