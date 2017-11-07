@@ -92,12 +92,12 @@ export default class InsightFacade implements IInsightFacade {
                     }
                     else {
                         code = 400;
-                        reject({code: code, body: {res: ("error: " + "wrong id")}});
+                        reject({code: code, body: {error: ("error: " + "wrong id")}});
                     }
                 }
             } catch (error) {
                 code = 400;
-                reject({code: code, body: {res: ("error: " + error.message)}});
+                reject({code: code, body: {error: ("error: " + error.message)}});
             }
         });
     }
@@ -110,7 +110,7 @@ export default class InsightFacade implements IInsightFacade {
                     code = 404;
                     reject({
                         code: code,
-                        body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+                        body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                     });
                 }
                 else {
@@ -128,7 +128,7 @@ export default class InsightFacade implements IInsightFacade {
                             code = 404;
                             reject({
                                 code: code,
-                                body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+                                body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                             });
                             break;
                         }
@@ -138,7 +138,7 @@ export default class InsightFacade implements IInsightFacade {
                 code = 404;
                 reject({
                     code: code,
-                    body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+                    body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                 });
             }
         });
@@ -146,21 +146,7 @@ export default class InsightFacade implements IInsightFacade {
 
 
     performQuery(query: any): Promise<InsightResponse> {
-        /*
-        return new Promise(function (resolve, reject) {
-            try {
-                //Dataset: {id: , dataArray: array}
-                for (let dataset of UBCInsight1) {
-                    let qNode = new QUERYNode(dataset.dataset);
-                    qNode.typeCheck(query);
 
-                }
-            } catch (err) {
-                reject({code: 400, body: {res: "Query is Invalid"}})
-            }
-            return null
-        })
-        */
 
         return new Promise(function (resolve, reject) {
             try {
@@ -195,11 +181,10 @@ export default class InsightFacade implements IInsightFacade {
                 }
             } catch (error) {
 
-                reject({code: 400, body: {res: 'the query failed because of a missing dataset'}});
+                reject({code: 400, body: {error: 'the query failed because of a missing dataset'}});
             }
 
         });
-
     }
 }
 
@@ -207,7 +192,7 @@ let m_keymain: any;
 let m_keyvalue: any;
 
 function optionNode(node: any) {
-    //try {
+
     let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
 
     queryID = columnNode[0].split("_", 1);
@@ -255,9 +240,6 @@ function optionNode(node: any) {
         });
     }
 
-    // } catch (error) {
-    //     throw Error(error.message);
-    // }
 }
 
 
@@ -379,9 +361,9 @@ function is(queryArray: Array<any>) {
 function lessThan(queryArray: Array<any>) {
     try {
         tempResult1 = queryArray.filter(function (result) {
-            //if (Number.isInteger(result[m_keymain])) {
+
             return result[m_keymain] < m_keyvalue.value;
-            //}
+
         });
     } catch (error) {
         throw new Error(error);
@@ -393,10 +375,8 @@ function greaterThan(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            //if (Number.isInteger(result[m_keymain])) {
-            //console.log(result[m_keymain]);
+
             return result[m_keymain] > m_keyvalue.value;
-            //}
         });
     } catch (error) {
         throw new Error(error);
@@ -408,9 +388,9 @@ function equalTo(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            //if (Number.isInteger(result[m_keymain])) {
+
             return result[m_keymain] === m_keyvalue.value;
-            //}
+
         });
     } catch (error) {
         throw new Error(error);
