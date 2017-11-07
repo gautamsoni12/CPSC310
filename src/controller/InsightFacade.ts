@@ -7,11 +7,8 @@ import Log from "../Util";
 
 'use strict';
 
-
-import {EVALUATENODE} from "../node/EVALUATENODE";
-
 const fs = require("fs");
-import {QUERYNode} from "../node/QUERYNode";
+
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
 
@@ -28,14 +25,13 @@ export interface Dataset {
 }
 
 'use strict';
-import Throw = Chai.Throw;
 
 let UBCInsight1: Array<any> = [];
 let code: number = 400;
 let tempResults: Array<any> = [];
 let queryID: string;
 let tempResult1: Array<any> = [];
-var where :any;
+let where :any;
 let tempResult2: Array<any> = [];
 
 export default class InsightFacade implements IInsightFacade {
@@ -55,7 +51,7 @@ export default class InsightFacade implements IInsightFacade {
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
 
-                            code = addDatasetResult(id, zipContent);//.then(function (value: any) {
+                            code = addDatasetResult(id, zipContent);
 
                             if (code === 201) {
                                 resolve({
@@ -66,7 +62,6 @@ export default class InsightFacade implements IInsightFacade {
                             else if (code === 204) {
                                 resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
                             }
-
                         }).catch(function (error: any) {
                             reject(error);
                         });
@@ -79,6 +74,7 @@ export default class InsightFacade implements IInsightFacade {
                             //console.log(zipContent);
 
                             code = addDatasetResult(id, zipContent);
+
                             if (code === 201) {
                                 resolve({
                                     code: code,
@@ -167,7 +163,7 @@ export default class InsightFacade implements IInsightFacade {
 
                     optionNode(option);
                     let myResult: Result = {result: tempResult2};
-                    //console.log(myResult);
+                    console.log(myResult);
                     code = 200;
                     resolve({code: code, body: myResult});
 
@@ -230,17 +226,21 @@ function optionNode(node: any) {
     if ((Object.getOwnPropertyDescriptor(node, "ORDER"))) {
         let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
 
-        tempResult2.sort(function (a: any, b: any) {
-
-            if (typeof a === 'object' && typeof b === 'object') {
-                if (a[orderNode] < b[orderNode])
-                    return -1;
-                if (a[orderNode] > b[orderNode])
-                    return 1;
-                return 0;
+            if (orderNode.split("_", 1) != queryID[0]) {
+                throw "Query contains both courses and rooms keys.";
             }
-        });
-    }
+
+            tempResult2.sort(function (a: any, b: any) {
+
+                if (typeof a === 'object' && typeof b === 'object') {
+                    if (a[orderNode] < b[orderNode])
+                        return -1;
+                    if (a[orderNode] > b[orderNode])
+                        return 1;
+                    return 0;
+                }
+            });
+        }
 
 }
 
@@ -457,7 +457,7 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
         }
     } catch (error) {
         code = 400;
-        console.log(error);
+        return code;
     }
 
 }

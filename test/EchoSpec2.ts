@@ -353,5 +353,74 @@ describe("EchoSpec", function () {
         })
     });
 
+    let query5_room = {
+        "WHERE": {
+            "IS": {
+                'rooms_fullname': "Hugh Dempster Pavilion"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_lat", "rooms_lon", "rooms_name"
+            ]
+        }
+    };
+
+    it("Room query 5_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(query5_room).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({ body: {error: 'the query failed' + error}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+
+    let query6_room = {
+        "WHERE": {
+            "IS": {
+                "rooms_type": "Small Group"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_lat", "rooms_lon", "rooms_name", "rooms_type"
+            ]
+        }
+    };
+
+    it("Room query 6_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(query6_room).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({ body: {error: 'the query failed' + error}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
 
 });
