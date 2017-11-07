@@ -442,4 +442,157 @@ describe("EchoSpec", function () {
         })
     });
 
+    let complexQuery = {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 90
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "adhe"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    };
+    it("Room query 7_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(complexQuery).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+    it("Room query 8_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(complexQuery).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+    it("Room query 9_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(complexQuery).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+    it("Room query 10_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(complexQuery).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });it("Room query 7_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(complexQuery).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+    it("Room query 11_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(complexQuery).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+
+
+
+
 });
