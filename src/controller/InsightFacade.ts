@@ -28,6 +28,7 @@ export interface Dataset {
 }
 
 'use strict';
+import Throw = Chai.Throw;
 
 let UBCInsight1: Array<any> = [];
 let code: number = 400;
@@ -75,6 +76,8 @@ export default class InsightFacade implements IInsightFacade {
                         let ubcRooms = new Rooms(id, content);
                         ubcRooms.loadFile(content).then(function (value: Array<any>) {
                             zipContent = value;
+                            //console.log(zipContent);
+
                             code = addDatasetResult(id, zipContent);
                             if (code === 201) {
                                 resolve({
@@ -165,7 +168,7 @@ export default class InsightFacade implements IInsightFacade {
 
                     optionNode(option);
                     let myResult: Result = {result: tempResult2};
-                    console.log(myResult);
+                    //console.log(myResult);
                     code = 200;
                     resolve({code: code, body: myResult});
 
@@ -192,11 +195,10 @@ let m_keymain: any;
 let m_keyvalue: any;
 
 function optionNode(node: any) {
-    //try {
     let columnNode = (Object.getOwnPropertyDescriptor(node, "COLUMNS")).value;
 
     queryID = columnNode[0].split("_", 1);
-    if (UBCInsight1.length === 0) {
+    if (columnNode.length < 1) {
         throw "empty dataset";
     }
 
@@ -240,9 +242,6 @@ function optionNode(node: any) {
         });
     }
 
-    // } catch (error) {
-    //     throw Error(error.message);
-    // }
 }
 
 
@@ -252,13 +251,19 @@ function whereNode(node: any) {
         let logicComarator = Object.getOwnPropertyNames(node);
         let andNode = Object.getOwnPropertyDescriptor(node, "AND");
         let orNode = Object.getOwnPropertyDescriptor(node, "OR");
+        let notNode = Object.getOwnPropertyDescriptor(node, "NOT");
+
         for (let logic of logicComarator) {
             if (andNode) {
                 andFunction(andNode.value);
             }
             else if (orNode) {
                 andFunction(orNode.value);
+            }else if (notNode) {
+                andFunction(orNode.value);
+
             }
+
             let m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
             var m_key1 = Object.getOwnPropertyNames(m_key);
             m_keymain = m_key1[0];
@@ -268,24 +273,27 @@ function whereNode(node: any) {
             }
             if (logic === 'LT') {
                 lessThan(tempResults);
+                break;
 
             }
             else if (logic === 'GT') {
                 greaterThan(tempResults);
+                break;
             }
             else if (logic === 'EQ') {
                 equalTo(tempResults);
+                break;
 
             }
             else if (logic === 'IS') {
                 is(tempResults);
+                break;
 
             }
-            else if (logic === 'NOT') {
-                not(tempResults);
-
-
+            else {
+                throw "Invalid query";
             }
+
         }
     }
     catch (error) {
@@ -300,10 +308,14 @@ function andFunction(node: Array<any>) {
 
             let andNode = Object.getOwnPropertyDescriptor(innerNode, "AND");
             let orNode = Object.getOwnPropertyDescriptor(innerNode, "OR");
+            let notNode = Object.getOwnPropertyDescriptor(node, "NOT");
             if (andNode) {
                 andFunction(andNode.value);
             }
             else if (orNode) {
+                andFunction(orNode.value);
+            }
+            else if (notNode) {
                 andFunction(orNode.value);
             }
             else {
@@ -326,6 +338,9 @@ function not(queryArray: Array<any>) {
             if (typeof result[m_keymain] === "string" && result[m_keymain] != "") {
                 var inputString = m_keyvalue.value.split("*", 1);
                 return !(result[m_keymain].includes(inputString));
+            }
+            else{
+                throw "Invalid NOT";
             }
         });
     } catch (error) {
@@ -353,6 +368,9 @@ function is(queryArray: Array<any>) {
                     return (result[m_keymain].includes(inputString3));
                 }
             }
+            // else{
+            //     throw "Invalid IS";
+            // }
         });
     } catch (error) {
         throw new Error(error);
@@ -367,6 +385,9 @@ function lessThan(queryArray: Array<any>) {
             if (Number.isFinite(result[m_keymain])) {
             return result[m_keymain] < m_keyvalue.value;
             }
+            else{
+                throw "Invalid LT";
+            }
         });
     } catch (error) {
         throw new Error(error);
@@ -378,9 +399,12 @@ function greaterThan(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (Number.isFinite(result[m_keymain])) {
+            if (Number.isFinite(m_keyvalue.value)) {
             //console.log(result[m_keymain]);
             return result[m_keymain] > m_keyvalue.value;
+            }
+            else{
+                throw "Invalid GT";
             }
         });
     } catch (error) {
@@ -395,6 +419,9 @@ function equalTo(queryArray: Array<any>) {
         tempResult1 = queryArray.filter(function (result) {
             if (Number.isFinite(result[m_keymain])) {
             return result[m_keymain] === m_keyvalue.value;
+            }
+            else{
+                throw "Invalid EQ";
             }
         });
     } catch (error) {
