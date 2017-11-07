@@ -87,17 +87,17 @@ export default class InsightFacade implements IInsightFacade {
                             }
 
                         }).catch(function (error: any) {
-                            reject(error);
+                            reject({code: code, body: {error: ("error: " + error.message)}});
                         });
                     }
                     else {
                         code = 400;
-                        reject({code: code, body: {res: ("error: " + "wrong id")}});
+                        reject({code: code, body: {error: ("error: " + "wrong id")}});
                     }
                 }
             } catch (error) {
                 code = 400;
-                reject({code: code, body: {res: ("error: " + error.message)}});
+                reject({code: code, body: {error: ("error: " + error.message)}});
             }
         });
     }
@@ -110,7 +110,7 @@ export default class InsightFacade implements IInsightFacade {
                     code = 404;
                     reject({
                         code: code,
-                        body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+                        body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                     });
                 }
                 else {
@@ -128,7 +128,7 @@ export default class InsightFacade implements IInsightFacade {
                             code = 404;
                             reject({
                                 code: code,
-                                body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+                                body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                             });
                             break;
                         }
@@ -138,7 +138,7 @@ export default class InsightFacade implements IInsightFacade {
                 code = 404;
                 reject({
                     code: code,
-                    body: {res: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
+                    body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                 });
             }
         });
@@ -181,7 +181,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
             } catch (error) {
 
-                reject({code: 400, body: {res: 'the query failed because of a missing dataset'}});
+                reject({code: 400, body: {error: 'the query failed because of a missing dataset'}});
             }
 
         });
