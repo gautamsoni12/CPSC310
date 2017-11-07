@@ -382,7 +382,7 @@ function is(queryArray: Array<any>) {
 function lessThan(queryArray: Array<any>) {
     try {
         tempResult1 = queryArray.filter(function (result) {
-            if (Number.isFinite(result[m_keymain])) {
+            if (typeof result[m_keymain]=== "number") {
             return result[m_keymain] < m_keyvalue.value;
             }
             else{
@@ -399,7 +399,7 @@ function greaterThan(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (Number.isFinite(m_keyvalue.value)) {
+            if (typeof result[m_keymain]=== "number") {
             //console.log(result[m_keymain]);
             return result[m_keymain] > m_keyvalue.value;
             }
@@ -417,7 +417,7 @@ function equalTo(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (Number.isFinite(result[m_keymain])) {
+            if (typeof result[m_keymain]=== "number") {
             return result[m_keymain] === m_keyvalue.value;
             }
             else{
