@@ -81,6 +81,7 @@ export default class InsightFacade implements IInsightFacade {
                                 throw "Empty Zip"
                             }
                             zipContent = value;
+                            //console.log(zipContent);
                             code = addDatasetResult(id, zipContent);
                             if (code === 201) {
                                 resolve({
