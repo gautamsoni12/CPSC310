@@ -27,7 +27,7 @@ export interface Dataset {
 'use strict';
 
 let UBCInsight1: Array<any> = [];
-let code: number = 400;
+let code: number = 0;
 let tempResults: Array<any> = [];
 let queryID: string;
 let tempResult1: Array<any> = [];
@@ -55,12 +55,12 @@ export default class InsightFacade implements IInsightFacade {
 
                             if (code === 201) {
                                 resolve({
-                                    code: code,
+                                    code: 201,
                                     body: {res: 'the operation was successful and the id already existed'}
                                 });
                             }
                             else if (code === 204) {
-                                resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
+                                resolve({code: 204, body: {res: 'the operation was successful and the id was new'}});
                             }
                         }).catch(function (error: any) {
                             reject(error);
@@ -77,26 +77,26 @@ export default class InsightFacade implements IInsightFacade {
 
                             if (code === 201) {
                                 resolve({
-                                    code: code,
+                                    code: 201,
                                     body: {res: 'the operation was successful and the id already existed'}
                                 });
                             }
                             else if (code === 204) {
-                                resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
+                                resolve({code: 204, body: {res: 'the operation was successful and the id was new'}});
                             }
 
                         }).catch(function (error: any) {
-                            reject({code: code, body: {error: ("error: " + error.message)}});
+                            reject({code: 400, body: {error: ("error: " + error.message)}});
                         });
                     }
                     else {
                         code = 400;
-                        reject({code: code, body: {error: ("error: " + "wrong id")}});
+                        reject({code: 400, body: {error: ("error: " + "wrong id")}});
                     }
                 }
             } catch (error) {
                 code = 400;
-                reject({code: code, body: {error: ("error: " + error.message)}});
+                reject({code: 400, body: {error: ("error: " + error.message)}});
             }
         });
     }
@@ -107,7 +107,7 @@ export default class InsightFacade implements IInsightFacade {
                 if (UBCInsight1.length < 1) {
                     code = 404;
                     reject({
-                        code: code,
+                        code: 204,
                         body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                     });
                 }
@@ -115,17 +115,17 @@ export default class InsightFacade implements IInsightFacade {
                     for (let insight of UBCInsight1) {
                         if (insight.id === id) {
                             code = 204;
-                            var i = UBCInsight1.indexOf(insight);
+                            let i = UBCInsight1.indexOf(insight);
                             if (i != -1) {
                                 UBCInsight1.splice(i, 1);
                             }
-                            resolve({code: code, body: {res: 'the operation was successful.'}});
+                            resolve({code: 204, body: {res: 'the operation was successful.'}});
 
                         }
                         else {
                             code = 404;
                             reject({
-                                code: code,
+                                code: 404,
                                 body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                             });
 
@@ -135,7 +135,7 @@ export default class InsightFacade implements IInsightFacade {
             } catch (error) {
                 code = 404;
                 reject({
-                    code: code,
+                    code: 404,
                     body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                 });
             }
@@ -162,25 +162,25 @@ export default class InsightFacade implements IInsightFacade {
 
 
                     optionNode(option);
-                    if (tempResult1.length< 1){
+                    if (tempResult2.length< 1){
                         throw "Invalid Query";
                     }
 
                     let myResult: Result = {result: tempResult2};
 
                      console.log(myResult);
-                    // console.log(JSON.stringify(myResult));
+
                     code = 200;
-                    resolve({code: code, body: myResult});
+                    resolve({code: 200, body: {result: tempResult2}});
 
                 } catch (error) {
                     if (error.message === "missing dataset") {
                         code = 424;
-                        reject({code: code, body: {error: 'the query failed' + error}});
+                        reject({code: 424, body: {error: 'the query failed' + error}});
                     }
                     else if (error) {
                         code = 400;
-                        reject({code: code, body: {error: 'the query failed'}});
+                        reject({code: 400, body: {error: 'the query failed'}});
                     }
                 }
             } catch (error) {
