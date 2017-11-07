@@ -167,9 +167,10 @@ export default class InsightFacade implements IInsightFacade {
                     }
 
                     let myResult: Result = {result: tempResult2};
-                    console.log(tempResult2);
+
+                    //console.log(JSON.stringify(myResult));
                     code = 200;
-                    resolve({code: code, body: tempResult2});
+                    resolve({code: code, body: JSON.stringify(myResult)});
 
                 } catch (error) {
                     if (error.message === "missing dataset") {
