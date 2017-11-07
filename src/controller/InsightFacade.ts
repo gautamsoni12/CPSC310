@@ -124,7 +124,7 @@ export default class InsightFacade implements IInsightFacade {
                                 UBCInsight1.splice(i, 1);
                             }
                             resolve({code: code, body: {res: 'the operation was successful.'}});
-                            break;
+
                         }
                         else {
                             code = 404;
@@ -132,7 +132,7 @@ export default class InsightFacade implements IInsightFacade {
                                 code: code,
                                 body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                             });
-                            break;
+
                         }
                     }
                 }
