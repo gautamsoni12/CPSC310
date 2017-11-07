@@ -317,7 +317,7 @@ describe("EchoSpec", function () {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(400);
-                expect(result.body).to.deep.equal({error: 'the query failed' + error});
+                expect(result.body).to.deep.equal({error: 'the query failed'});
 
             });
             expect(value).to.deep.equal({
@@ -351,7 +351,7 @@ describe("EchoSpec", function () {
             insightFacade.performQuery(query4_room).then(function (result) {
                 sanityCheck(result);
 
-                expect(result.code).to.equal(400);
+                expect(result.code).to.equal(200);
                 expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
 
             });
@@ -377,7 +377,7 @@ describe("EchoSpec", function () {
         },
         "OPTIONS": {
             "COLUMNS": [
-                "rooms_lat", "rooms_lon", "rooms_name"
+                "rooms_shortname", "rooms_name", 'rooms_seats'
             ]
         }
     };

@@ -168,9 +168,10 @@ export default class InsightFacade implements IInsightFacade {
 
                     let myResult: Result = {result: tempResult2};
 
-                    //console.log(JSON.stringify(myResult));
+                    // console.log(myResult);
+                    // console.log(JSON.stringify(myResult));
                     code = 200;
-                    resolve({code: code, body: JSON.stringify(myResult)});
+                    resolve({code: code, body: myResult});
 
                 } catch (error) {
                     if (error.message === "missing dataset") {
@@ -272,7 +273,6 @@ function whereNode(node: any) {
                     andFunction(orNode.value);
 
                 }
-
 
                 let m_key = Object.getOwnPropertyDescriptor(node, logic).value; // m_key is Object with course_avg = 95;
                 var m_key1 = Object.getOwnPropertyNames(m_key);
