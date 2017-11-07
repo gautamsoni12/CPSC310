@@ -106,7 +106,6 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
-        let code: number;
         return new Promise(function (resolve, reject) {
             try {
                 if (UBCInsight1.length < 1) {
@@ -168,7 +167,7 @@ export default class InsightFacade implements IInsightFacade {
 
                     optionNode(option);
                     let myResult: Result = {result: tempResult2};
-                    //console.log(myResult);
+                    console.log(myResult);
                     code = 200;
                     resolve({code: code, body: myResult});
 
@@ -216,7 +215,6 @@ function optionNode(node: any) {
 
     for (let data of tempResult1) {
         let resultObject: any = {};
-
         for (let queryColumn of columnNode) {
 
             resultObject[queryColumn] = Object.getOwnPropertyDescriptor(data, queryColumn).value;
@@ -230,7 +228,6 @@ function optionNode(node: any) {
         let orderNode: any = (Object.getOwnPropertyDescriptor(node, "ORDER")).value;
 
         tempResult2.sort(function (a: any, b: any) {
-
 
             if (typeof a === 'object' && typeof b === 'object') {
                 if (a[orderNode] < b[orderNode])
@@ -353,7 +350,7 @@ function is(queryArray: Array<any>) {
     try {
 
         tempResult1 = queryArray.filter(function (result) {
-            if (typeof result[m_keymain] === "string" && result[m_keymain] != "") {
+            if (typeof result[m_keymain] === "string"){//} && result[m_keymain] != "") {
                 let inputString = m_keyvalue.value.split("*", 3);
                 let inputString1 = inputString[0];
                 let inputString2 = inputString[1];
