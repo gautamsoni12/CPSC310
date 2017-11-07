@@ -144,55 +144,57 @@ describe("EchoSpec", function () {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(200);
-                expect(result.body).to.deep.equal({ result: [{ courses_dept: 'math', courses_avg: 97.09 },
-                    { courses_dept: 'math', courses_avg: 97.09 },
-                    { courses_dept: 'epse', courses_avg: 97.09 },
-                    { courses_dept: 'epse', courses_avg: 97.09 },
-                    { courses_dept: 'math', courses_avg: 97.25 },
-                    { courses_dept: 'math', courses_avg: 97.25 },
-                    { courses_dept: 'epse', courses_avg: 97.29 },
-                    { courses_dept: 'epse', courses_avg: 97.29 },
-                    { courses_dept: 'nurs', courses_avg: 97.33 },
-                    { courses_dept: 'nurs', courses_avg: 97.33 },
-                    { courses_dept: 'epse', courses_avg: 97.41 },
-                    { courses_dept: 'epse', courses_avg: 97.41 },
-                    { courses_dept: 'cnps', courses_avg: 97.47 },
-                    { courses_dept: 'cnps', courses_avg: 97.47 },
-                    { courses_dept: 'math', courses_avg: 97.48 },
-                    { courses_dept: 'math', courses_avg: 97.48 },
-                    { courses_dept: 'educ', courses_avg: 97.5 },
-                    { courses_dept: 'nurs', courses_avg: 97.53 },
-                    { courses_dept: 'nurs', courses_avg: 97.53 },
-                    { courses_dept: 'epse', courses_avg: 97.67 },
-                    { courses_dept: 'epse', courses_avg: 97.69 },
-                    { courses_dept: 'epse', courses_avg: 97.78 },
-                    { courses_dept: 'crwr', courses_avg: 98 },
-                    { courses_dept: 'crwr', courses_avg: 98 },
-                    { courses_dept: 'epse', courses_avg: 98.08 },
-                    { courses_dept: 'nurs', courses_avg: 98.21 },
-                    { courses_dept: 'nurs', courses_avg: 98.21 },
-                    { courses_dept: 'epse', courses_avg: 98.36 },
-                    { courses_dept: 'epse', courses_avg: 98.45 },
-                    { courses_dept: 'epse', courses_avg: 98.45 },
-                    { courses_dept: 'nurs', courses_avg: 98.5 },
-                    { courses_dept: 'nurs', courses_avg: 98.5 },
-                    { courses_dept: 'nurs', courses_avg: 98.58 },
-                    { courses_dept: 'nurs', courses_avg: 98.58 },
-                    { courses_dept: 'epse', courses_avg: 98.58 },
-                    { courses_dept: 'epse', courses_avg: 98.58 },
-                    { courses_dept: 'epse', courses_avg: 98.7 },
-                    { courses_dept: 'nurs', courses_avg: 98.71 },
-                    { courses_dept: 'nurs', courses_avg: 98.71 },
-                    { courses_dept: 'eece', courses_avg: 98.75 },
-                    { courses_dept: 'eece', courses_avg: 98.75 },
-                    { courses_dept: 'epse', courses_avg: 98.76 },
-                    { courses_dept: 'epse', courses_avg: 98.76 },
-                    { courses_dept: 'epse', courses_avg: 98.8 },
-                    { courses_dept: 'spph', courses_avg: 98.98 },
-                    { courses_dept: 'spph', courses_avg: 98.98 },
-                    { courses_dept: 'cnps', courses_avg: 99.19 },
-                    { courses_dept: 'math', courses_avg: 99.78 },
-                    { courses_dept: 'math', courses_avg: 99.78 } ] } );
+                expect(result.body).to.deep.equal({
+                    result: [{courses_dept: 'math', courses_avg: 97.09},
+                        {courses_dept: 'math', courses_avg: 97.09},
+                        {courses_dept: 'epse', courses_avg: 97.09},
+                        {courses_dept: 'epse', courses_avg: 97.09},
+                        {courses_dept: 'math', courses_avg: 97.25},
+                        {courses_dept: 'math', courses_avg: 97.25},
+                        {courses_dept: 'epse', courses_avg: 97.29},
+                        {courses_dept: 'epse', courses_avg: 97.29},
+                        {courses_dept: 'nurs', courses_avg: 97.33},
+                        {courses_dept: 'nurs', courses_avg: 97.33},
+                        {courses_dept: 'epse', courses_avg: 97.41},
+                        {courses_dept: 'epse', courses_avg: 97.41},
+                        {courses_dept: 'cnps', courses_avg: 97.47},
+                        {courses_dept: 'cnps', courses_avg: 97.47},
+                        {courses_dept: 'math', courses_avg: 97.48},
+                        {courses_dept: 'math', courses_avg: 97.48},
+                        {courses_dept: 'educ', courses_avg: 97.5},
+                        {courses_dept: 'nurs', courses_avg: 97.53},
+                        {courses_dept: 'nurs', courses_avg: 97.53},
+                        {courses_dept: 'epse', courses_avg: 97.67},
+                        {courses_dept: 'epse', courses_avg: 97.69},
+                        {courses_dept: 'epse', courses_avg: 97.78},
+                        {courses_dept: 'crwr', courses_avg: 98},
+                        {courses_dept: 'crwr', courses_avg: 98},
+                        {courses_dept: 'epse', courses_avg: 98.08},
+                        {courses_dept: 'nurs', courses_avg: 98.21},
+                        {courses_dept: 'nurs', courses_avg: 98.21},
+                        {courses_dept: 'epse', courses_avg: 98.36},
+                        {courses_dept: 'epse', courses_avg: 98.45},
+                        {courses_dept: 'epse', courses_avg: 98.45},
+                        {courses_dept: 'nurs', courses_avg: 98.5},
+                        {courses_dept: 'nurs', courses_avg: 98.5},
+                        {courses_dept: 'nurs', courses_avg: 98.58},
+                        {courses_dept: 'nurs', courses_avg: 98.58},
+                        {courses_dept: 'epse', courses_avg: 98.58},
+                        {courses_dept: 'epse', courses_avg: 98.58},
+                        {courses_dept: 'epse', courses_avg: 98.7},
+                        {courses_dept: 'nurs', courses_avg: 98.71},
+                        {courses_dept: 'nurs', courses_avg: 98.71},
+                        {courses_dept: 'eece', courses_avg: 98.75},
+                        {courses_dept: 'eece', courses_avg: 98.75},
+                        {courses_dept: 'epse', courses_avg: 98.76},
+                        {courses_dept: 'epse', courses_avg: 98.76},
+                        {courses_dept: 'epse', courses_avg: 98.8},
+                        {courses_dept: 'spph', courses_avg: 98.98},
+                        {courses_dept: 'spph', courses_avg: 98.98},
+                        {courses_dept: 'cnps', courses_avg: 99.19},
+                        {courses_dept: 'math', courses_avg: 99.78},
+                        {courses_dept: 'math', courses_avg: 99.78}]
+                });
 
             });
             expect(value).to.deep.equal({
@@ -269,8 +271,18 @@ describe("EchoSpec", function () {
             insightFacade.performQuery(query3).then(function (result) {
                 sanityCheck(result);
 
-                expect(result.code).to.equal(400);
-                expect(result.body).to.deep.equal({ body: {error: 'the query failed' + error}});
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({ result:
+                    [ { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                        rooms_name: 'DMP_101' },
+                        { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                            rooms_name: 'DMP_110' },
+                        { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                            rooms_name: 'DMP_201' },
+                        { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                            rooms_name: 'DMP_301' },
+                        { rooms_address: '6245 Agronomy Road V6T 1Z4',
+                            rooms_name: 'DMP_310' } ] });
 
             });
             expect(value).to.deep.equal({
@@ -340,7 +352,7 @@ describe("EchoSpec", function () {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(400);
-                expect(result.body).to.deep.equal({ body: {error: 'the query failed' + error}});
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
 
             });
             expect(value).to.deep.equal({
@@ -355,9 +367,13 @@ describe("EchoSpec", function () {
 
     let query5_room = {
         "WHERE": {
-            "IS": {
-                'rooms_fullname': "Hugh Dempster Pavilion"
-            }
+            "AND": [{
+                "GT": {
+                    'rooms_seats': 100
+                }
+            }, {
+                "IS": {"rooms_shortname": "BUCH"}
+            }]
         },
         "OPTIONS": {
             "COLUMNS": [
@@ -374,9 +390,12 @@ describe("EchoSpec", function () {
             insightFacade.performQuery(query5_room).then(function (result) {
                 sanityCheck(result);
 
-                expect(result.code).to.equal(400);
-                expect(result.body).to.deep.equal({ body: {error: 'the query failed' + error}});
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
 
+            }).catch(function (error) {
+
+                console.log(error.message);
             });
             expect(value).to.deep.equal({
                 "code": 204,
@@ -410,7 +429,7 @@ describe("EchoSpec", function () {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(400);
-                expect(result.body).to.deep.equal({ body: {error: 'the query failed' + error}});
+                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
 
             });
             expect(value).to.deep.equal({
