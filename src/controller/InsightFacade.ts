@@ -50,8 +50,10 @@ export default class InsightFacade implements IInsightFacade {
                         let newCourse = new Course(id, content);
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
+                            //console.log(zipContent);
 
                             code = addDatasetResult(id, zipContent);
+
 
                             if (code === 201) {
                                 resolve({
