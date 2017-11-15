@@ -1,6 +1,7 @@
 
 let evaluatedResult: Array<any> = [];
 let evaluatedResult2: Array<any> = [];
+let evaluatedResult3: Array<any> = [];
 
 export class Transformation {
     node: any;
@@ -12,54 +13,108 @@ export class Transformation {
     }
 
     evaluate() {
+        let x = this;
         evaluatedResult = this.queryArray;
 
         let groupNode = (Object.getOwnPropertyDescriptor(this.node, "GROUP")).value;
 
-        this.evaluateApply();
-
         groupNode.forEach(function (group: any) {
 
-            evaluatedResult2 = evaluatedResult.map(function(obj:any){
+            evaluatedResult.map(function(obj:any){
+                let group_each = obj[group];
+                evaluatedResult2 = evaluatedResult.filter(function(e_res){
 
+                    return e_res[group] === group_each;
+
+                });
+
+                x.evaluateApply(evaluatedResult2);
 
             });
 
         });
+        this.queryArray = evaluatedResult3;
 
     }
 
-    evaluateApply(){
+    evaluateApply(gp_array: Array<any>){
         let applyNode = (Object.getOwnPropertyDescriptor(this.node, "APPLY")).value;
+
 
         applyNode.forEach(function (apply: any) {
 
+
             let applyToken = Object.keys(apply);
-            //console.log(applyToken);
+            console.log(applyToken);
+
             applyToken.forEach(function (token) {
                 let tokenNode = (Object.getOwnPropertyDescriptor(apply, token)).value;
 
                 if (Object.getOwnPropertyDescriptor(tokenNode, "MAX")) {
                     let maxNode = (Object.getOwnPropertyDescriptor(tokenNode, "MAX")).value;
 
-                    var newObj = Math.max.apply(Math, evaluatedResult.map(function (o: any) {
+                    let maxItem = Math.max.apply(Math, gp_array.map(function (o: any) {
                         return o[maxNode];
                     }));
 
+
+                    let maxObject = gp_array.filter(function(m_object){
+                        return m_object[maxNode] === maxItem;
+                    });
+
+                    maxObject[0][token] = maxItem;
+                    evaluatedResult3.push(maxObject[0]);
+
+
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "MIN")) {
-                    let minNode = (Object.getOwnPropertyDescriptor(tokenNode, "MAX")).value;
+                    let minNode = (Object.getOwnPropertyDescriptor(tokenNode, "MIN")).value;
+
+                    let minItem = Math.min.apply(Math, gp_array.map(function (o: any) {
+                        return o[minNode];
+                    }));
+
+                    let minObject = gp_array.filter(function(m_object){
+                        return m_object[minNode] === minItem;
+                    });
+                    minObject[0][token] = minItem;
+                    evaluatedResult3.push(minObject[0]);
+
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "AVG")) {
-                    let avgNode = (Object.getOwnPropertyDescriptor(tokenNode, "MAX")).value;
+                    let avgNode = (Object.getOwnPropertyDescriptor(tokenNode, "AVG")).value;
+                    var sum = 0;
+                    gp_array.forEach(function (gp_object) {
+                        sum += gp_object[avgNode];
+                    });
+
+                    var average = sum/gp_array.length;
+                    gp_array[0][avgNode] = average;
+                    evaluatedResult3.push(gp_array[0]);
+
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "SUM")) {
-                    let sumNode = (Object.getOwnPropertyDescriptor(tokenNode, "MAX")).value;
+                    let sumNode = (Object.getOwnPropertyDescriptor(tokenNode, "SUM")).value;
+
+                    var sum = 0;
+                    gp_array.forEach(function (gp_object) {
+                        sum += gp_object[sumNode];
+                    });
+
+                    //var average = sum/gp_array.length;
+                    gp_array[0][sumNode] = sum;
+                    evaluatedResult3.push(gp_array[0]);
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "COUNT")) {
-                    let countNode = (Object.getOwnPropertyDescriptor(tokenNode, "MAX")).value;
-                }
+                    let countNode = (Object.getOwnPropertyDescriptor(tokenNode, "COUNT")).value;
 
+                    let count = 0;
+                    for (var i = 0; i < gp_array.length; i++){
+                        count++;
+                    }
+                    gp_array[0][countNode] = count;
+                    evaluatedResult3.push(gp_array[0]);
+                }
             });
         });
     }
