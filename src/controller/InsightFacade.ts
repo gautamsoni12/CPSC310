@@ -26,6 +26,10 @@ export interface Dataset {
 
 'use strict';
 
+import {Body} from "../Query/BODY";
+import {Options} from "../Query/OPTIONS";
+import {Transformation} from "../Query/TRANSFORMATIONS";
+
 let UBCInsight1: Array<any> = [];
 let code: number = 0;
 let tempResults: Array<any> = [];
@@ -33,6 +37,7 @@ let queryID: string;
 let tempResult1: Array<any> = [];
 let where: any;
 let tempResult2: Array<any> = [];
+
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -146,11 +151,45 @@ export default class InsightFacade implements IInsightFacade {
 
 
     performQuery(query: any): Promise<InsightResponse> {
-
         return new Promise(function (resolve, reject) {
             try {
                 let qObject = JSON.parse(JSON.stringify(query));
-                var option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
+                where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
+
+                for (let insight of UBCInsight1) {
+                    if (Object.getOwnPropertyDescriptor(insight, "id").value === "rooms") {
+                        var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+                        if (dataToQuery === null) {
+                            throw new Error("missing dataset");
+                        }
+                        break;
+                    }
+                }
+                let queryBody = new Body(where, dataToQuery );
+                queryBody.evaluate();
+                let Array1: Array<any> = queryBody.queryArray;
+
+                //console.log(Array1);
+               // console.log(Array1);
+
+                let transformation =  (Object.getOwnPropertyDescriptor(qObject, "TRANSFORMATIONS")).value;
+                let queryTransformation = new Transformation(transformation,Array1);
+                queryTransformation.evaluate();
+                let Array3: Array<any> = queryTransformation.queryArray;
+
+
+                let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
+                let queryOption = new Options(option, Array3);
+                queryOption.evaluate();
+
+                let Array2:Array<any> = queryOption.queryArray;
+
+                console.log(Array2);
+                console.log(Array2);
+
+
+
+
 
                 if (typeof option === 'undefined') {
                     throw "Invalid query. Body missing.";
@@ -193,6 +232,7 @@ export default class InsightFacade implements IInsightFacade {
         });
     }
 }
+
 
 let m_keymain: any;
 let m_keyvalue: any;
