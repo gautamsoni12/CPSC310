@@ -45,7 +45,7 @@ export class Transformation {
 
 
             let applyToken = Object.keys(apply);
-            console.log(applyToken);
+
 
             applyToken.forEach(function (token) {
                 let tokenNode = (Object.getOwnPropertyDescriptor(apply, token)).value;
@@ -89,7 +89,7 @@ export class Transformation {
                     });
 
                     var average = sum/gp_array.length;
-                    gp_array[0][avgNode] = average;
+                    gp_array[0][token] = average;
                     evaluatedResult3.push(gp_array[0]);
 
                 }
@@ -101,8 +101,7 @@ export class Transformation {
                         sum += gp_object[sumNode];
                     });
 
-                    //var average = sum/gp_array.length;
-                    gp_array[0][sumNode] = sum;
+                    gp_array[0][token] = sum;
                     evaluatedResult3.push(gp_array[0]);
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "COUNT")) {
@@ -112,7 +111,7 @@ export class Transformation {
                     for (var i = 0; i < gp_array.length; i++){
                         count++;
                     }
-                    gp_array[0][countNode] = count;
+                    gp_array[0][token] = count;
                     evaluatedResult3.push(gp_array[0]);
                 }
             });

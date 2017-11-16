@@ -28,7 +28,7 @@ export class Options {
         let sortNode = (Object.getOwnPropertyDescriptor(this.node, "ORDER")).value;
         this.evaluateOrder(sortNode);
         this.queryArray = evaluatedResult;
-       
+
     }
 
     evaluateOrder(node:any){

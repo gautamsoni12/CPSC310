@@ -56,8 +56,8 @@ export class Rooms {
                             }
                         });
 
-                        Promise.all(promiseArray).then(function (response: any) {
 
+                        Promise.all(promiseArray).then(function (response: any) {
 
                             fulfill(comleteRoom(buildings, rooms));
 
@@ -92,6 +92,7 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
                         room.rooms_name = building.building_shortname + "_" + room.rooms_number;
                         room.rooms_address = building.building_address;
 
+
                         latlonPrimiseArray.push(new Promise(function (fulfill, reject) {
                                 getlatLon(building.building_address, room).then(function (value: any) {
                                     fulfill(value);
@@ -102,12 +103,13 @@ function comleteRoom(buildingsArray: Array<any>, roomsArray: Array<any>): Promis
                             })
                         );
 
-
-
                     }
                 }
             }
             Promise.all(latlonPrimiseArray).then(function (response: any) {
+                rooms = rooms.filter(function(r_obj){
+                    return r_obj.rooms_fullname != "";
+                });
                 resolve(rooms);
             }).catch(function (error: string) {
                 reject(error);

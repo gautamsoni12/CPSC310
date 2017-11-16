@@ -160,7 +160,7 @@ export default class InsightFacade implements IInsightFacade {
                     }
 
                     for (let insight of UBCInsight1) {
-                        if (Object.getOwnPropertyDescriptor(insight, "id").value === "rooms") {
+                        if (Object.getOwnPropertyDescriptor(insight, "id").value === "courses") {
                             var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
                             if (dataToQuery === null) {
                                 throw new Error("missing dataset");
@@ -172,18 +172,25 @@ export default class InsightFacade implements IInsightFacade {
                     queryBody.evaluate();
                     let Array1: Array<any> = queryBody.queryArray;
 
-
-                    let transformation = (Object.getOwnPropertyDescriptor(qObject, "TRANSFORMATIONS")).value;
-                    let queryTransformation = new Transformation(transformation, Array1);
-                    queryTransformation.evaluate();
-                    let Array3: Array<any> = queryTransformation.queryArray;
+                    if ((Object.getOwnPropertyDescriptor(qObject, "TRANSFORMATIONS"))) {
+                        let transformation = (Object.getOwnPropertyDescriptor(qObject, "TRANSFORMATIONS")).value;
+                        let queryTransformation = new Transformation(transformation, Array1);
+                        queryTransformation.evaluate();
+                        var Array3: Array<any> = queryTransformation.queryArray;
+                    }
 
 
                     let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
                     if (typeof option === 'undefined') {
                         throw "Invalid query. Options missing.";
                     }
-                    let queryOption = new Options(option, Array3);
+                    if (Array3) {
+                        var queryOption = new Options(option, Array3);
+                    }
+                    else if (!Array3) {
+                        var queryOption = new Options(option, Array1);
+                    }
+
                     queryOption.evaluate();
 
                     let Array2: Array<any> = queryOption.queryArray;
@@ -192,7 +199,7 @@ export default class InsightFacade implements IInsightFacade {
                     //     return !this[a.timestamp] && (this[a.timestamp] = true);
                     // }, Object.create(null));
 
-                     // console.log(Array2);
+                      console.log(Array2);
                      // console.log(Array2);
 
                     code = 200;

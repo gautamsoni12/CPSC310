@@ -1,14 +1,7 @@
-import Log from "../Util";
-import * as JSzip from "jszip";
+
 
 'use strict';
-import {error} from "util";
-//import {Room} from "./Room";
 
-let fs = require("fs");
-let request = require('request');
-let JSZip = require('jszip');
-const parse5 = require('parse5');
 
 export interface Course1 {
     courses_dept?: string,      //The department that offered the course.
