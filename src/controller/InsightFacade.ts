@@ -153,7 +153,13 @@ export default class InsightFacade implements IInsightFacade {
                     }
                     getID(where);
 
+                    if (UBCInsight1.length < 1) {
+                        throw new Error("missing dataset");
+                    }
+
                     let dataToQuery = getData(qID);
+                    fs.readFileSync(qID, dataToQuery);
+
                     let queryBody = new Body(where, dataToQuery);
                     queryBody.evaluate();
                     let Array1: Array<any> = queryBody.queryArray;
@@ -164,8 +170,6 @@ export default class InsightFacade implements IInsightFacade {
                         queryTransformation.evaluate();
                         var Array3: Array<any> = queryTransformation.queryArray;
                     }
-
-
                     let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
                     if (typeof option === 'undefined') {
                         throw "Invalid query. Options missing.";
@@ -180,10 +184,7 @@ export default class InsightFacade implements IInsightFacade {
                     queryOption.evaluate();
 
                     let Array2: Array<any> = queryOption.queryArray;
-
-                      console.log(Array2);
-
-
+                    console.log(Array2);
                     code = 200;
                     resolve({code: code, body: {result: Array2}});
 
@@ -198,7 +199,7 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
             } catch (error) {
-
+                code = 400;
                 reject({code: code, body: {error: 'the query failed because of a missing dataset'}});
             }
 
@@ -297,14 +298,18 @@ function getID(whereNode: any){
 
 function getData(id: any): Array<any>{
 
-    for (let insight of UBCInsight1) {
-        if (Object.getOwnPropertyDescriptor(insight, "id").value === id) {
-            var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
-            if (dataToQuery === null) {
-                throw new Error("missing dataset");
+    try {
+        for (let insight of UBCInsight1) {
+            if (Object.getOwnPropertyDescriptor(insight, "id").value === id) {
+                let dataToQ: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+                if (dataToQ.length < 1) {
+                    throw new Error("missing dataset");
+                }
+                return dataToQ;
             }
-
         }
+    }catch(error){
+        throw new Error("missing dataset");
     }
-    return dataToQuery;
+
 }
