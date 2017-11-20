@@ -12,11 +12,6 @@ const fs = require("fs");
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
 
-export interface Result {
-
-    result: Array<any>;        // An array of dataset
-}
-
 export interface Dataset {
 
     id: string;                 // DataSet ID.
@@ -32,11 +27,8 @@ import {Transformation} from "../Query/TRANSFORMATIONS";
 
 let UBCInsight1: Array<any> = [];
 let code: number = 0;
-// let tempResults: Array<any> = [];
-// let queryID: string;
-// let tempResult1: Array<any> = [];
 let where: any;
-let tempResult2: Array<any> = [];
+let qID: string;
 
 
 export default class InsightFacade implements IInsightFacade {
@@ -125,6 +117,7 @@ export default class InsightFacade implements IInsightFacade {
                             if (i != -1) {
                                 UBCInsight1.splice(i, 1);
                             }
+                            fs.unlink(i);
                             resolve({code: code, body: {res: 'the operation was successful.'}});
 
                         }
@@ -158,16 +151,9 @@ export default class InsightFacade implements IInsightFacade {
                     if (typeof where === 'undefined') {
                         throw "Invalid query. Body missing.";
                     }
+                    getID(where);
 
-                    for (let insight of UBCInsight1) {
-                        if (Object.getOwnPropertyDescriptor(insight, "id").value === "courses") {
-                            var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
-                            if (dataToQuery === null) {
-                                throw new Error("missing dataset");
-                            }
-                            break;
-                        }
-                    }
+                    let dataToQuery = getData(qID);
                     let queryBody = new Body(where, dataToQuery);
                     queryBody.evaluate();
                     let Array1: Array<any> = queryBody.queryArray;
@@ -195,12 +181,8 @@ export default class InsightFacade implements IInsightFacade {
 
                     let Array2: Array<any> = queryOption.queryArray;
 
-                    // var result = Array2.filter(function (a) {
-                    //     return !this[a.timestamp] && (this[a.timestamp] = true);
-                    // }, Object.create(null));
-
                       console.log(Array2);
-                     // console.log(Array2);
+
 
                     code = 200;
                     resolve({code: code, body: {result: Array2}});
@@ -254,6 +236,75 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
         code = 400;
         return code;
     }
+}
+
+function getID(whereNode: any){
+
+    if (Object.getOwnPropertyDescriptor(whereNode, "AND")){
+        let AND = (Object.getOwnPropertyDescriptor(whereNode, "AND")).value;
+        for (let a of AND){
+            getID(a);
+            break;
+        }
+    }
+
+    else if (Object.getOwnPropertyDescriptor(whereNode, "OR")){
+        let OR = (Object.getOwnPropertyDescriptor(whereNode, "OR")).value;
+        for (let a of OR){
+            getID(a);
+            break;
+        }
+    }
+    else if (Object.getOwnPropertyDescriptor(whereNode, "NOT")){
+        let NOT = (Object.getOwnPropertyDescriptor(whereNode, "NOT")).value;
+        for (let a of NOT){
+            getID(a);
+            break;
+        }
+    }
+    else if (Object.getOwnPropertyDescriptor(whereNode, "IS")){
+        let IS = (Object.getOwnPropertyDescriptor(whereNode, "IS")).value;
+        let qID_temp = Object.getOwnPropertyNames(IS);
+        let qID_temp2 = qID_temp[0].split("_",1);
+        qID = qID_temp2[0];
+
+
+    }
+    else if (Object.getOwnPropertyDescriptor(whereNode, "GT")){
+        let GT = (Object.getOwnPropertyDescriptor(whereNode, "GT")).value;
+        let qID_temp = Object.getOwnPropertyNames(GT);
+        let qID_temp2 = qID_temp[0].split("_",1);
+         qID = qID_temp2[0];
+
+    }
+    else if (Object.getOwnPropertyDescriptor(whereNode, "LT")){
+        let LT = (Object.getOwnPropertyDescriptor(whereNode, "LT")).value;
+        let qID_temp = Object.getOwnPropertyNames(LT);
+        let qID_temp2 = qID_temp[0].split("_",1);
+         qID = qID_temp2[0];
+    }
+    else if (Object.getOwnPropertyDescriptor(whereNode, "EQ")){
+        let EQ = (Object.getOwnPropertyDescriptor(whereNode, "EQ")).value;
+        let qID_temp = Object.getOwnPropertyNames(EQ);
+        let qID_temp2 = qID_temp[0].split("_",1);
+         qID = qID_temp2[0];
+
+    }
+
 
 }
 
+
+function getData(id: any): Array<any>{
+
+    for (let insight of UBCInsight1) {
+        if (Object.getOwnPropertyDescriptor(insight, "id").value === id) {
+            var dataToQuery: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+            if (dataToQuery === null) {
+                throw new Error("missing dataset");
+            }
+
+        }
+    }
+    return dataToQuery;
+}

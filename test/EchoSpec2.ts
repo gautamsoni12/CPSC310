@@ -409,14 +409,33 @@ describe("EchoSpec", function () {
 
     let query6_room = {
         "WHERE": {
-            "IS": {
-                "rooms_type": "Small Group"
-            }
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
         },
         "OPTIONS": {
             "COLUMNS": [
-                "rooms_lat", "rooms_lon", "rooms_name", "rooms_type"
-            ]
+                "rooms_shortname",
+                "maxSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["maxSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "maxSeats": {
+                    "MAX": "rooms_seats"
+                }
+            }]
         }
     };
 
@@ -428,8 +447,69 @@ describe("EchoSpec", function () {
             insightFacade.performQuery(query6_room).then(function (result) {
                 sanityCheck(result);
 
-                expect(result.code).to.equal(400);
-                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({body: {result : [ { rooms_shortname: 'OSBO', maxSeats: 442 },
+                    { rooms_shortname: 'HEBB', maxSeats: 375 },
+                    { rooms_shortname: 'LSC', maxSeats: 350 },
+                    { rooms_shortname: 'LSC', maxSeats: 350 } ]}});
+
+            });
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            expect.fail();
+        })
+    });
+
+
+    let query7_room = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "avgSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["avgSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "avgSeats": {
+                    "AVG": "rooms_seats"
+                }
+            }]
+        }
+    };
+
+    it("Room query 7_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+
+            insightFacade.performQuery(query7_room).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({body: {result : [ { rooms_shortname: 'OSBO', avgSeats: 442 },
+                    { rooms_shortname: 'HEBB', avgSeats: 375 },
+                    { rooms_shortname: 'LSC', avgSeats: 350 },
+                    { rooms_shortname: 'LSC', avgSeats: 350 } ]}});
 
             });
             expect(value).to.deep.equal({
@@ -466,7 +546,7 @@ describe("EchoSpec", function () {
             "ORDER": "courses_avg"
         }
     };
-    it("Room query 7_room", function () {
+    it("Room query 12_room", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
@@ -591,8 +671,5 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
-
-
-
 
 });

@@ -23,13 +23,10 @@ export class Transformation {
             evaluatedResult.map(function(obj:any){
                 let group_each = obj[group];
                 evaluatedResult2 = evaluatedResult.filter(function(e_res){
-
                     return e_res[group] === group_each;
 
                 });
-
                 x.evaluateApply(evaluatedResult2);
-
             });
 
         });

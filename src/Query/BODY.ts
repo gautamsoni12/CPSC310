@@ -1,12 +1,12 @@
 
-
 let evaluatedResult: Array<any> =[];
 let m_comp:any;
 
 export class Body{
     node:any;
-    queryArray: Array<any>;
+    queryArray: Array<any> = [];
     queryID: string = "";
+
 
     constructor(bodyNode:any, queryArray:Array<any>){
         this.node = bodyNode;
@@ -14,7 +14,6 @@ export class Body{
     }
 
     evaluate(){
-
 
         if (Object.getOwnPropertyDescriptor(this.node, "AND")){
             let andArray: Array<any> = (Object.getOwnPropertyDescriptor(this.node, "AND")).value;
@@ -39,27 +38,29 @@ export class Body{
         else if (Object.getOwnPropertyDescriptor(this.node, "LT")){
             m_comp = ( Object.getOwnPropertyDescriptor(this.node, "LT")).value;
             this.evaluateLT(m_comp, this.queryArray);
+            this.queryArray = evaluatedResult;
         }
         else if (Object.getOwnPropertyDescriptor(this.node, "GT")){
             m_comp = ( Object.getOwnPropertyDescriptor(this.node, "GT")).value;
             this.evaluateGT(m_comp, this.queryArray);
+            this.queryArray = evaluatedResult;
         }
         else if (Object.getOwnPropertyDescriptor(this.node, "EQ")){
             m_comp = ( Object.getOwnPropertyDescriptor(this.node, "EQ")).value;
             this.evaluateEQ(m_comp, this.queryArray);
+            this.queryArray = evaluatedResult;
         }
         else if (Object.getOwnPropertyDescriptor(this.node, "IS")){
             m_comp = ( Object.getOwnPropertyDescriptor(this.node, "IS")).value;
             this.evaluateIS(m_comp, this.queryArray);
+            this.queryArray = evaluatedResult;
         }
         else if (Object.getOwnPropertyDescriptor(this.node, "NOT")){
             m_comp = ( Object.getOwnPropertyDescriptor(this.node, "NOT")).value;
+            this.queryArray = evaluatedResult;
         }
     }
 
-    // getDataset(){
-    //
-    // }
 
     evaluateLT(node:any , arrayToQuery: Array<any>){
         try {
@@ -69,7 +70,6 @@ export class Body{
             if(this.queryID === ""){
                 let queryID_array = m_comp_key.split("_", 1);
                 this.queryID = queryID_array[0];
-
             }
 
             let m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
@@ -98,8 +98,8 @@ export class Body{
             if(this.queryID === ""){
                 let queryID_array = m_comp_key.split("_", 1);
                 this.queryID = queryID_array[0];
-
             }
+
             let m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
             var tempArray = arrayToQuery.filter(function (result) {
                 if (typeof result[m_comp_key] === "number") {
@@ -124,8 +124,8 @@ export class Body{
             if(this.queryID === ""){
                 let queryID_array = m_comp_key.split("_", 1);
                 this.queryID = queryID_array[0];
-
             }
+
             let m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
             var tempArray = arrayToQuery.filter(function (result) {
                 if (typeof result[m_comp_key] === "number") {
@@ -145,14 +145,14 @@ export class Body{
     evaluateIS(node:any ,arrayToQuery: Array<any>) {
         try {
 
-            let m_comp_key_array = (Object.getOwnPropertyNames(node));
-            let m_comp_key = m_comp_key_array[0];
+            var m_comp_key_array = (Object.getOwnPropertyNames(node));
+            var m_comp_key = m_comp_key_array[0];
             if(this.queryID === ""){
                 let queryID_array = m_comp_key.split("_", 1);
                 this.queryID = queryID_array[0];
-
             }
-            let m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
+
+            var m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
             var tempArray = arrayToQuery.filter(function (result) {
                 if (typeof result[m_comp_key] === "string") {
                     if ((m_comp_value).includes("**")){
@@ -178,6 +178,4 @@ export class Body{
         }
         evaluatedResult = tempArray;
     }
-
-
 }

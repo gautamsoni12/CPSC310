@@ -25,8 +25,11 @@ export class Options {
             }
             evaluatedResult.push(resultObject);
         }
-        let sortNode = (Object.getOwnPropertyDescriptor(this.node, "ORDER")).value;
-        this.evaluateOrder(sortNode);
+        if (Object.getOwnPropertyDescriptor(this.node, "ORDER")){
+            let sortNode = (Object.getOwnPropertyDescriptor(this.node, "ORDER")).value;
+            this.evaluateOrder(sortNode);
+        }
+
         this.queryArray = evaluatedResult;
 
     }
@@ -60,8 +63,19 @@ export class Options {
                         }
                     });
                 }
-
             });
+        }
+        else{
+            evaluatedResult.sort(function (a: any, b: any) {
+                if (typeof a === 'object' && typeof b === 'object') {
+                    if (a[node] < b[node])
+                        return -1;
+                    if (a[node] > b[node])
+                        return 1;
+                    return 0;
+                }
+            });
+
         }
 
 
