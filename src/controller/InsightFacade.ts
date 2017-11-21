@@ -12,6 +12,12 @@ const fs = require("fs");
 import {Course} from "./Course";
 import {Rooms} from "./Rooms";
 
+export interface Result {
+
+    result: Array<any>;        // An array of dataset
+}
+
+
 export interface Dataset {
 
     id: string;                 // DataSet ID.
@@ -48,9 +54,7 @@ export default class InsightFacade implements IInsightFacade {
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
 
-
                             code = addDatasetResult(id, zipContent);
-
 
                             if (code === 201) {
                                 resolve({
@@ -184,9 +188,12 @@ export default class InsightFacade implements IInsightFacade {
                     queryOption.evaluate();
 
                     let Array2: Array<any> = queryOption.queryArray;
-                    console.log(Array2);
+
+                    let myResult: Result = {result: Array2};
+                    console.log(myResult);
                     code = 200;
-                    resolve({code: code, body: {result: Array2}});
+
+                    resolve({code: code, body: myResult});
 
                 } catch (error) {
                     if (error.message === "missing dataset") {
