@@ -672,4 +672,113 @@ describe("EchoSpec", function () {
         })
     });
 
+
+    let complexQuery5 ={
+        "WHERE":{
+            "AND": [{
+                "IS": {
+                    "courses_instructor":"*a"
+                }
+            },
+                {
+                    "IS": {
+                        "courses_dept":"cpsc"
+                    }
+                }
+            ]},
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_instructor"
+            ],
+            "ORDER":"courses_instructor"
+        }
+    };
+    it("Room query 20_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery5).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                console.log(result.body);
+                expect(result.body).to.deep.equal({ result:
+                    [ { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'berg, celina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'berg, celina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'conati, cristina' },
+                        { courses_dept: 'cpsc', courses_instructor: 'cooper, kendra' },
+                        { courses_dept: 'cpsc', courses_instructor: 'cooper, kendra' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'darwish, mohammad mostafa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'dawson, jessica' },
+                        { courses_dept: 'cpsc', courses_instructor: 'dawson, jessica' },
+                        { courses_dept: 'cpsc', courses_instructor: 'dawson, jessica' },
+                        { courses_dept: 'cpsc', courses_instructor: 'dawson, jessica' },
+                        { courses_dept: 'cpsc', courses_instructor: 'dunfield, joshua' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'mcgrenere, joanna' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'mcgrenere, joanna' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'mcgrenere, joanna' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'mcgrenere, joanna' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'mcgrenere, joanna' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'mcgrenere, joanna' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'mcgrenere, joanna' },
+                        { courses_dept: 'cpsc',
+                            courses_instructor: 'mcgrenere, joanna' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'munzner, tamara' },
+                        { courses_dept: 'cpsc', courses_instructor: 'sheffer, alla' },
+                        { courses_dept: 'cpsc', courses_instructor: 'sheffer, alla' },
+                        { courses_dept: 'cpsc', courses_instructor: 'sheffer, alla' },
+                        { courses_dept: 'cpsc', courses_instructor: 'sheffer, alla' } ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
 });
