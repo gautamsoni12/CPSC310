@@ -984,4 +984,169 @@ describe("EchoSpec", function () {
         })
     });
 
+    let complexQuery10 ={
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "cpsc"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 88
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "c*"
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    };
+    it("Room query 22_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery10).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                expect(result.body).to.deep.equal({ result:
+                    [{courses_instructor: 'carenini, giuseppe', courses_dept: 'cpsc', courses_avg: 88.82},
+                        {courses_instructor: 'carenini, giuseppe', courses_dept: 'cpsc', courses_avg: 89.1},
+                        {courses_instructor: 'carenini, giuseppe', courses_dept: 'cpsc', courses_avg: 89.47},
+                        {courses_instructor: 'carenini, giuseppe', courses_dept: 'cpsc', courses_avg: 94.5}
+                    ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
+    let complexQuery11 ={
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "*ps*"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 98
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*c*"
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    };
+    it("Room query 23_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery11).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                //console.log(result.body);
+                expect(result.body).to.deep.equal({ result:
+                    [
+                        {courses_instructor: 'cole, kenneth', courses_dept: 'epse', courses_avg: 98.08},
+                        {courses_instructor: 'cannon, joanna', courses_dept: 'epse', courses_avg: 98.45},
+                        {courses_instructor: 'cole, kenneth', courses_dept: 'epse', courses_avg: 98.7},
+                        {courses_instructor: 'cox, daniel', courses_dept: 'cnps', courses_avg: 99.19}
+                    ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
+    let complexQuery12 ={
+        "WHERE": {
+
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_name"
+            ],
+            "ORDER": "rooms_name"
+        }
+    };
+    it("Room query 24_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery12).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                //console.log(result.body);
+                expect(result.body).to.deep.equal({ result:
+                    [
+                        {courses_instructor: 'wohlstadter, eric', courses_dept: 'cpsc', courses_avg: 91.79}
+                    ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
 });
