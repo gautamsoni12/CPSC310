@@ -7,6 +7,7 @@ import restify = require('restify');
 
 import Log from "../Util";
 import {InsightResponse} from "../controller/IInsightFacade";
+import InsightFacade from "../controller/InsightFacade";
 
 /**
  * This configures the REST endpoints for the server.
@@ -61,6 +62,8 @@ export default class Server {
                     return next();
                 });
 
+                that.rest.use(restify.bodyParser({mapParams: true, mapFiles: true}));
+
                 that.rest.get('/', function (req: restify.Request, res: restify.Response, next: restify.Next) {
                     res.send(200);
                     return next();
@@ -88,6 +91,74 @@ export default class Server {
             }
         });
     }
+
+    putDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
+        // Get the dataset data coming from the request
+        let dataStr = new Buffer(req.params.body).toString('base64');
+
+        let iFacade = new InsightFacade();
+        let datasetName = req.params.id;
+
+        iFacade.addDataset(datasetName, dataStr).then( function (value) {
+            res.status(value.code);
+            res.json(value);
+
+        }).catch(function(error){
+            console.log(error.message);
+        });
+
+        // Call your good old AddDataset() -- Remember it is an ASYNC function!!
+        // ...
+        // ...
+        // ...
+
+        // Write to response object the code you're returning
+        //res.status(value.code);
+
+        // Write to response object the json data you're returning
+        //res.json(value);
+
+        // Return this. Because.
+        return next();
+    }
+
+    deleteDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
+        // Get the dataset data coming from the request
+        let dataStr = new Buffer(req.params.body).toString('base64');
+
+        let iFacade = new InsightFacade();
+        let datasetName = req.params.id;
+
+        iFacade.removeDataset(dataStr).then( function (value) {
+            res.status(value.code);
+            res.json(value);
+
+        }).catch(function(error){
+            console.log(error.message);
+        });
+
+        return next();
+    }
+
+    postDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
+        // Get the dataset data coming from the request
+        let dataStr = new Buffer(req.params.body).toString('base64');
+
+        let iFacade = new InsightFacade();
+        let datasetName = req.params.id;
+
+        iFacade.removeDataset(dataStr).then( function (value) {
+            res.status(value.code);
+            res.json(value);
+
+        }).catch(function(error){
+            console.log(error.message);
+        });
+
+        return next();
+    }
+
+
 
     // The next two methods handle the echo service.
     // These are almost certainly not the best place to put these, but are here for your reference.

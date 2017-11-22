@@ -136,7 +136,7 @@ describe("EchoSpec", function () {
             }).catch(function (error) {
                 Log.test('Error:' + error);
                 expect.fail();
-            })
+            });
 
             expect(value).to.deep.equal({
                 "code": 204,
@@ -157,8 +157,8 @@ describe("EchoSpec", function () {
             //console.log(value);
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
-                "code": 201,
-                "body": {res: 'the operation was successful and the id already existed'}
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
             });
 
         }).catch(function (error) {

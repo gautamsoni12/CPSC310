@@ -313,19 +313,24 @@ describe("EchoSpec", function () {
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
-            insightFacade.performQuery(invalid_query).then(function (result) {
-                sanityCheck(result);
-
-                expect(result.code).to.equal(400);
-                expect(result.body).to.deep.equal({error: 'the query failed'});
-
-            });
             expect(value).to.deep.equal({
                 "code": 204,
                 "body": {res: 'the operation was successful and the id was new'}
             });
+
+            return insightFacade.performQuery(invalid_query).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(400);
+                expect(result.body).to.deep.equal({error: "Invalid Query - 400 !"});
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
         }).catch(function (error) {
             Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
             expect.fail();
         })
     });
@@ -348,61 +353,195 @@ describe("EchoSpec", function () {
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
-            insightFacade.performQuery(query4_room).then(function (result) {
+            return insightFacade.performQuery(query4_room).then(function (result) {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(200);
-                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
+                //console.log(result.body);
+                expect(result.body).to.deep.equal({ result:
+                    [ { rooms_address: '2194 Health Sciences Mall',
+                        rooms_name: 'WOOD_B75',
+                        rooms_seats: 30 },
+                        { rooms_address: '2194 Health Sciences Mall',
+                            rooms_name: 'WOOD_G41',
+                            rooms_seats: 30 },
+                        { rooms_address: '1866 Main Mall',
+                            rooms_name: 'BUCH_D205',
+                            rooms_seats: 30 },
+                        { rooms_address: '1866 Main Mall',
+                            rooms_name: 'BUCH_D207',
+                            rooms_seats: 30 },
+                        { rooms_address: '1866 Main Mall',
+                            rooms_name: 'BUCH_D213',
+                            rooms_seats: 30 },
+                        { rooms_address: '1866 Main Mall',
+                            rooms_name: 'BUCH_D221',
+                            rooms_seats: 30 },
+                        { rooms_address: '1866 Main Mall',
+                            rooms_name: 'BUCH_D229',
+                            rooms_seats: 30 },
+                        { rooms_address: '1866 Main Mall',
+                            rooms_name: 'BUCH_D304',
+                            rooms_seats: 30 },
+                        { rooms_address: '1866 Main Mall',
+                            rooms_name: 'BUCH_D307',
+                            rooms_seats: 30 },
+                        { rooms_address: '1866 Main Mall',
+                            rooms_name: 'BUCH_D313',
+                            rooms_seats: 30 },
+                        { rooms_address: '6331 Crescent Road V6T 1Z1',
+                            rooms_name: 'UCLL_101',
+                            rooms_seats: 30 },
+                        { rooms_address: '6331 Crescent Road V6T 1Z1',
+                            rooms_name: 'UCLL_109',
+                            rooms_seats: 30 },
+                        { rooms_address: '1984 Mathematics Road',
+                            rooms_name: 'MATH_105',
+                            rooms_seats: 30 },
+                        { rooms_address: '1984 Mathematics Road',
+                            rooms_name: 'MATH_202',
+                            rooms_seats: 30 },
+                        { rooms_address: '1984 Mathematics Road',
+                            rooms_name: 'MATH_204',
+                            rooms_seats: 30 },
+                        { rooms_address: '6224 Agricultural Road',
+                            rooms_name: 'HENN_301',
+                            rooms_seats: 30 },
+                        { rooms_address: '6224 Agricultural Road',
+                            rooms_name: 'HENN_302',
+                            rooms_seats: 30 },
+                        { rooms_address: '1961 East Mall V6T 1Z1',
+                            rooms_name: 'IBLC_461',
+                            rooms_seats: 30 },
+                        { rooms_address: '2206 East Mall',
+                            rooms_name: 'SPPH_B108',
+                            rooms_seats: 30 } ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
 
-            });
-            expect(value).to.deep.equal({
-                "code": 204,
-                "body": {res: 'the operation was successful and the id was new'}
-            });
         }).catch(function (error) {
             Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
             expect.fail();
         })
     });
 
     let query5_room = {
-        "WHERE": {
-            "AND": [{
-                "GT": {
-                    'rooms_seats': 100
+        "WHERE":{
+            "OR":[
+                {
+                    "AND":[
+                        {
+                            "GT":{
+                                "courses_avg":90
+                            }
+                        },
+                        {
+                            "IS":{
+                                "courses_dept":"adhe"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ":{
+                        "courses_avg":95
+                    }
                 }
-            }, {
-                "IS": {"rooms_shortname": "BUCH"}
-            }]
-        },
-        "OPTIONS": {
-            "COLUMNS": [
-                "rooms_shortname", "rooms_name", 'rooms_seats'
             ]
+        },
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
         }
     };
 
     it("Room query 5_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
-        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+        let content: string = fs.readFileSync("/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip", "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
-            insightFacade.performQuery(query5_room).then(function (result) {
-                sanityCheck(result);
-
-                expect(result.code).to.equal(200);
-                expect(result.body).to.deep.equal({body: {error: 'the query failed' + error}});
-
-            }).catch(function (error) {
-
-                console.log(error.message);
-            });
             expect(value).to.deep.equal({
                 "code": 204,
                 "body": {res: 'the operation was successful and the id was new'}
             });
+
+            return insightFacade.performQuery(query5_room).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                //console.log(result.body);
+                expect(result.body).to.deep.equal({ result:
+                    [ { courses_dept: 'adhe', courses_id: '329', courses_avg: 90.02 },
+                        { courses_dept: 'adhe', courses_id: '412', courses_avg: 90.16 },
+                        { courses_dept: 'adhe', courses_id: '330', courses_avg: 90.17 },
+                        { courses_dept: 'adhe', courses_id: '412', courses_avg: 90.18 },
+                        { courses_dept: 'adhe', courses_id: '330', courses_avg: 90.5 },
+                        { courses_dept: 'adhe', courses_id: '330', courses_avg: 90.72 },
+                        { courses_dept: 'adhe', courses_id: '329', courses_avg: 90.82 },
+                        { courses_dept: 'adhe', courses_id: '330', courses_avg: 90.85 },
+                        { courses_dept: 'adhe', courses_id: '330', courses_avg: 91.29 },
+                        { courses_dept: 'adhe', courses_id: '330', courses_avg: 91.33 },
+                        { courses_dept: 'adhe', courses_id: '330', courses_avg: 91.33 },
+                        { courses_dept: 'adhe', courses_id: '330', courses_avg: 91.48 },
+                        { courses_dept: 'adhe', courses_id: '329', courses_avg: 92.54 },
+                        { courses_dept: 'adhe', courses_id: '329', courses_avg: 93.33 },
+                        { courses_dept: 'cpsc', courses_id: '589', courses_avg: 95 },
+                        { courses_dept: 'sowk', courses_id: '570', courses_avg: 95 },
+                        { courses_dept: 'mtrl', courses_id: '599', courses_avg: 95 },
+                        { courses_dept: 'mtrl', courses_id: '564', courses_avg: 95 },
+                        { courses_dept: 'mtrl', courses_id: '564', courses_avg: 95 },
+                        { courses_dept: 'nurs', courses_id: '424', courses_avg: 95 },
+                        { courses_dept: 'nurs', courses_id: '424', courses_avg: 95 },
+                        { courses_dept: 'kin', courses_id: '500', courses_avg: 95 },
+                        { courses_dept: 'kin', courses_id: '500', courses_avg: 95 },
+                        { courses_dept: 'crwr', courses_id: '599', courses_avg: 95 },
+                        { courses_dept: 'crwr', courses_id: '599', courses_avg: 95 },
+                        { courses_dept: 'crwr', courses_id: '599', courses_avg: 95 },
+                        { courses_dept: 'crwr', courses_id: '599', courses_avg: 95 },
+                        { courses_dept: 'crwr', courses_id: '599', courses_avg: 95 },
+                        { courses_dept: 'cpsc', courses_id: '589', courses_avg: 95 },
+                        { courses_dept: 'crwr', courses_id: '599', courses_avg: 95 },
+                        { courses_dept: 'musc', courses_id: '553', courses_avg: 95 },
+                        { courses_dept: 'musc', courses_id: '553', courses_avg: 95 },
+                        { courses_dept: 'musc', courses_id: '553', courses_avg: 95 },
+                        { courses_dept: 'musc', courses_id: '553', courses_avg: 95 },
+                        { courses_dept: 'musc', courses_id: '553', courses_avg: 95 },
+                        { courses_dept: 'musc', courses_id: '553', courses_avg: 95 },
+                        { courses_dept: 'cnps', courses_id: '535', courses_avg: 95 },
+                        { courses_dept: 'cnps', courses_id: '535', courses_avg: 95 },
+                        { courses_dept: 'edcp', courses_id: '473', courses_avg: 95 },
+                        { courses_dept: 'edcp', courses_id: '473', courses_avg: 95 },
+                        { courses_dept: 'obst', courses_id: '549', courses_avg: 95 },
+                        { courses_dept: 'epse', courses_id: '606', courses_avg: 95 },
+                        { courses_dept: 'math', courses_id: '532', courses_avg: 95 },
+                        { courses_dept: 'math', courses_id: '532', courses_avg: 95 },
+                        { courses_dept: 'bmeg', courses_id: '597', courses_avg: 95 },
+                        { courses_dept: 'bmeg', courses_id: '597', courses_avg: 95 },
+                        { courses_dept: 'epse', courses_id: '682', courses_avg: 95 },
+                        { courses_dept: 'epse', courses_id: '682', courses_avg: 95 },
+                        { courses_dept: 'econ', courses_id: '516', courses_avg: 95 },
+                        { courses_dept: 'econ', courses_id: '516', courses_avg: 95 },
+                        { courses_dept: 'psyc', courses_id: '501', courses_avg: 95 },
+                        { courses_dept: 'psyc', courses_id: '501', courses_avg: 95 },
+                        { courses_dept: 'kin', courses_id: '499', courses_avg: 95 },
+                        { courses_dept: 'rhsc', courses_id: '501', courses_avg: 95 },
+                        { courses_dept: 'crwr', courses_id: '599', courses_avg: 95 },
+                        { courses_dept: 'adhe', courses_id: '329', courses_avg: 96.11 } ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
         }).catch(function (error) {
             Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
             expect.fail();
         })
     });
@@ -769,6 +908,70 @@ describe("EchoSpec", function () {
                         { courses_dept: 'cpsc', courses_instructor: 'sheffer, alla' },
                         { courses_dept: 'cpsc', courses_instructor: 'sheffer, alla' },
                         { courses_dept: 'cpsc', courses_instructor: 'sheffer, alla' } ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
+    let complexQuery9 ={
+        "WHERE":{
+            "AND": [{
+                "OR":[{
+                    "IS": {"courses_instructor": "*elisa*"}
+                }, {
+                    "IS": {"courses_instructor": "*reid*"}
+
+                }]
+            },
+                {
+                    "IS": {
+                        "courses_dept":"cpsc"
+                    }
+                }
+            ]},
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_instructor"
+            ],
+            "ORDER":"courses_instructor"
+        }
+    };
+    it("Room query 21_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery9).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                //console.log(result.body);
+                expect(result.body).to.deep.equal({ result:
+                    [ { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'baniassad, elisa' },
+                        { courses_dept: 'cpsc', courses_instructor: 'holmes, reid' },
+                        { courses_dept: 'cpsc', courses_instructor: 'holmes, reid' },
+                        { courses_dept: 'cpsc', courses_instructor: 'holmes, reid' } ] });
             }).catch(err => {
                 console.log("performQUery error: ", err);
                 expect.fail();

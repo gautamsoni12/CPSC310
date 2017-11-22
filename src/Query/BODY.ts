@@ -1,5 +1,6 @@
 
 let evaluatedResult: Array<any> =[];
+let evaluatedResult_OR: Array<any> =[];
 let m_comp:any;
 
 export class Body{
@@ -30,10 +31,12 @@ export class Body{
                 let myOrNode = new Body(array_node, this.queryArray);
                 myOrNode.evaluate();
                 myOrNode.queryArray.forEach(function (result) {
-                    evaluatedResult.push(result);
+                    evaluatedResult_OR.push(result);
                 });
             }
-            this.queryArray = evaluatedResult;
+            this.queryArray = evaluatedResult_OR;
+            evaluatedResult = evaluatedResult_OR;
+
         }
         else if (Object.getOwnPropertyDescriptor(this.node, "LT")){
             m_comp = ( Object.getOwnPropertyDescriptor(this.node, "LT")).value;
@@ -158,19 +161,38 @@ export class Body{
                     if ((m_comp_value).includes("**")){
                         throw "Invalid string";
                     }
+
                     let inputString = m_comp_value.split("*", 3);
                     let inputString1 = inputString[0];
                     let inputString2 = inputString[1];
                     let inputString3 = inputString[2];
-                    if (inputString1 != "") {
-                        return (result[m_comp_key].includes(inputString1));
-                    }
-                    else if (inputString2 != "") {
+
+                    if (m_comp_value.startsWith("*") && m_comp_value.endsWith("*")){
                         return (result[m_comp_key].includes(inputString2));
                     }
-                    else if (inputString3 != "") {
-                        return (result[m_comp_key].includes(inputString3));
+                    else if (m_comp_value.startsWith("*")){
+                        return (result[m_comp_key].endsWith(inputString2));
                     }
+                    else if (m_comp_value.endsWith("*")){
+                        return (result[m_comp_key].startsWith(inputString1));
+                    }
+                    else{
+                        return (result[m_comp_key]=== (inputString1));
+                    }
+                    // let inputString = m_comp_value.split("*", 3);
+                    // let inputString1 = inputString[0];
+                    // let inputString2 = inputString[1];
+                    // let inputString3 = inputString[2];
+                    //
+                    // if (inputString1 != "") {
+                    //     return (result[m_comp_key].includes(inputString1));
+                    // }
+                    // else if (inputString2 != "") {
+                    //     return (result[m_comp_key].includes(inputString2));
+                    // }
+                    // else if (inputString3 != "") {
+                    //     return (result[m_comp_key].includes(inputString3));
+                    // }
                 }
             });
         } catch (error) {
