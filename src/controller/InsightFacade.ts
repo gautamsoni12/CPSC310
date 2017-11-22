@@ -66,7 +66,7 @@ export default class InsightFacade implements IInsightFacade {
                                 resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
                             }
                         }).catch(function (error: any) {
-                            reject(error);
+                            reject({code: code, body: {error: ("error: " + error.message)}});
                         });
                     }
                     else if (id === "rooms") {
@@ -144,7 +144,6 @@ export default class InsightFacade implements IInsightFacade {
             }
         });
     }
-
 
     performQuery(query: any): Promise<InsightResponse> {
         return new Promise(function (resolve, reject) {
@@ -248,7 +247,6 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
 function getID(optionNode:any){
 
     try {
-
         let columnNode = (Object.getOwnPropertyDescriptor(optionNode, "COLUMNS")).value;
 
         if (columnNode.length < 1) {
@@ -262,64 +260,6 @@ function getID(optionNode:any){
     }
 
 }
-
-// function getID(whereNode: any){
-//
-//     if (Object.getOwnPropertyDescriptor(whereNode, "AND")){
-//         let AND = (Object.getOwnPropertyDescriptor(whereNode, "AND")).value;
-//         for (let a of AND){
-//             getID(a);
-//             break;
-//         }
-//     }
-//
-//     else if (Object.getOwnPropertyDescriptor(whereNode, "OR")){
-//         let OR = (Object.getOwnPropertyDescriptor(whereNode, "OR")).value;
-//         for (let a of OR){
-//             getID(a);
-//             break;
-//         }
-//     }
-//     else if (Object.getOwnPropertyDescriptor(whereNode, "NOT")){
-//         let NOT = (Object.getOwnPropertyDescriptor(whereNode, "NOT")).value;
-//         for (let a of NOT){
-//             getID(a);
-//             break;
-//         }
-//     }
-//     else if (Object.getOwnPropertyDescriptor(whereNode, "IS")){
-//         let IS = (Object.getOwnPropertyDescriptor(whereNode, "IS")).value;
-//         let qID_temp = Object.getOwnPropertyNames(IS);
-//         let qID_temp2 = qID_temp[0].split("_",1);
-//         qID = qID_temp2[0];
-//
-//
-//     }
-//     else if (Object.getOwnPropertyDescriptor(whereNode, "GT")){
-//         let GT = (Object.getOwnPropertyDescriptor(whereNode, "GT")).value;
-//         let qID_temp = Object.getOwnPropertyNames(GT);
-//         let qID_temp2 = qID_temp[0].split("_",1);
-//          qID = qID_temp2[0];
-//
-//     }
-//     else if (Object.getOwnPropertyDescriptor(whereNode, "LT")){
-//         let LT = (Object.getOwnPropertyDescriptor(whereNode, "LT")).value;
-//         let qID_temp = Object.getOwnPropertyNames(LT);
-//         let qID_temp2 = qID_temp[0].split("_",1);
-//          qID = qID_temp2[0];
-//     }
-//     else if (Object.getOwnPropertyDescriptor(whereNode, "EQ")){
-//         let EQ = (Object.getOwnPropertyDescriptor(whereNode, "EQ")).value;
-//         let qID_temp = Object.getOwnPropertyNames(EQ);
-//         let qID_temp2 = qID_temp[0].split("_",1);
-//          qID = qID_temp2[0];
-//     }
-//     else{
-//         throw "Invalid Query - 400 !";
-//     }
-
-
-
 
 
 function getData(id: any): Array<any>{

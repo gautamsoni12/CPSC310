@@ -1,11 +1,14 @@
 
-let evaluatedResult: Array<any> = [];
-let evaluatedResult2: Array<any> = [];
-let evaluatedResult3: Array<any> = [];
+// let evaluatedResult: Array<any> = [];
+// let evaluatedResult2: Array<any> = [];
+// let evaluatedResult3: Array<any> = [];
 
 export class Transformation {
     node: any;
     queryArray: Array<any>;
+     evaluatedResult: Array<any> = [];
+     evaluatedResult2: Array<any> = [];
+     evaluatedResult3: Array<any> = [];
 
     constructor(bodyNode: any, queryArray: Array<any>) {
         this.node = bodyNode;
@@ -14,27 +17,28 @@ export class Transformation {
 
     evaluate() {
         let x = this;
-        evaluatedResult = this.queryArray;
+        x.evaluatedResult = this.queryArray;
 
         let groupNode = (Object.getOwnPropertyDescriptor(this.node, "GROUP")).value;
 
         groupNode.forEach(function (group: any) {
 
-            evaluatedResult.map(function(obj:any){
+            x.evaluatedResult.map(function(obj:any){
                 let group_each = obj[group];
-                evaluatedResult2 = evaluatedResult.filter(function(e_res){
+                x.evaluatedResult2 = x.evaluatedResult.filter(function(e_res){
                     return e_res[group] === group_each;
 
                 });
-                x.evaluateApply(evaluatedResult2);
+                x.evaluateApply(x.evaluatedResult2);
             });
 
         });
-        this.queryArray = evaluatedResult3;
+        this.queryArray = x.evaluatedResult3;
 
     }
 
     evaluateApply(gp_array: Array<any>){
+        let x = this;
         let applyNode = (Object.getOwnPropertyDescriptor(this.node, "APPLY")).value;
 
 
@@ -60,7 +64,7 @@ export class Transformation {
                     });
 
                     maxObject[0][token] = maxItem;
-                    evaluatedResult3.push(maxObject[0]);
+                    x.evaluatedResult3.push(maxObject[0]);
 
 
                 }
@@ -75,7 +79,7 @@ export class Transformation {
                         return m_object[minNode] === minItem;
                     });
                     minObject[0][token] = minItem;
-                    evaluatedResult3.push(minObject[0]);
+                    x.evaluatedResult3.push(minObject[0]);
 
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "AVG")) {
@@ -87,7 +91,7 @@ export class Transformation {
 
                     var average = sum/gp_array.length;
                     gp_array[0][token] = average;
-                    evaluatedResult3.push(gp_array[0]);
+                    x.evaluatedResult3.push(gp_array[0]);
 
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "SUM")) {
@@ -99,7 +103,7 @@ export class Transformation {
                     });
 
                     gp_array[0][token] = sum;
-                    evaluatedResult3.push(gp_array[0]);
+                    x.evaluatedResult3.push(gp_array[0]);
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "COUNT")) {
                     let countNode = (Object.getOwnPropertyDescriptor(tokenNode, "COUNT")).value;
@@ -109,7 +113,7 @@ export class Transformation {
                         count++;
                     }
                     gp_array[0][token] = count;
-                    evaluatedResult3.push(gp_array[0]);
+                    x.evaluatedResult3.push(gp_array[0]);
                 }
             });
         });

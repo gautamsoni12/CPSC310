@@ -168,14 +168,26 @@ describe("EchoSpec", function () {
     });
 
     it("Should be able to handle a file 2", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses2.zip', "base64");
-        insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
-            //console.log(value);
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
-                "code": 201,
+                "code": 204,
                 "body": {res: 'the operation was successful and the id was new'}
             });
+
+            return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+                Log.test('Value:' + value);
+                //console.log(value);
+                expect(value).to.deep.equal({
+                    "code": 201,
+                    "body": {res: 'the operation was successful and the id already existed'}
+                });
+
+            }).catch(function (error) {
+                Log.test('Error:' + error);
+                expect.fail();
+            })
 
         }).catch(function (error) {
             Log.test('Error:' + error);
@@ -363,9 +375,7 @@ describe("EchoSpec", function () {
 
     let roomQuery = {
         "WHERE": {
-            "IS": {
-                "rooms_name": "DMP_*"
-            }
+
         },
         "OPTIONS": {
             "COLUMNS": [

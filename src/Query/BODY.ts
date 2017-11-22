@@ -1,12 +1,15 @@
 
-let evaluatedResult: Array<any> =[];
-let evaluatedResult_OR: Array<any> =[];
-let m_comp:any;
+// let evaluatedResult: Array<any> =[];
+// let evaluatedResult_OR: Array<any> =[];
+// let m_comp:any;
 
 export class Body{
     node:any;
     queryArray: Array<any> = [];
     queryID: string = "";
+     evaluatedResult: Array<any> =[];
+     evaluatedResult_OR: Array<any> =[];
+     m_comp: any;
 
 
     constructor(bodyNode:any, queryArray:Array<any>){
@@ -15,57 +18,65 @@ export class Body{
     }
 
     evaluate(){
+        let x = this;
+        try {
 
-        if (Object.getOwnPropertyDescriptor(this.node, "AND")){
-            let andArray: Array<any> = (Object.getOwnPropertyDescriptor(this.node, "AND")).value;
-            for (let array_node of andArray){
-                let andNode = new Body(array_node, this.queryArray);
-                andNode.evaluate();
-                this.queryArray = evaluatedResult;
+            if (Object.getOwnPropertyDescriptor(this.node, "AND")) {
+                let andArray: Array<any> = (Object.getOwnPropertyDescriptor(this.node, "AND")).value;
+                if (andArray.length < 1 ){ throw "EMPTY AND !"; }
+                for (let array_node of andArray) {
+                    let andNode = new Body(array_node, this.queryArray);
+                    andNode.evaluate();
+                    this.queryArray = andNode.evaluatedResult;
+                }
+
             }
+            else if (Object.getOwnPropertyDescriptor(this.node, "OR")) {
+                let orArray: Array<any> = ( Object.getOwnPropertyDescriptor(this.node, "OR")).value;
+                if (orArray.length < 1 ){ throw "EMPTY OR !"; }
+                for (let array_node of orArray) {
+                    let myOrNode = new Body(array_node, this.queryArray);
+                    myOrNode.evaluate();
+                    myOrNode.queryArray.forEach(function (result) {
+                        x.evaluatedResult_OR.push(result);
+                    });
+                }
+                this.queryArray = x.evaluatedResult_OR;
+                x.evaluatedResult = x.evaluatedResult_OR;
 
-        }
-        else if (Object.getOwnPropertyDescriptor(this.node, "OR")){
-           let orArray: Array<any> = ( Object.getOwnPropertyDescriptor(this.node, "OR")).value;
-            for (let array_node of orArray){
-                let myOrNode = new Body(array_node, this.queryArray);
-                myOrNode.evaluate();
-                myOrNode.queryArray.forEach(function (result) {
-                    evaluatedResult_OR.push(result);
-                });
             }
-            this.queryArray = evaluatedResult_OR;
-            evaluatedResult = evaluatedResult_OR;
-
-        }
-        else if (Object.getOwnPropertyDescriptor(this.node, "LT")){
-            m_comp = ( Object.getOwnPropertyDescriptor(this.node, "LT")).value;
-            this.evaluateLT(m_comp, this.queryArray);
-            this.queryArray = evaluatedResult;
-        }
-        else if (Object.getOwnPropertyDescriptor(this.node, "GT")){
-            m_comp = ( Object.getOwnPropertyDescriptor(this.node, "GT")).value;
-            this.evaluateGT(m_comp, this.queryArray);
-            this.queryArray = evaluatedResult;
-        }
-        else if (Object.getOwnPropertyDescriptor(this.node, "EQ")){
-            m_comp = ( Object.getOwnPropertyDescriptor(this.node, "EQ")).value;
-            this.evaluateEQ(m_comp, this.queryArray);
-            this.queryArray = evaluatedResult;
-        }
-        else if (Object.getOwnPropertyDescriptor(this.node, "IS")){
-            m_comp = ( Object.getOwnPropertyDescriptor(this.node, "IS")).value;
-            this.evaluateIS(m_comp, this.queryArray);
-            this.queryArray = evaluatedResult;
-        }
-        else if (Object.getOwnPropertyDescriptor(this.node, "NOT")){
-            m_comp = ( Object.getOwnPropertyDescriptor(this.node, "NOT")).value;
-            this.queryArray = evaluatedResult;
+            else if (Object.getOwnPropertyDescriptor(this.node, "LT")) {
+                x.m_comp = ( Object.getOwnPropertyDescriptor(this.node, "LT")).value;
+                this.evaluateLT(x.m_comp, this.queryArray);
+                this.queryArray = x.evaluatedResult;
+            }
+            else if (Object.getOwnPropertyDescriptor(this.node, "GT")) {
+                x.m_comp = ( Object.getOwnPropertyDescriptor(this.node, "GT")).value;
+                this.evaluateGT(x.m_comp, this.queryArray);
+                this.queryArray = x.evaluatedResult;
+            }
+            else if (Object.getOwnPropertyDescriptor(this.node, "EQ")) {
+                x.m_comp = ( Object.getOwnPropertyDescriptor(this.node, "EQ")).value;
+                this.evaluateEQ(x.m_comp, this.queryArray);
+                this.queryArray = x.evaluatedResult;
+            }
+            else if (Object.getOwnPropertyDescriptor(this.node, "IS")) {
+                x.m_comp = ( Object.getOwnPropertyDescriptor(this.node, "IS")).value;
+                this.evaluateIS(x.m_comp, this.queryArray);
+                this.queryArray = x.evaluatedResult;
+            }
+            else if (Object.getOwnPropertyDescriptor(this.node, "NOT")) {
+                x.m_comp = ( Object.getOwnPropertyDescriptor(this.node, "NOT")).value;
+                this.queryArray = x.evaluatedResult;
+            }
+        }catch(error){
+            throw error.message;
         }
     }
 
 
     evaluateLT(node:any , arrayToQuery: Array<any>){
+        let x = this;
         try {
             let m_comp_key_array = (Object.getOwnPropertyNames(node));
             let m_comp_key = m_comp_key_array[0];
@@ -88,12 +99,13 @@ export class Body{
             throw new Error(error);
         }
 
-        evaluatedResult = tempArray;
+        x.evaluatedResult = tempArray;
 
     }
 
 
     evaluateGT(node:any, arrayToQuery: Array<any>) {
+        let x = this;
 
         try {
             let m_comp_key_array = (Object.getOwnPropertyNames(node));
@@ -109,17 +121,18 @@ export class Body{
                     return result[m_comp_key] > m_comp_value;
                 }
                 else {
-                    throw "Invalid LT";
+                    throw "Invalid GT";
                 }
             });
         } catch (error) {
             throw new Error(error);
         }
-        evaluatedResult = tempArray;
+        x.evaluatedResult = tempArray;
     }
 
 
     evaluateEQ(node:any ,arrayToQuery: Array<any>) {
+        let x = this;
 
         try {
             let m_comp_key_array = (Object.getOwnPropertyNames(node));
@@ -141,11 +154,12 @@ export class Body{
         } catch (error) {
             throw new Error(error);
         }
-        evaluatedResult = tempArray;
+        x.evaluatedResult = tempArray;
 
     }
 
     evaluateIS(node:any ,arrayToQuery: Array<any>) {
+        let x = this;
         try {
 
             var m_comp_key_array = (Object.getOwnPropertyNames(node));
@@ -179,25 +193,11 @@ export class Body{
                     else{
                         return (result[m_comp_key]=== (inputString1));
                     }
-                    // let inputString = m_comp_value.split("*", 3);
-                    // let inputString1 = inputString[0];
-                    // let inputString2 = inputString[1];
-                    // let inputString3 = inputString[2];
-                    //
-                    // if (inputString1 != "") {
-                    //     return (result[m_comp_key].includes(inputString1));
-                    // }
-                    // else if (inputString2 != "") {
-                    //     return (result[m_comp_key].includes(inputString2));
-                    // }
-                    // else if (inputString3 != "") {
-                    //     return (result[m_comp_key].includes(inputString3));
-                    // }
                 }
             });
         } catch (error) {
             throw new Error(error);
         }
-        evaluatedResult = tempArray;
+        x.evaluatedResult = tempArray;
     }
 }

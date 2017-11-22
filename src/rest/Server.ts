@@ -73,6 +73,16 @@ export default class Server {
                 // curl -is  http://localhost:4321/echo/myMessage
                 that.rest.get('/echo/:msg', Server.echo);
 
+
+                that.rest.put('/dataset/:id', that.putDataset);
+
+
+                that.rest.get('/echo/:msg', Server.echo);
+
+
+                that.rest.get('/echo/:msg', Server.echo);
+
+
                 // Other endpoints will go here
 
                 that.rest.listen(that.port, function () {
@@ -107,18 +117,6 @@ export default class Server {
             console.log(error.message);
         });
 
-        // Call your good old AddDataset() -- Remember it is an ASYNC function!!
-        // ...
-        // ...
-        // ...
-
-        // Write to response object the code you're returning
-        //res.status(value.code);
-
-        // Write to response object the json data you're returning
-        //res.json(value);
-
-        // Return this. Because.
         return next();
     }
 
