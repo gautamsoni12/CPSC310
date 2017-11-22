@@ -162,7 +162,7 @@ export default class InsightFacade implements IInsightFacade {
                     }
 
                     let dataToQuery = getData(qID);
-                    fs.readFileSync(qID, dataToQuery);
+                    //fs.readFileSync(qID, dataToQuery);
 
                     let queryBody = new Body(where, dataToQuery);
                     queryBody.evaluate();
@@ -198,11 +198,11 @@ export default class InsightFacade implements IInsightFacade {
                 } catch (error) {
                     if (error.message === "missing dataset") {
                         code = 424;
-                        reject({code: code, body: {error: 'the query failed' + error}});
+                        reject({code: code, body: {error: 'Query_failed : ' + error.message}});
                     }
                     else if (error) {
                         code = 400;
-                        reject({code: code, body: {error: 'the query failed'}});
+                        reject({code: code, body: {error: '"Invalid Query - 400 !"'}});
                     }
                 }
             } catch (error) {
@@ -296,7 +296,9 @@ function getID(whereNode: any){
         let qID_temp = Object.getOwnPropertyNames(EQ);
         let qID_temp2 = qID_temp[0].split("_",1);
          qID = qID_temp2[0];
-
+    }
+    else{
+        throw "Invalid Query - 400 !";
     }
 
 
@@ -308,12 +310,15 @@ function getData(id: any): Array<any>{
     try {
         for (let insight of UBCInsight1) {
             if (Object.getOwnPropertyDescriptor(insight, "id").value === id) {
-                let dataToQ: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
-                if (dataToQ.length < 1) {
-                    throw new Error("missing dataset");
-                }
-                return dataToQ;
+                var dataToQ: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
+
             }
+        }
+        if (dataToQ.length < 1) {
+            throw new Error("missing dataset");
+        }
+        else{
+            return dataToQ;
         }
     }catch(error){
         throw new Error("missing dataset");
