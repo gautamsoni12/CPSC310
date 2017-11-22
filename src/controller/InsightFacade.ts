@@ -152,17 +152,17 @@ export default class InsightFacade implements IInsightFacade {
                 let qObject = JSON.parse(JSON.stringify(query));
                 try {
                     where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
+                    let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
                     if (typeof where === 'undefined') {
                         throw "Invalid query. Body missing.";
                     }
-                    getID(where);
+                    getID(option);
 
                     if (UBCInsight1.length < 1) {
                         throw new Error("missing dataset");
                     }
 
                     let dataToQuery = getData(qID);
-                    //fs.readFileSync(qID, dataToQuery);
 
                     let queryBody = new Body(where, dataToQuery);
                     queryBody.evaluate();
@@ -174,7 +174,7 @@ export default class InsightFacade implements IInsightFacade {
                         queryTransformation.evaluate();
                         var Array3: Array<any> = queryTransformation.queryArray;
                     }
-                    let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
+
                     if (typeof option === 'undefined') {
                         throw "Invalid query. Options missing.";
                     }
@@ -209,7 +209,6 @@ export default class InsightFacade implements IInsightFacade {
                 code = 400;
                 reject({code: code, body: {error: 'the query failed because of a missing dataset'}});
             }
-
         });
     }
 }
@@ -246,63 +245,81 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
     }
 }
 
-function getID(whereNode: any){
+function getID(optionNode:any){
 
-    if (Object.getOwnPropertyDescriptor(whereNode, "AND")){
-        let AND = (Object.getOwnPropertyDescriptor(whereNode, "AND")).value;
-        for (let a of AND){
-            getID(a);
-            break;
-        }
-    }
+    try {
 
-    else if (Object.getOwnPropertyDescriptor(whereNode, "OR")){
-        let OR = (Object.getOwnPropertyDescriptor(whereNode, "OR")).value;
-        for (let a of OR){
-            getID(a);
-            break;
+        let columnNode = (Object.getOwnPropertyDescriptor(optionNode, "COLUMNS")).value;
+
+        if (columnNode.length < 1) {
+            throw "INVALID QUERY";
         }
-    }
-    else if (Object.getOwnPropertyDescriptor(whereNode, "NOT")){
-        let NOT = (Object.getOwnPropertyDescriptor(whereNode, "NOT")).value;
-        for (let a of NOT){
-            getID(a);
-            break;
-        }
-    }
-    else if (Object.getOwnPropertyDescriptor(whereNode, "IS")){
-        let IS = (Object.getOwnPropertyDescriptor(whereNode, "IS")).value;
-        let qID_temp = Object.getOwnPropertyNames(IS);
-        let qID_temp2 = qID_temp[0].split("_",1);
+        let qID_temp2 = columnNode[0].split("_",1);
         qID = qID_temp2[0];
 
-
+    }catch(err){
+        throw err.message;
     }
-    else if (Object.getOwnPropertyDescriptor(whereNode, "GT")){
-        let GT = (Object.getOwnPropertyDescriptor(whereNode, "GT")).value;
-        let qID_temp = Object.getOwnPropertyNames(GT);
-        let qID_temp2 = qID_temp[0].split("_",1);
-         qID = qID_temp2[0];
-
-    }
-    else if (Object.getOwnPropertyDescriptor(whereNode, "LT")){
-        let LT = (Object.getOwnPropertyDescriptor(whereNode, "LT")).value;
-        let qID_temp = Object.getOwnPropertyNames(LT);
-        let qID_temp2 = qID_temp[0].split("_",1);
-         qID = qID_temp2[0];
-    }
-    else if (Object.getOwnPropertyDescriptor(whereNode, "EQ")){
-        let EQ = (Object.getOwnPropertyDescriptor(whereNode, "EQ")).value;
-        let qID_temp = Object.getOwnPropertyNames(EQ);
-        let qID_temp2 = qID_temp[0].split("_",1);
-         qID = qID_temp2[0];
-    }
-    else{
-        throw "Invalid Query - 400 !";
-    }
-
 
 }
+
+// function getID(whereNode: any){
+//
+//     if (Object.getOwnPropertyDescriptor(whereNode, "AND")){
+//         let AND = (Object.getOwnPropertyDescriptor(whereNode, "AND")).value;
+//         for (let a of AND){
+//             getID(a);
+//             break;
+//         }
+//     }
+//
+//     else if (Object.getOwnPropertyDescriptor(whereNode, "OR")){
+//         let OR = (Object.getOwnPropertyDescriptor(whereNode, "OR")).value;
+//         for (let a of OR){
+//             getID(a);
+//             break;
+//         }
+//     }
+//     else if (Object.getOwnPropertyDescriptor(whereNode, "NOT")){
+//         let NOT = (Object.getOwnPropertyDescriptor(whereNode, "NOT")).value;
+//         for (let a of NOT){
+//             getID(a);
+//             break;
+//         }
+//     }
+//     else if (Object.getOwnPropertyDescriptor(whereNode, "IS")){
+//         let IS = (Object.getOwnPropertyDescriptor(whereNode, "IS")).value;
+//         let qID_temp = Object.getOwnPropertyNames(IS);
+//         let qID_temp2 = qID_temp[0].split("_",1);
+//         qID = qID_temp2[0];
+//
+//
+//     }
+//     else if (Object.getOwnPropertyDescriptor(whereNode, "GT")){
+//         let GT = (Object.getOwnPropertyDescriptor(whereNode, "GT")).value;
+//         let qID_temp = Object.getOwnPropertyNames(GT);
+//         let qID_temp2 = qID_temp[0].split("_",1);
+//          qID = qID_temp2[0];
+//
+//     }
+//     else if (Object.getOwnPropertyDescriptor(whereNode, "LT")){
+//         let LT = (Object.getOwnPropertyDescriptor(whereNode, "LT")).value;
+//         let qID_temp = Object.getOwnPropertyNames(LT);
+//         let qID_temp2 = qID_temp[0].split("_",1);
+//          qID = qID_temp2[0];
+//     }
+//     else if (Object.getOwnPropertyDescriptor(whereNode, "EQ")){
+//         let EQ = (Object.getOwnPropertyDescriptor(whereNode, "EQ")).value;
+//         let qID_temp = Object.getOwnPropertyNames(EQ);
+//         let qID_temp2 = qID_temp[0].split("_",1);
+//          qID = qID_temp2[0];
+//     }
+//     else{
+//         throw "Invalid Query - 400 !";
+//     }
+
+
+
 
 
 function getData(id: any): Array<any>{
