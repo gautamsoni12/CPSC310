@@ -1155,4 +1155,76 @@ describe("EchoSpec", function () {
         })
     });
 
+
+    let complexQuery101 ={
+        "WHERE":{
+            "OR":[
+                {
+                    "AND":[
+                        {
+                            "GT":{
+                                "courses_avg":60
+                            }
+                        },
+                        {
+                            "IS":{
+                                "courses_dept":"engl"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ":{
+                        "courses_avg":95
+                    }
+                },
+                {
+                    "NOT":{
+                        "NOT":{
+                            "GT":{
+                                "courses_audit": 20
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_instructor",
+                "courses_uuid"
+            ]
+        }
+    };
+    it("Room query 25_room", function () {
+        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery101).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+
+                expect(result.body).to.deep.equal({ result:
+                    [
+                        {courses_instructor: 'wohlstadter, eric', courses_dept: 'cpsc', courses_avg: 91.79}
+                    ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
 });
