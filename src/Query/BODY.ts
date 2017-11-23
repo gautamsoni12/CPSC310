@@ -1,7 +1,4 @@
 
-// let evaluatedResult: Array<any> =[];
-// let evaluatedResult_OR: Array<any> =[];
-// let m_comp:any;
 
 export class Body{
     node:any;
@@ -66,8 +63,16 @@ export class Body{
                 this.queryArray = x.evaluatedResult;
             }
             else if (Object.getOwnPropertyDescriptor(this.node, "NOT")) {
-                x.m_comp = ( Object.getOwnPropertyDescriptor(this.node, "NOT")).value;
-                this.queryArray = x.evaluatedResult;
+                let notNode: any = ( Object.getOwnPropertyDescriptor(this.node, "NOT")).value;
+                let notBody = new Body(notNode, this.queryArray);
+                notBody.evaluate();
+                let notArray = notBody.queryArray;
+                this.queryArray = this.queryArray.filter( function( el ) {
+                    return notArray.indexOf( el ) < 0;
+                });
+            }
+            else{
+                throw "Invalid Query!";
             }
         }catch(error){
             throw error.message;

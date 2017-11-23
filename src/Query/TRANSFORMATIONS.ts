@@ -1,7 +1,4 @@
 
-// let evaluatedResult: Array<any> = [];
-// let evaluatedResult2: Array<any> = [];
-// let evaluatedResult3: Array<any> = [];
 
 export class Transformation {
     node: any;
@@ -27,7 +24,6 @@ export class Transformation {
                 let group_each = obj[group];
                 x.evaluatedResult2 = x.evaluatedResult.filter(function(e_res){
                     return e_res[group] === group_each;
-
                 });
                 x.evaluateApply(x.evaluatedResult2);
             });
@@ -65,7 +61,6 @@ export class Transformation {
 
                     maxObject[0][token] = maxItem;
                     x.evaluatedResult3.push(maxObject[0]);
-
 
                 }
                 else if (Object.getOwnPropertyDescriptor(tokenNode, "MIN")) {

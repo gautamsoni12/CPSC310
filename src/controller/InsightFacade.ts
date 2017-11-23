@@ -172,6 +172,10 @@ export default class InsightFacade implements IInsightFacade {
                         let queryTransformation = new Transformation(transformation, Array1);
                         queryTransformation.evaluate();
                         var Array3: Array<any> = queryTransformation.queryArray;
+                        Array3 = Array3.filter( function( item, index, inputArray ) {
+                            return inputArray.indexOf(item) == index;
+                        });
+
                     }
 
                     if (typeof option === 'undefined') {

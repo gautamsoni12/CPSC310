@@ -323,6 +323,7 @@ describe("EchoSpec", function () {
 
                 expect(result.code).to.equal(400);
                 expect(result.body).to.deep.equal({error: "Invalid Query - 400 !"});
+
             }).catch(err => {
                 console.log("performQUery error: ", err);
                 expect.fail();
@@ -636,27 +637,32 @@ describe("EchoSpec", function () {
         }
     };
 
-    it("Room query 7_room", function () {
+    it("Room query 113_room", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
-
-            insightFacade.performQuery(query7_room).then(function (result) {
-                sanityCheck(result);
-
-                expect(result.code).to.equal(200);
-                expect(result.body).to.deep.equal({body: {result : [ { rooms_shortname: 'OSBO', avgSeats: 442 },
-                    { rooms_shortname: 'HEBB', avgSeats: 375 },
-                    { rooms_shortname: 'LSC', avgSeats: 350 },
-                    { rooms_shortname: 'LSC', avgSeats: 350 } ]}});
-
-            });
             expect(value).to.deep.equal({
                 "code": 204,
                 "body": {res: 'the operation was successful and the id was new'}
             });
+
+            return insightFacade.performQuery(query7_room).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                //console.log(result.body);
+                expect(result.body).to.deep.equal({ result:
+                    [ { rooms_shortname: 'OSBO', avgSeats: 442 },
+                        { rooms_shortname: 'HEBB', avgSeats: 375 },
+                        { rooms_shortname: 'LSC', avgSeats: 350 } ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
         }).catch(function (error) {
             Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
             expect.fail();
         })
     });

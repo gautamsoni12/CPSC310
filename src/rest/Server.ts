@@ -77,10 +77,10 @@ export default class Server {
                 that.rest.put('/dataset/:id', that.putDataset);
 
 
-                that.rest.get('/echo/:msg', Server.echo);
+                that.rest.del('/:id', that.deleteDataset);
 
 
-                that.rest.get('/echo/:msg', Server.echo);
+                that.rest.post('/echo/:msg', that.postDataset);
 
 
                 // Other endpoints will go here
@@ -127,7 +127,7 @@ export default class Server {
         let iFacade = new InsightFacade();
         let datasetName = req.params.id;
 
-        iFacade.removeDataset(dataStr).then( function (value) {
+        iFacade.removeDataset(datasetName).then( function (value) {
             res.status(value.code);
             res.json(value);
 
@@ -140,12 +140,13 @@ export default class Server {
 
     postDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
         // Get the dataset data coming from the request
-        let dataStr = new Buffer(req.params.body).toString('base64');
+
+        let queryStr = JSON.parse(req.params.body);
 
         let iFacade = new InsightFacade();
-        let datasetName = req.params.id;
 
-        iFacade.removeDataset(dataStr).then( function (value) {
+
+        iFacade.performQuery(queryStr).then( function (value) {
             res.status(value.code);
             res.json(value);
 
