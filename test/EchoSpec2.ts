@@ -1081,7 +1081,7 @@ describe("EchoSpec", function () {
             "ORDER": "courses_avg"
         }
     };
-    it("Room query 23_room", function () {
+    it("Room query 29_room", function () {
         let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
@@ -1094,7 +1094,6 @@ describe("EchoSpec", function () {
                 sanityCheck(result);
 
                 expect(result.code).to.equal(200);
-                //console.log(result.body);
                 expect(result.body).to.deep.equal({ result:
                     [
                         {courses_instructor: 'cole, kenneth', courses_dept: 'epse', courses_avg: 98.08},

@@ -47,7 +47,7 @@ export default class InsightFacade implements IInsightFacade {
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise(function (resolve, reject) {
             try {
-                if (content != null) {
+                if (typeof content != null || typeof content != 'undefined') {
                     var zipContent: Array<any> = [];
                     if (id === "courses") {
                         let newCourse = new Course(id, content);
@@ -88,6 +88,7 @@ export default class InsightFacade implements IInsightFacade {
                             }
 
                         }).catch(function (error: any) {
+                            code = 400;
                             reject({code: code, body: {error: ("error: " + error.message)}});
                         });
                     }
@@ -131,7 +132,6 @@ export default class InsightFacade implements IInsightFacade {
                                 code: code,
                                 body: {error: 'the operation was unsuccessful because the delete was for a resource that was not previously added.'}
                             });
-
                         }
                     }
                 }
@@ -148,64 +148,65 @@ export default class InsightFacade implements IInsightFacade {
     performQuery(query: any): Promise<InsightResponse> {
         return new Promise(function (resolve, reject) {
             try {
-                let qObject = JSON.parse(JSON.stringify(query));
-                try {
-                    where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
-                    let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
-                    if (typeof where === 'undefined') {
-                        throw "Invalid query. Body missing.";
-                    }
-                    getID(option);
+                if (typeof query != "undefined" ||typeof query != null) {
+                    let qObject = JSON.parse(JSON.stringify(query));
+                    try {
+                        where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
+                        let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
+                        if (typeof where === 'undefined') {
+                            throw "Invalid query. Body missing.";
+                        }
+                        getID(option);
 
-                    if (UBCInsight1.length < 1) {
-                        throw new Error("missing dataset");
-                    }
+                        if (UBCInsight1.length < 1) {
+                            throw new Error("missing dataset");
+                        }
 
-                    let dataToQuery = getData(qID);
+                        let dataToQuery = getData(qID);
 
-                    let queryBody = new Body(where, dataToQuery);
-                    queryBody.evaluate();
-                    let Array1: Array<any> = queryBody.queryArray;
+                        let queryBody = new Body(where, dataToQuery);
+                        queryBody.evaluate();
+                        let Array1: Array<any> = queryBody.queryArray;
 
-                    if ((Object.getOwnPropertyDescriptor(qObject, "TRANSFORMATIONS"))) {
-                        let transformation = (Object.getOwnPropertyDescriptor(qObject, "TRANSFORMATIONS")).value;
-                        let queryTransformation = new Transformation(transformation, Array1);
-                        queryTransformation.evaluate();
-                        var Array3: Array<any> = queryTransformation.queryArray;
-                        Array3 = Array3.filter( function( item, index, inputArray ) {
-                            return inputArray.indexOf(item) == index;
-                        });
+                        if ((Object.getOwnPropertyDescriptor(qObject, "TRANSFORMATIONS"))) {
+                            let transformation = (Object.getOwnPropertyDescriptor(qObject, "TRANSFORMATIONS")).value;
+                            let queryTransformation = new Transformation(transformation, Array1);
+                            queryTransformation.evaluate();
+                            var Array3: Array<any> = queryTransformation.queryArray;
+                            Array3 = Array3.filter(function (item, index, inputArray) {
+                                return inputArray.indexOf(item) == index;
+                            });
 
-                    }
+                        }
 
-                    if (typeof option === 'undefined') {
-                        throw "Invalid query. Options missing.";
-                    }
-                    if (Array3) {
-                        var queryOption = new Options(option, Array3);
-                    }
-                    else if (!Array3) {
-                        var queryOption = new Options(option, Array1);
-                    }
+                        if (typeof option === 'undefined') {
+                            throw "Invalid query. Options missing.";
+                        }
+                        if (Array3) {
+                            var queryOption = new Options(option, Array3);
+                        }
+                        else if (!Array3) {
+                            var queryOption = new Options(option, Array1);
+                        }
 
-                    queryOption.evaluate();
+                        queryOption.evaluate();
 
-                    let Array2: Array<any> = queryOption.queryArray;
+                        let Array2: Array<any> = queryOption.queryArray;
 
-                    let myResult: Result = {result: Array2};
-                    console.log(myResult);
-                    code = 200;
+                        let myResult: Result = {result: Array2};
+                        //console.log(myResult);
+                        code = 200;
+                        resolve({code: code, body: myResult});
 
-                    resolve({code: code, body: myResult});
-
-                } catch (error) {
-                    if (error.message === "missing dataset") {
-                        code = 424;
-                        reject({code: code, body: {error: 'Query_failed : ' + error.message}});
-                    }
-                    else if (error) {
-                        code = 400;
-                        reject({code: code, body: {error: '"Invalid Query - 400 !"'}});
+                    } catch (error) {
+                        if (error.message === "missing dataset") {
+                            code = 424;
+                            reject({code: code, body: {error: 'Query_failed : ' + error.message}});
+                        }
+                        else if (error) {
+                            code = 400;
+                            reject({code: code, body: {error: '"Invalid Query - 400 !"'}});
+                        }
                     }
                 }
             } catch (error) {
@@ -248,7 +249,7 @@ function addDatasetResult(id: string, dataArray: Array<any>): number {
     }
 }
 
-function getID(optionNode:any){
+function getID(optionNode: any) {
 
     try {
         let columnNode = (Object.getOwnPropertyDescriptor(optionNode, "COLUMNS")).value;
@@ -256,32 +257,31 @@ function getID(optionNode:any){
         if (columnNode.length < 1) {
             throw "INVALID QUERY";
         }
-        let qID_temp2 = columnNode[0].split("_",1);
+        let qID_temp2 = columnNode[0].split("_", 1);
         qID = qID_temp2[0];
 
-    }catch(err){
+    } catch (err) {
         throw err.message;
     }
 
 }
 
 
-function getData(id: any): Array<any>{
+function getData(id: any): Array<any> {
 
     try {
         for (let insight of UBCInsight1) {
             if (Object.getOwnPropertyDescriptor(insight, "id").value === id) {
                 var dataToQ: Array<any> = Object.getOwnPropertyDescriptor(insight, "dataset").value;
-
             }
         }
         if (dataToQ.length < 1) {
             throw new Error("missing dataset");
         }
-        else{
+        else {
             return dataToQ;
         }
-    }catch(error){
+    } catch (error) {
         throw new Error("missing dataset");
     }
 

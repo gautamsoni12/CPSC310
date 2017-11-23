@@ -71,9 +71,7 @@ export class Body{
                     return notArray.indexOf( el ) < 0;
                 });
             }
-            else{
-                throw "Invalid Query!";
-            }
+
         }catch(error){
             throw error.message;
         }
@@ -86,20 +84,23 @@ export class Body{
             let m_comp_key_array = (Object.getOwnPropertyNames(node));
             let m_comp_key = m_comp_key_array[0];
 
-            if(this.queryID === ""){
-                let queryID_array = m_comp_key.split("_", 1);
-                this.queryID = queryID_array[0];
-            }
+            if( m_comp_key === "courses_avg" || m_comp_key === "courses_pass" || m_comp_key === "courses_fail" || m_comp_key === "courses_audit" || m_comp_key === "courses_year" || m_comp_key === "rooms_lat" || m_comp_key === "rooms_lon" || m_comp_key === "rooms_seats") {
 
-            let m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
-            var tempArray = arrayToQuery.filter(function (result) {
-                if (typeof result[m_comp_key] === "number") {
-                    return result[m_comp_key] < m_comp_value;
+                if (this.queryID === "") {
+                    let queryID_array = m_comp_key.split("_", 1);
+                    this.queryID = queryID_array[0];
                 }
-                else {
-                    throw "Invalid LT";
-                }
-            });
+
+                let m_comp_value = Object.getOwnPropertyDescriptor(node, m_comp_key).value;
+                var tempArray = arrayToQuery.filter(function (result) {
+                    if (typeof result[m_comp_key] === "number") {
+                        return result[m_comp_key] < m_comp_value;
+                    }
+                    else {
+                        throw "Invalid LT";
+                    }
+                });
+            }
         } catch (error) {
             throw new Error(error);
         }
@@ -115,20 +116,24 @@ export class Body{
         try {
             let m_comp_key_array = (Object.getOwnPropertyNames(node));
             let m_comp_key = m_comp_key_array[0];
-            if(this.queryID === ""){
-                let queryID_array = m_comp_key.split("_", 1);
-                this.queryID = queryID_array[0];
-            }
 
-            let m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
-            var tempArray = arrayToQuery.filter(function (result) {
-                if (typeof result[m_comp_key] === "number") {
-                    return result[m_comp_key] > m_comp_value;
+            if( m_comp_key === "courses_avg" || m_comp_key === "courses_pass" || m_comp_key === "courses_fail" || m_comp_key === "courses_audit" || m_comp_key === "courses_year" || m_comp_key === "rooms_lat" || m_comp_key === "rooms_lon" || m_comp_key === "rooms_seats") {
+
+                if (this.queryID === "") {
+                    let queryID_array = m_comp_key.split("_", 1);
+                    this.queryID = queryID_array[0];
                 }
-                else {
-                    throw "Invalid GT";
-                }
-            });
+
+                let m_comp_value = Object.getOwnPropertyDescriptor(node, m_comp_key).value;
+                var tempArray = arrayToQuery.filter(function (result) {
+                    if (typeof result[m_comp_key] === "number") {
+                        return result[m_comp_key] > m_comp_value;
+                    }
+                    else {
+                        throw "Invalid GT";
+                    }
+                });
+            }
         } catch (error) {
             throw new Error(error);
         }
@@ -142,20 +147,24 @@ export class Body{
         try {
             let m_comp_key_array = (Object.getOwnPropertyNames(node));
             let m_comp_key = m_comp_key_array[0];
-            if(this.queryID === ""){
-                let queryID_array = m_comp_key.split("_", 1);
-                this.queryID = queryID_array[0];
-            }
 
-            let m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
-            var tempArray = arrayToQuery.filter(function (result) {
-                if (typeof result[m_comp_key] === "number") {
-                    return result[m_comp_key] === m_comp_value;
+            if( m_comp_key === "courses_avg" || m_comp_key === "courses_pass" || m_comp_key === "courses_fail" || m_comp_key === "courses_audit" || m_comp_key === "courses_year" || m_comp_key === "rooms_lat" || m_comp_key === "rooms_lon" || m_comp_key === "rooms_seats") {
+
+                if (this.queryID === "") {
+                    let queryID_array = m_comp_key.split("_", 1);
+                    this.queryID = queryID_array[0];
                 }
-                else {
-                    throw "Invalid LT";
-                }
-            });
+
+                let m_comp_value = Object.getOwnPropertyDescriptor(node, m_comp_key).value;
+                var tempArray = arrayToQuery.filter(function (result) {
+                    if (typeof result[m_comp_key] === "number") {
+                        return result[m_comp_key] === m_comp_value;
+                    }
+                    else {
+                        throw "Invalid LT";
+                    }
+                });
+            }
         } catch (error) {
             throw new Error(error);
         }
@@ -169,37 +178,41 @@ export class Body{
 
             var m_comp_key_array = (Object.getOwnPropertyNames(node));
             var m_comp_key = m_comp_key_array[0];
-            if(this.queryID === ""){
-                let queryID_array = m_comp_key.split("_", 1);
-                this.queryID = queryID_array[0];
-            }
 
-            var m_comp_value = Object.getOwnPropertyDescriptor(node,m_comp_key).value;
-            var tempArray = arrayToQuery.filter(function (result) {
-                if (typeof result[m_comp_key] === "string") {
-                    if ((m_comp_value).includes("**")){
-                        throw "Invalid string";
-                    }
+            if( m_comp_key === "courses_dept" || m_comp_key === "courses_id" || m_comp_key === "courses_instructor" || m_comp_key === "courses_title" || m_comp_key === "courses_uuid" || m_comp_key === "rooms_fullname" || m_comp_key === "rooms_shortname" || m_comp_key === "rooms_number" || m_comp_key === "rooms_name" || m_comp_key === "rooms_address" || m_comp_key === "rooms_type" || m_comp_key === "rooms_furniture" || m_comp_key === "rooms_href") {
 
-                    let inputString = m_comp_value.split("*", 3);
-                    let inputString1 = inputString[0];
-                    let inputString2 = inputString[1];
-                    let inputString3 = inputString[2];
-
-                    if (m_comp_value.startsWith("*") && m_comp_value.endsWith("*")){
-                        return (result[m_comp_key].includes(inputString2));
-                    }
-                    else if (m_comp_value.startsWith("*")){
-                        return (result[m_comp_key].endsWith(inputString2));
-                    }
-                    else if (m_comp_value.endsWith("*")){
-                        return (result[m_comp_key].startsWith(inputString1));
-                    }
-                    else{
-                        return (result[m_comp_key]=== (inputString1));
-                    }
+                if (this.queryID === "") {
+                    let queryID_array = m_comp_key.split("_", 1);
+                    this.queryID = queryID_array[0];
                 }
-            });
+
+                var m_comp_value = Object.getOwnPropertyDescriptor(node, m_comp_key).value;
+                var tempArray = arrayToQuery.filter(function (result) {
+                    if (typeof result[m_comp_key] === "string") {
+                        if ((m_comp_value).includes("**")) {
+                            throw "Invalid string";
+                        }
+
+                        let inputString = m_comp_value.split("*", 3);
+                        let inputString1 = inputString[0];
+                        let inputString2 = inputString[1];
+                        let inputString3 = inputString[2];
+
+                        if (m_comp_value.startsWith("*") && m_comp_value.endsWith("*")) {
+                            return (result[m_comp_key].includes(inputString2));
+                        }
+                        else if (m_comp_value.startsWith("*")) {
+                            return (result[m_comp_key].endsWith(inputString2));
+                        }
+                        else if (m_comp_value.endsWith("*")) {
+                            return (result[m_comp_key].startsWith(inputString1));
+                        }
+                        else {
+                            return (result[m_comp_key] === (inputString1));
+                        }
+                    }
+                });
+            }
         } catch (error) {
             throw new Error(error);
         }

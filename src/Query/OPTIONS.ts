@@ -1,4 +1,3 @@
-// let evaluatedResult: Array<any> = [];
 
 export class Options {
     node: any;
@@ -76,13 +75,6 @@ export class Options {
                     return 0;
                 }
             });
-
         }
-
-
     }
-
-
-
-
 }
