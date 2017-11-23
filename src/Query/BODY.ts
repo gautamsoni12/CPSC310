@@ -101,6 +101,9 @@ export class Body{
                     }
                 });
             }
+            else {
+                throw "Invalid LT";
+            }
         } catch (error) {
             throw new Error(error);
         }
@@ -134,6 +137,9 @@ export class Body{
                     }
                 });
             }
+            else {
+                throw "Invalid LT";
+            }
         } catch (error) {
             throw new Error(error);
         }
@@ -164,6 +170,9 @@ export class Body{
                         throw "Invalid LT";
                     }
                 });
+            }
+            else {
+                throw "Invalid LT";
             }
         } catch (error) {
             throw new Error(error);
@@ -212,6 +221,9 @@ export class Body{
                         }
                     }
                 });
+            }
+            else {
+                throw "Invalid LT";
             }
         } catch (error) {
             throw new Error(error);

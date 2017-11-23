@@ -136,7 +136,7 @@ describe("EchoSpec", function () {
     };
 
     it("Course Query 1", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             // console.log(value);
             Log.test('Value:' + value);
@@ -309,7 +309,7 @@ describe("EchoSpec", function () {
     };
 
     it("Room query - invalid_query", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        let content: string = fs.readFileSync('rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -350,7 +350,7 @@ describe("EchoSpec", function () {
     };
 
     it("Room query 4_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        let content: string = fs.readFileSync('rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -464,7 +464,7 @@ describe("EchoSpec", function () {
     };
 
     it("Room query 5_room", function () {
-        let content: string = fs.readFileSync("/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip", "base64");
+        let content: string = fs.readFileSync("courses_full.zip", "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -580,7 +580,7 @@ describe("EchoSpec", function () {
     };
 
     it("Room query 6_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        let content: string = fs.readFileSync('rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -638,7 +638,7 @@ describe("EchoSpec", function () {
     };
 
     it("Room query 113_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        let content: string = fs.readFileSync('rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
@@ -692,7 +692,7 @@ describe("EchoSpec", function () {
         }
     };
     it("Room query 12_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -713,7 +713,7 @@ describe("EchoSpec", function () {
         })
     });
     it("Room query 8_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -734,7 +734,7 @@ describe("EchoSpec", function () {
         })
     });
     it("Room query 9_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -755,7 +755,7 @@ describe("EchoSpec", function () {
         })
     });
     it("Room query 10_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -775,7 +775,7 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });it("Room query 7_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -796,7 +796,7 @@ describe("EchoSpec", function () {
         })
     });
     it("Room query 11_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
 
@@ -840,7 +840,7 @@ describe("EchoSpec", function () {
         }
     };
     it("Room query 20_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
@@ -951,7 +951,7 @@ describe("EchoSpec", function () {
         }
     };
     it("Room query 21_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
@@ -1021,7 +1021,7 @@ describe("EchoSpec", function () {
         }
     };
     it("Room query 22_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
@@ -1082,7 +1082,7 @@ describe("EchoSpec", function () {
         }
     };
     it("Room query 29_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_3.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
@@ -1125,7 +1125,7 @@ describe("EchoSpec", function () {
         }
     };
     it("Room query 24_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/rooms.zip', "base64");
+        let content: string = fs.readFileSync('rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({
@@ -1197,7 +1197,7 @@ describe("EchoSpec", function () {
         }
     };
     it("Room query 25_room", function () {
-        let content: string = fs.readFileSync('/Users/gautamsoni/Desktop/CPSC 310/D1/cpsc310_team126/courses_full.zip', "base64");
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
         return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);
             expect(value).to.deep.equal({

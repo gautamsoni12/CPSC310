@@ -114,7 +114,8 @@ export default class Server {
             res.json(value);
 
         }).catch(function(error){
-            console.log(error.message);
+            res.status(error.code);
+            res.json(error);
         });
 
         return next();
@@ -122,7 +123,7 @@ export default class Server {
 
     deleteDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
         // Get the dataset data coming from the request
-        let dataStr = new Buffer(req.params.body).toString('base64');
+        //let dataStr = new Buffer(req.params.body).toString('base64');
 
         let iFacade = new InsightFacade();
         let datasetName = req.params.id;
@@ -132,16 +133,15 @@ export default class Server {
             res.json(value);
 
         }).catch(function(error){
-            console.log(error.message);
+            res.status(error.code);
+            res.json(error);
         });
 
         return next();
     }
 
     postDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
-        // Get the dataset data coming from the request
-
-        let queryStr = JSON.parse(req.params.body);
+        let queryStr = JSON.parse(req.body);
 
         let iFacade = new InsightFacade();
 
@@ -151,7 +151,8 @@ export default class Server {
             res.json(value);
 
         }).catch(function(error){
-            console.log(error.message);
+            res.status(error.code);
+            res.json(error);
         });
 
         return next();

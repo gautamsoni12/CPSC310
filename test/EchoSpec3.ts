@@ -139,19 +139,76 @@ describe("EchoSpec", function () {
         chai.use(chaiHttp);
         let server = new Server(4321);
         let URL = "http://127.0.0.1:4321";
-        return chai.request(URL)
-            .put('/dataset/rooms')
-            .attach("body", fs.readFileSync("./310rooms.1.0.zip"), "310rooms.1.0.zip")
-            .then(function (res: Response) {
-                Log.trace('then:');
-                // some assertions
-            })
-            .catch(function (err) {
-                Log.trace('catch:');
-                // some assertions
-                expect.fail();
-            });
+
+        return server.start().then(function (success: boolean) {
+            return chai.request(URL)
+                .put('/dataset/rooms')
+                .attach("body", fs.readFileSync("rooms.zip"), "rooms.zip")
+                .then(function (res: Response) {
+                    Log.trace('then:');
+                    // some assertions
+                })
+                .catch(function (err) {
+                    Log.trace('catch:');
+                    // some assertions
+                    expect.fail();
+                });
+        });
     });
+
+    let queryJSONObject ={
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "*ps*"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 98
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*c*"
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    };
+
+
+    it("POST description", function () {
+        chai.use(chaiHttp);
+        let server = new Server(4321);
+        let URL = "http://127.0.0.1:4321";
+
+        return server.start().then(function (success: boolean) {
+            return chai.request(URL)
+                .post('/query')
+                .send(queryJSONObject)
+                .then(function (res: Response) {
+                    Log.trace('then:');
+                    // some assertions
+                })
+                .catch(function (err) {
+                    Log.trace('catch:');
+                    // some assertions
+                    expect.fail();
+                });
+        });
+    });
+
 
 
 

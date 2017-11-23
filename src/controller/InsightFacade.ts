@@ -122,9 +122,8 @@ export default class InsightFacade implements IInsightFacade {
                             if (i != -1) {
                                 UBCInsight1.splice(i, 1);
                             }
-                            fs.unlink(i);
+                            fs.unlinkSync(id);
                             resolve({code: code, body: {res: 'the operation was successful.'}});
-
                         }
                         else {
                             code = 404;
