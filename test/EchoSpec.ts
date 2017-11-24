@@ -259,7 +259,7 @@ describe("EchoSpec", function () {
     let query = {
         "WHERE": {
             "GT": {
-                "courses_avg": 97
+                "courses_avg": 90
             }
         },
         "OPTIONS": {

@@ -1226,4 +1226,180 @@ describe("EchoSpec", function () {
         })
     });
 
+    let complexQuery105 ={
+        "WHERE": {},
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_furniture"
+            ],
+            "ORDER": "rooms_furniture"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_furniture"],
+            "APPLY": {}
+        }
+    };
+    it("Room query 26_room", function () {
+        let content: string = fs.readFileSync('rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery105).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+
+                expect(result.body).to.deep.equal({"result":[ { rooms_furniture: 'Classroom-Fixed Tables/Fixed Chairs' },
+                    { rooms_furniture: 'Classroom-Fixed Tables/Movable Chairs' },
+                    { rooms_furniture: 'Classroom-Fixed Tables/Moveable Chairs' },
+                    { rooms_furniture: 'Classroom-Fixed Tablets' },
+                    { rooms_furniture: 'Classroom-Hybrid Furniture' },
+                    { rooms_furniture: 'Classroom-Learn Lab' },
+                    { rooms_furniture: 'Classroom-Movable Tables & Chairs' },
+                    { rooms_furniture: 'Classroom-Movable Tablets' },
+                    { rooms_furniture: 'Classroom-Moveable Tables & Chairs' },
+                    { rooms_furniture: 'Classroom-Moveable Tablets' } ]});
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
+    let complexQuery106 ={
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "maxSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["maxSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "maxSeats": {
+                    "MAX": "rooms_seats"
+                }
+            }]
+        }
+    };
+    it("Room query 27_room", function () {
+        let content: string = fs.readFileSync('rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery106).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+
+                expect(result.body).to.deep.equal({"result":[{
+                    "rooms_shortname": "OSBO",
+                    "maxSeats": 442
+                }, {
+                    "rooms_shortname": "HEBB",
+                    "maxSeats": 375
+                }, {
+                    "rooms_shortname": "LSC",
+                    "maxSeats": 350
+                }]});
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
+    let complexQuery107 ={
+        "WHERE": {
+            "IS": {
+                "courses_dept": "cpsc"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_title",
+                "average",
+                "sectionsOffered"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_dept", "courses_title"],
+            "APPLY": [
+                {
+                    "average": {
+                        "AVG": "courses_avg"
+                    }
+                },
+                {
+                    "sectionsOffered": {
+                        "COUNT": "courses_uuid"
+                    }
+                }
+            ]
+        }
+    };
+    it("Room query 28_room", function () {
+        let content: string = fs.readFileSync('courses_full.zip', "base64");
+        return insightFacade.addDataset('courses', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(complexQuery107).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+
+                expect(result.body).to.deep.equal({"result":[{ courses_dept: 'cpsc',
+                    courses_title: 'thry of automata',
+                    average: 77.58,
+                    sectionsOffered: 1111 } ]});
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
 });

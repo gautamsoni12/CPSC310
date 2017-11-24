@@ -54,6 +54,10 @@ export default class InsightFacade implements IInsightFacade {
                         newCourse.loadfile(content).then(function (value: Array<any>) {
                             zipContent = value;
 
+                            if (value.length < 1){
+                                throw "invalid zip";
+                            }
+
                             code = addDatasetResult(id, zipContent);
 
                             if (code === 201) {
@@ -74,6 +78,10 @@ export default class InsightFacade implements IInsightFacade {
                         let ubcRooms = new Rooms(id, content);
                         ubcRooms.loadFile(content).then(function (value: Array<any>) {
                             zipContent = value;
+
+                            if (value.length < 1){
+                                throw "invalid zip";
+                            }
 
                             code = addDatasetResult(id, zipContent);
 
@@ -145,6 +153,7 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     performQuery(query: any): Promise<InsightResponse> {
+        //console.log(query);
         return new Promise(function (resolve, reject) {
             try {
                 if (typeof query != "undefined" ||typeof query != null) {
@@ -193,7 +202,7 @@ export default class InsightFacade implements IInsightFacade {
                         let Array2: Array<any> = queryOption.queryArray;
 
                         let myResult: Result = {result: Array2};
-                        //console.log(myResult);
+                        console.log(myResult);
                         code = 200;
                         resolve({code: code, body: myResult});
 

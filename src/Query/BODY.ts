@@ -93,7 +93,7 @@ export class Body{
 
                 let m_comp_value = Object.getOwnPropertyDescriptor(node, m_comp_key).value;
                 var tempArray = arrayToQuery.filter(function (result) {
-                    if (typeof result[m_comp_key] === "number") {
+                    if (typeof m_comp_value === "number") {
                         return result[m_comp_key] < m_comp_value;
                     }
                     else {
@@ -129,7 +129,7 @@ export class Body{
 
                 let m_comp_value = Object.getOwnPropertyDescriptor(node, m_comp_key).value;
                 var tempArray = arrayToQuery.filter(function (result) {
-                    if (typeof result[m_comp_key] === "number") {
+                    if (typeof m_comp_value === "number") {
                         return result[m_comp_key] > m_comp_value;
                     }
                     else {
@@ -163,7 +163,7 @@ export class Body{
 
                 let m_comp_value = Object.getOwnPropertyDescriptor(node, m_comp_key).value;
                 var tempArray = arrayToQuery.filter(function (result) {
-                    if (typeof result[m_comp_key] === "number") {
+                    if (typeof m_comp_value === "number") {
                         return result[m_comp_key] === m_comp_value;
                     }
                     else {
@@ -197,7 +197,7 @@ export class Body{
 
                 var m_comp_value = Object.getOwnPropertyDescriptor(node, m_comp_key).value;
                 var tempArray = arrayToQuery.filter(function (result) {
-                    if (typeof result[m_comp_key] === "string") {
+                    if (typeof  m_comp_value === "string") {
                         if ((m_comp_value).includes("**")) {
                             throw "Invalid string";
                         }

@@ -193,6 +193,8 @@ describe("EchoSpec", function () {
         let server = new Server(4321);
         let URL = "http://127.0.0.1:4321";
 
+        console.log(1);
+
         return server.start().then(function (success: boolean) {
             return chai.request(URL)
                 .post('/query')
@@ -203,13 +205,12 @@ describe("EchoSpec", function () {
                 })
                 .catch(function (err) {
                     Log.trace('catch:');
+                    console.log(err);
                     // some assertions
                     expect.fail();
                 });
         });
     });
-
-
 
 
 });
