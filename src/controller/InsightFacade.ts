@@ -290,7 +290,7 @@ function getData(id: any): Array<any> {
             return dataToQ;
         }
     } catch (error) {
-        throw new Error("missing dataset");
+        throw "Invalid Query";
     }
 
 }

@@ -139,13 +139,8 @@ export default class Server {
     }
 
     postDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
-        //console.log(2, req.body);
-        //let queryStr = JSON.parse(req.body);
 
         let iFacade = new InsightFacade();
-
-        //console.log(123, queryStr);
-
 
         iFacade.performQuery(req.body).then( function (value) {
             res.status(value.code);

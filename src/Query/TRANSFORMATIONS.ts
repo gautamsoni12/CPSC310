@@ -17,47 +17,10 @@ export class Transformation {
             x.evaluatedResult = this.queryArray;
 
             let groupNode = (Object.getOwnPropertyDescriptor(this.node, "GROUP")).value;
-            // let groupArray: Array<any>= [];
-            //
-            // x.evaluatedResult.forEach(function (obj:any) {
-            //     let smallGroupArray: Array<any> = [];
-            //     groupNode.forEach(function (group:any) {
-            //         smallGroupArray.push(obj[group]);
-            //     });
-            //     groupArray.push(smallGroupArray);
-            // });
-            //
-            // var tmp:Array<any> = [];
-            //
-            // var b = groupArray.filter(function (v) {
-            //     if (tmp.indexOf(v.toString()) < 0) {
-            //         tmp.push(v.toString());
-            //         return v;
-            //     }
-            // });
-            //
-            // console.log(b);
-            //
-            //
-            // let bucket: Array<any> = [];
-            // b.forEach(function (value) {
-            //     x.evaluatedResult.forEach(function(obj)
-            //     {
-            //         value.forEach(function (a: any) {
-            //             groupNode.forEach(function (g:any) {
-            //                if( obj[g] === a){
-            //                    bucket.push(obj);
-            //                }
-            //             })
-            //             });
-            //
-            //             bucket.push(obj);
-            //
-            //     });
-            // });
-            //
-            //
 
+            if (groupNode.length < 1){
+                throw "Invalid Group";
+            }
 
             groupNode.forEach(function (group: any) {
                 let groupArray: Array<any> = [];
