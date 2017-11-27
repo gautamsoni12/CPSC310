@@ -22,10 +22,17 @@ export class Transformation {
                 throw "Invalid Group";
             }
 
+
+
             groupNode.forEach(function (group: any) {
                 let groupArray: Array<any> = [];
 
                 x.evaluatedResult.forEach(function (obj: any) {
+
+                   if (typeof obj[group] ==='undefined'){
+                       throw "invalid group";
+                   }
+
                     let g = obj[group];
                     groupArray.push(g);
                 });

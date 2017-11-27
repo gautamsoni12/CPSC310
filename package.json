@@ -9,7 +9,7 @@
   "bugs": "",
   "keywords": [],
   "version": "0.2.0",
-  "devDependencies": {},
+
   "scripts": {
     "clean": "rm -rf ./node_modules/ .yarnclean",
     "cleanwin": "rmdir node_modules .yarnclean /s /q & exit 0",

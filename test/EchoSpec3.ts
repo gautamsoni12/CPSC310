@@ -136,24 +136,18 @@ describe("EchoSpec3", function () {
 
 
     it("PUT description", function () {
-        chai.use(chaiHttp);
-        let server = new Server(4321);
-        let URL = "http://127.0.0.1:4321";
-
-        return server.start().then(function (success: boolean) {
-            return chai.request(URL)
-                .put('/dataset/rooms')
-                .attach("body", fs.readFileSync("rooms.zip"), "rooms.zip")
-                .then(function (res: Response) {
-                    Log.trace('then:');
-                    // some assertions
-                })
-                .catch(function (err) {
-                    Log.trace('catch:');
-                    // some assertions
-                    expect.fail();
-                });
-        });
+        return chai.request(URL)
+            .put('/dataset/rooms')
+            .attach("body", fs.readFileSync("./310rooms.1.0.zip"), "310rooms.1.0.zip")
+            .then(function (res: Response) {
+                Log.trace('then:');
+                // some assertions
+            })
+            .catch(function (err) {
+                Log.trace('catch:');
+                // some assertions
+                expect.fail();
+            });
     });
 
     it("DEL description", function () {
@@ -163,8 +157,7 @@ describe("EchoSpec3", function () {
 
         return server.start().then(function (success: boolean) {
             return chai.request(URL)
-                .del('/dataset/rooms')
-                .attach("body", fs.readFileSync("rooms.zip"), "rooms.zip")
+                .del('/rooms')
                 .then(function (res: Response) {
                     Log.trace('then:');
                     // some assertions
