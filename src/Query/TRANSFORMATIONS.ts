@@ -138,10 +138,13 @@ export class Transformation {
                         gp_array[0][token] = count;
                         x.evaluatedResult3.push(gp_array[0]);
                     }
+                    else{
+                        throw "Invalid ApplyToken";
+                    }
                 });
             });
         } catch (error) {
-            throw "Invalid ApplyToken"
+            throw "Invalid ApplyToken";
         }
 
     }

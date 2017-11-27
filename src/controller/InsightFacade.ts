@@ -48,63 +48,71 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (resolve, reject) {
             try {
                 if (typeof content != null || typeof content != 'undefined') {
-                    var zipContent: Array<any> = [];
-                    if (id === "courses") {
-                        let newCourse = new Course(id, content);
-                        newCourse.loadfile(content).then(function (value: Array<any>) {
-                            zipContent = value;
+                    let zipContent: Array<any> = [];
 
-                            if (value.length < 1){
-                                throw "invalid zip";
-                            }
+                        if (id === "courses") {
+                            let newCourse = new Course(id, content);
+                            newCourse.loadfile(content).then(function (value: Array<any>) {
+                                zipContent = value;
 
-                            code = addDatasetResult(id, zipContent);
+                                if (value.length < 1) {
+                                    throw "invalid zip";
+                                }
 
-                            if (code === 201) {
-                                resolve({
-                                    code: code,
-                                    body: {res: 'the operation was successful and the id already existed'}
-                                });
-                            }
-                            else if (code === 204) {
-                                resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
-                            }
-                        }).catch(function (error: any) {
-                            reject({code: code, body: {error: ("error: " + error.message)}});
-                        });
-                    }
-                    else if (id === "rooms") {
+                                code = addDatasetResult(id, zipContent);
 
-                        let ubcRooms = new Rooms(id, content);
-                        ubcRooms.loadFile(content).then(function (value: Array<any>) {
-                            zipContent = value;
+                                if (code === 201) {
+                                    resolve({
+                                        code: code,
+                                        body: {res: 'the operation was successful and the id already existed'}
+                                    });
+                                }
+                                else if (code === 204) {
+                                    resolve({
+                                        code: code,
+                                        body: {res: 'the operation was successful and the id was new'}
+                                    });
+                                }
+                            }).catch(function (error: any) {
+                                reject({code: code, body: {error: ("error: " + error.message)}});
+                            });
+                        }
+                        else if (id === "rooms") {
 
-                            if (value.length < 1){
-                                throw "invalid zip";
-                            }
+                            let ubcRooms = new Rooms(id, content);
+                            ubcRooms.loadFile(content).then(function (value: Array<any>) {
+                                zipContent = value;
 
-                            code = addDatasetResult(id, zipContent);
+                                if (value.length < 1) {
+                                    throw "invalid zip";
+                                }
 
-                            if (code === 201) {
-                                resolve({
-                                    code: code,
-                                    body: {res: 'the operation was successful and the id already existed'}
-                                });
-                            }
-                            else if (code === 204) {
-                                resolve({code: code, body: {res: 'the operation was successful and the id was new'}});
-                            }
+                                code = addDatasetResult(id, zipContent);
 
-                        }).catch(function (error: any) {
+                                if (code === 201) {
+                                    resolve({
+                                        code: code,
+                                        body: {res: 'the operation was successful and the id already existed'}
+                                    });
+                                }
+                                else if (code === 204) {
+                                    resolve({
+                                        code: code,
+                                        body: {res: 'the operation was successful and the id was new'}
+                                    });
+                                }
+
+                            }).catch(function (error: any) {
+                                code = 400;
+                                reject({code: code, body: {error: ("error: " + error.message)}});
+                            });
+                        }
+                        else {
                             code = 400;
-                            reject({code: code, body: {error: ("error: " + error.message)}});
-                        });
+                            reject({code: code, body: {error: ("error: " + "wrong id")}});
+                        }
                     }
-                    else {
-                        code = 400;
-                        reject({code: code, body: {error: ("error: " + "wrong id")}});
-                    }
-                }
+
             } catch (error) {
                 code = 400;
                 reject({code: code, body: {error: ("error: " + error.message)}});
@@ -153,10 +161,10 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     performQuery(query: any): Promise<InsightResponse> {
-        //console.log(query);
+
         return new Promise(function (resolve, reject) {
             try {
-                if (typeof query != "undefined" ||typeof query != null) {
+                if (typeof query != "undefined" || typeof query != null) {
                     let qObject = JSON.parse(JSON.stringify(query));
                     try {
                         where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
@@ -184,7 +192,6 @@ export default class InsightFacade implements IInsightFacade {
                             Array3 = Array3.filter(function (item, index, inputArray) {
                                 return inputArray.indexOf(item) == index;
                             });
-
                         }
 
                         if (typeof option === 'undefined') {

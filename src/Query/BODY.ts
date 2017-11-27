@@ -138,7 +138,7 @@ export class Body{
                 });
             }
             else {
-                throw "Invalid LT";
+                throw "Invalid GT";
             }
         } catch (error) {
             throw new Error(error);
@@ -167,12 +167,12 @@ export class Body{
                         return result[m_comp_key] === m_comp_value;
                     }
                     else {
-                        throw "Invalid LT";
+                        throw "Invalid EQ";
                     }
                 });
             }
             else {
-                throw "Invalid LT";
+                throw "Invalid EQ";
             }
         } catch (error) {
             throw new Error(error);
@@ -223,7 +223,7 @@ export class Body{
                 });
             }
             else {
-                throw "Invalid LT";
+                throw "Invalid IS";
             }
         } catch (error) {
             throw new Error(error);
