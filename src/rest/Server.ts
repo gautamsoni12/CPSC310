@@ -74,11 +74,11 @@ export default class Server {
                 that.rest.get('/echo/:msg', Server.echo);
 
 
-                that.rest.put('/dataset/:id', that.putDataset);
+                that.rest.put('/dataset/:id', Server.putDataset);
 
-                that.rest.del('/:id', that.deleteDataset);
+                that.rest.del('/:id', Server.deleteDataset);
 
-                that.rest.post('/query', that.postDataset);
+                that.rest.post('/query', Server.postDataset);
 
 
                 // Other endpoints will go here
@@ -100,7 +100,7 @@ export default class Server {
         });
     }
 
-    putDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
+    public static putDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
         // Get the dataset data coming from the request
         let dataStr = new Buffer(req.params.body).toString('base64');
 
@@ -119,7 +119,7 @@ export default class Server {
         return next();
     }
 
-    deleteDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
+    public static deleteDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
         // Get the dataset data coming from the request
         //let dataStr = new Buffer(req.params.body).toString('base64');
 
@@ -138,7 +138,7 @@ export default class Server {
         return next();
     }
 
-    postDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
+    public static postDataset (req: restify.Request, res: restify.Response, next: restify.Next) {
 
         let iFacade = new InsightFacade();
 
