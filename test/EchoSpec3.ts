@@ -14,9 +14,9 @@ import chaiHttp = require('chai-http');
 import Response = ChaiHttp.Response;
 import restify = require('restify');
 import * as fs from "fs";
+import {error} from "util";
 
-
-describe("EchoSpec", function () {
+describe("EchoSpec3", function () {
 
 
     function sanityCheck(response: InsightResponse) {
@@ -143,6 +143,27 @@ describe("EchoSpec", function () {
         return server.start().then(function (success: boolean) {
             return chai.request(URL)
                 .put('/dataset/rooms')
+                .attach("body", fs.readFileSync("rooms.zip"), "rooms.zip")
+                .then(function (res: Response) {
+                    Log.trace('then:');
+                    // some assertions
+                })
+                .catch(function (err) {
+                    Log.trace('catch:');
+                    // some assertions
+                    expect.fail();
+                });
+        });
+    });
+
+    it("DEL description", function () {
+        chai.use(chaiHttp);
+        let server = new Server(4321);
+        let URL = "http://127.0.0.1:4321";
+
+        return server.start().then(function (success: boolean) {
+            return chai.request(URL)
+                .del('/dataset/rooms')
                 .attach("body", fs.readFileSync("rooms.zip"), "rooms.zip")
                 .then(function (res: Response) {
                     Log.trace('then:');

@@ -69,6 +69,10 @@ export class Transformation {
 
                 let applyToken = Object.keys(apply);
 
+                if (checkIfArrayIsUnique(applyToken)){
+                    throw "Invalid Apply-Array";
+                }
+
                 applyToken.forEach(function (token) {
                     let tokenNode = (Object.getOwnPropertyDescriptor(apply, token)).value;
 
@@ -148,5 +152,23 @@ export class Transformation {
         }
 
     }
+}
 
+
+function checkIfArrayIsUnique(myArray:Array<any>)
+{
+    for (var i = 0; i < myArray.length; i++)
+    {
+        for (var j = 0; j < myArray.length; j++)
+        {
+            if (i != j)
+            {
+                if (myArray[i] == myArray[j])
+                {
+                    return true; // means there are duplicate values
+                }
+            }
+        }
+    }
+    return false; // means there are no duplicate values.
 }

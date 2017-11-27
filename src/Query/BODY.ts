@@ -220,6 +220,9 @@ export class Body{
                             return (result[m_comp_key] === (inputString1));
                         }
                     }
+                    else{
+                        throw "Invalid IS";
+                    }
                 });
             }
             else {
