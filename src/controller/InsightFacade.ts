@@ -33,7 +33,7 @@ import {Transformation} from "../Query/TRANSFORMATIONS";
 
 let UBCInsight1: Array<any> = [];
 let code: number = 0;
-let where: any;
+// let where: any;
 let qID: string;
 
 
@@ -74,7 +74,7 @@ export default class InsightFacade implements IInsightFacade {
                                     });
                                 }
                             }).catch(function (error: any) {
-                                reject({code: code, body: {error: ("error: " + error.message)}});
+                                reject({code: 400, body: {error: ("error: " + error.message)}});
                             });
                         }
                         else if (id === "rooms") {
@@ -167,7 +167,7 @@ export default class InsightFacade implements IInsightFacade {
                 if (typeof query != "undefined" || typeof query != null) {
                     let qObject = JSON.parse(JSON.stringify(query));
                     try {
-                        where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
+                        let where = (Object.getOwnPropertyDescriptor(qObject, "WHERE")).value;
                         let option = (Object.getOwnPropertyDescriptor(qObject, "OPTIONS")).value;
                         if (typeof where === 'undefined') {
                             throw "Invalid query. Body missing.";
@@ -209,7 +209,7 @@ export default class InsightFacade implements IInsightFacade {
                         let Array2: Array<any> = queryOption.queryArray;
 
                         let myResult: Result = {result: Array2};
-                        console.log(myResult);
+                        //console.log(myResult);
                         code = 200;
                         resolve({code: code, body: myResult});
 
