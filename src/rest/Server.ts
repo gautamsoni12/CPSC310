@@ -76,7 +76,7 @@ export default class Server {
 
                 that.rest.put('/dataset/:id', Server.putDataset);
 
-                that.rest.del('/:id', Server.deleteDataset);
+                that.rest.del('/dataset/:id', Server.deleteDataset);
 
                 that.rest.post('/query', Server.postDataset);
 

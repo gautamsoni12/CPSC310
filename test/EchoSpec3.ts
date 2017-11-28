@@ -157,7 +157,7 @@ describe("EchoSpec3", function () {
 
         return server.start().then(function (success: boolean) {
             return chai.request(URL)
-                .del('/rooms')
+                .del('/dataset/:rooms')
                 .then(function (res: Response) {
                     Log.trace('then:');
                     // some assertions
