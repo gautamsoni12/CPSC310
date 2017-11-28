@@ -1402,6 +1402,68 @@ describe("EchoSpec", function () {
         })
     });
 
+    let query9_room = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "avgSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["avgSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "avgSeats": {
+                    "AVG": "rooms_seats"
+                }
+            }]
+        }
+    };
+
+    it("Room query 119_room", function () {
+        let content: string = fs.readFileSync('rooms.zip', "base64");
+        return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
+            Log.test('Value:' + value);
+            expect(value).to.deep.equal({
+                "code": 204,
+                "body": {res: 'the operation was successful and the id was new'}
+            });
+
+            return insightFacade.performQuery(query9_room).then(function (result) {
+                sanityCheck(result);
+
+                expect(result.code).to.equal(200);
+                //console.log(result.body);
+                expect(result.body).to.deep.equal({ result:
+                    [ { rooms_shortname: 'OSBO', avgSeats: 442 },
+                        { rooms_shortname: 'HEBB', avgSeats: 375 },
+                        { rooms_shortname: 'LSC', avgSeats: 350 } ] });
+            }).catch(err => {
+                console.log("performQUery error: ", err);
+                expect.fail();
+            });
+
+        }).catch(function (error) {
+            Log.test('Error:' + error);
+            console.log("addDataset error: ", error);
+            expect.fail();
+        })
+    });
+
 
 
 });
