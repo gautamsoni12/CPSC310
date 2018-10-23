@@ -1428,13 +1428,13 @@ describe("EchoSpec", function () {
             "GROUP": ["rooms_shortname"],
             "APPLY": [{
                 "avgSeats": {
-                    "AVG": "rooms_seats"
+                    "MIN": "rooms_seats"
                 }
             }]
         }
     };
 
-    it("Room query 119_room", function () {
+    it("Room query 110_room", function () {
         let content: string = fs.readFileSync('rooms.zip', "base64");
         return insightFacade.addDataset('rooms', content).then(function (value: InsightResponse) {
             Log.test('Value:' + value);

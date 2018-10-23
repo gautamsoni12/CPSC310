@@ -21,9 +21,6 @@ export class Transformation {
             if (groupNode.length < 1){
                 throw "Invalid Group";
             }
-
-
-
             groupNode.forEach(function (group: any) {
                 let groupArray: Array<any> = [];
 
@@ -48,6 +45,7 @@ export class Transformation {
                             bucket.push(g_obj);
                         }
                     });
+
                     let applyNode = (Object.getOwnPropertyDescriptor(x.node, "APPLY")).value;
                     if (applyNode.length >= 1) {
                         x.evaluateApply(bucket);

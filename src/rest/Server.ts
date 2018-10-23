@@ -133,6 +133,7 @@ export default class Server {
         }).catch(function(error){
             res.status(error.code);
             res.json(error);
+
         });
 
         return next();
